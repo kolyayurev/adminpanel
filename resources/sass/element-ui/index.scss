@@ -1,0 +1,168 @@
+@import 'element-plus/dist/index.css';
+@import 'element-plus/theme-chalk/dark/css-vars.css';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+//@import './index.css';
+//
+.dialog{
+    z-index: z(dialog);
+    &.--crop{
+        &.el-dialog {
+            width: fit-content;
+            max-width: 90%;
+        }
+        .crop-container{
+            img{
+                max-width: 100%;
+                max-height: 600px;
+            }
+        }
+    }
+    &.--form{
+        &.el-dialog {
+            width: 100%;
+            max-width: 500px;
+        }
+    }
+    &.--big-form{
+        &.el-dialog {
+            width: 100%;
+            max-width: 1000px;
+        }
+    }
+    &.el-dialog{
+        width: 100%;
+        max-width: 1200px;
+        border-radius: 4px;
+        @include media-breakpoint-down(xl){
+            max-width: 95vw;
+        }
+
+    }
+    .el-dialog{
+        &__header{
+            //padding: 15px 20px;
+            //border-radius: 4px 4px 0 0;
+        }
+        &__title{
+            //font-weight: 500;
+        }
+        &__headerbtn{
+            //top: 15px;
+            .el-dialog__close{
+            }
+        }
+        &__footer{
+            display: flex;
+            position: sticky;
+            bottom: 5px;
+            //border-radius: 0 0 4px 4px;
+        }
+    }
+
+}
+
+.el-popconfirm__main{
+    word-break: break-word;
+}
+.el-button{
+    [class*="bi bi-"]{
+        height: 1em;
+        width: 1em;
+        line-height: 1em;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        fill: currentColor;
+        color: var(--color);
+        font-size: inherit;
+    }
+}
+//.el-button--primary{
+//    background-color: cl(primary);
+//}
+//.dialog-media-picker{
+//
+//}
+//.dialog-create-custom-bread{
+//    .el-dialog{
+//        min-width: 750px;
+//    }
+//}
+//.dialog-image-preview{
+//    .el-dialog{
+//        width: auto;
+//    }
+//}
+//.modal-info{
+//    .el-dialog__header{
+//        background-color: cl(primary);
+//        color: cl(text-white);
+//    }
+//    .el-dialog__title{
+//        color: cl(text-white);
+//    }
+//    .el-dialog__headerbtn{
+//        .el-dialog__close{
+//            color: cl(text-white);
+//        }
+//    }
+//}
+//
+//.el-form--label-top{
+//    .el-form-item__label{
+//        padding-bottom: 0;
+//    }
+//}
+//.el-radio{
+//    &:hover{
+//        .el-radio__inner{
+//            border-color: #409EFF;
+//        }
+//        .el-radio__label{
+//            color: #535B65;
+//        }
+//    }
+//    &__inner{
+//        border: 4px solid #AAAAAA;
+//        width: 20px;
+//        height: 20px;
+//        transition: border 0.25s linear;
+//        &::after {
+//            width: 8px;
+//            height: 8px;
+//            background-color: transparent;
+//            transform: translate(-50%,-50%) scale(1);
+//            transition: transform .15s ease-in, background 0.25s linear;
+//        }
+//    }
+//    &__label{
+//        color: #AAAAAA;
+//        transition: color 0.25s linear;
+//    }
+//    &__input{
+//        &.is-checked{
+//            &+.el-radio__label{
+//                color: #535B65;
+//            }
+//            .el-radio__inner {
+//                border-color: #409EFF;
+//                background: transparent;
+//            }
+//            .el-radio__inner::after {
+//                background-color: #409EFF;
+//            }
+//        }
+//    }
+//}
+//.el-date-editor{
+//    max-width: 100%;
+//}
+.el-select{
+    width: 100%;
+}
+//.el-date-editor.el-input, .el-date-editor.el-input__inner{
+//    width: 100%;
+//}

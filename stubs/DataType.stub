@@ -1,0 +1,38 @@
+<?php
+
+namespace DummyNamespace;
+
+use DummyRepositoryNamespace;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use KY\AdminPanel\DataTypes\BaseDataType;
+use KY\AdminPanel\Blocks\Row;
+
+class DummyClass extends BaseDataType
+{
+    protected string $pluralTitle = 'DummyTitle';
+    protected string $singleTitle = 'DummyTitle';
+    protected string $slug = 'DummySlug';
+
+    public function __construct(){
+        $this->repository = new DummyRepository();
+    }
+
+    public function layout(): Collection
+    {
+        return collect([
+            Row::blocks('*'),
+        ]);
+    }
+
+    public function fields():Collection{
+        return collect([]);
+    }
+
+    public function rules(Request $request):array
+    {
+        return [];
+    }
+}
+
+

@@ -1,0 +1,121 @@
+@php
+    $id = name2id('list_'.$field->get('name'));
+    $vue_instance_name = vue_instance_name($field, $model);
+@endphp
+
+<div class="col-12 col-md-{{ $field->getCol() }} mb-3">
+    <div class="form-group list-field" id="{{ $id }}" v-cloak>
+        <label for="{{ $field->get('id') ?? name2id($field->get('name')) }}">{{ $field->get('label') }}</label>
+        @include('adminpanel::multilingual.input-hidden-form')
+        <input type="hidden" name="{{$field->get('name')}}"
+               class="form-control is-vue"
+               :value="printObject(items)"
+               data-vue-instance="{{ $vue_instance_name }}"
+        />
+        <draggable v-model="items" item-key="name" class="list-field__items">
+            <template #item="{element,index}">
+                <div class="list-item">
+                    <div class="list-item__title"><i class="bi bi-list"></i> @{{ element.text }}</div>
+                    <div class="list-item__buttons">
+                        <el-button class="button" type="primary" @click="editItem(index)" size="small"><i
+                                class="bi bi-pencil-square"></i></el-button>
+                        <el-button class="button" type="danger" @click="deleteItem(index)" size="small"><i
+                                class="bi bi-trash3"></i></el-button>
+                    </div>
+                </div>
+            </template>
+        </draggable>
+        <legend></legend>
+        <el-form
+            :model="model"
+            :rules="rules"
+            ref="form"
+            label-position="top">
+            <el-form-item prop="text">
+                <el-input type="text" v-model="model.text" placeholder="Текст"
+                          @keydown.enter.prevent="isEdit?saveItem():addItem()"></el-input>
+            </el-form-item>
+            <el-button @click="isEdit?saveItem():addItem()"><i :class="'bi bi-'+(isEdit?'check':'plus')"></i> @{{ lang.get('common.'+(isEdit?'save':'add')) }}</el-button>
+        </el-form>
+
+    </div>
+</div>
+
+
+@push('vue')
+    <script>
+        var {{$vue_instance_name}} = createVueApp({
+            data() {
+                return {
+                    model: {
+                        text: '',
+                    },
+                    rules: {
+                        text: [
+                            {required: true, message: lang.get('validation.required'), trigger: 'blur'},
+                        ],
+                    },
+                    items: {!! printArray(old($field->get('name'),$field->getValue($model))) !!},
+                    isEdit: false,
+                    editIndex: false,
+                    test: 'test'
+                }
+            },
+            created() {
+                @if (is_field_translatable($model, $field))
+                this.updateLocaleData(this.items)  // important
+                @endif
+            },
+            mounted() {
+                vueFieldInstances['{{$vue_instance_name}}'] = this
+            },
+            methods: {
+                addItem() {
+                    this.$refs.form.validate((valid) => {
+                        if (valid) {
+                            this.items.push({...this.model})
+                            this.clearForm()
+                        } else {
+                            return false;
+                        }
+                    });
+
+                },
+                editItem(key) {
+                    this.isEdit = true
+                    this.editIndex = key
+                    this.model = {...this.items[key]}
+                },
+                saveItem() {
+                    this.$refs.form.validate((valid) => {
+                        if (valid) {
+                            this.items[this.editIndex] = {...this.model}
+                            this.editIndex = false
+                            this.isEdit = false
+                            this.clearForm()
+                        } else {
+                            return false;
+                        }
+                    });
+
+                },
+                deleteItem(key) {
+                    this.items.splice(key, 1);
+                },
+                clearForm() {
+                    for (var key in this.model) {
+                        this.model[key] = '';
+                    }
+                },
+                printObject(obj) {
+                    return JSON.stringify(obj);
+                },
+                @if (is_field_translatable($model, $field) )
+                updateLocaleData(items) {
+                    this.items = this.isJsonValid(items) ? JSON.parse(items) : (items ? items : [])
+                }
+                @endif
+            }
+        }).mount('#{{ $id }}');
+    </script>
+@endpush

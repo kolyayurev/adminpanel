@@ -1,0 +1,19 @@
+<?php
+
+namespace DummyNamespace;
+
+use AdminPanel;
+use Illuminate\Http\Request;
+use KY\AdminPanel\Http\Controllers\BaseDataController;
+
+class DummyClass extends BaseDataController
+{
+    public function __construct(){
+        $this->dataType = AdminPanel::getDataType('DummyDataTypeSlug');
+    }
+
+}
+
+
+
+

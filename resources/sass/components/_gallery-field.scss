@@ -1,0 +1,44 @@
+.gallery-field {
+    &__items {
+        display: flex;
+        overflow-x: auto;
+    }
+
+    .el-carousel__item {
+        display: flex;
+        justify-content: center;
+    }
+
+    &__item {
+        min-width: 300px;
+        max-width: 400px;
+        margin-right: .5rem;
+        cursor: move;
+    }
+
+    .el-input {
+        max-width: 100%;
+    }
+
+    .dd-empty {
+        min-height: 60px;
+    }
+
+    .image-box {
+        height: 200px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 70px;
+    }
+
+    .image-box > img {
+        max-width: 100%;
+        display: block;
+    }
+    .bottom {
+        margin-top: 13px;
+        line-height: 12px;
+    }
+}

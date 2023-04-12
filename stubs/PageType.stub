@@ -1,0 +1,36 @@
+<?php
+
+namespace DummyNamespace;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use KY\AdminPanel\Blocks\{Accordion,Collapse,Row};
+use KY\AdminPanel\PageTypes\BasePageType;
+
+class DummyClass extends BasePageType
+{
+    protected $title = 'DummyTitle';
+    protected $slug = 'DummySlug';
+
+
+    /**
+     * @return Collection
+     */
+    public function layout(): Collection
+    {
+        return collect([
+            Accordion::blocks(
+                Collapse::blocks(
+                    Row::blocks(
+                        '*'
+                    )
+                ),
+            )
+        ]);
+    }
+
+    public function fields():Collection{
+        return collect([]);
+    }
+
+}

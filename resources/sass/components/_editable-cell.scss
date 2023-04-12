@@ -1,0 +1,30 @@
+.editable-cell{
+    $this : &;
+    position: relative;
+    cursor:pointer;
+    min-height: 30px;
+
+    label{
+        //TODO: refactor, временная заплатка, чтобы не был виден label.
+        display: none;
+    }
+    &__button{
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    &:not(.--edit):hover{
+       #{$this}__button{
+           display: block;
+       }
+    }
+    &__form{
+        position: relative;
+        &-buttons{
+            //position: absolute;
+            //top: 0;
+            //right: 0;
+        }
+    }
+}

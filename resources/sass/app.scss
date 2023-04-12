@@ -1,0 +1,26 @@
+// Variables
+@import './variables';
+@import './functions';
+@import './utilites';
+@import './transitions';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+@import "~bootstrap-fileinput/scss/fileinput";
+@import "~daterangepicker/daterangepicker.css";
+
+@import '~select2/src/scss/core';
+@import '~select2-bootstrap-5-theme/src/include-all';
+
+@import "~toastr";
+
+@import "~cropperjs/src/css/cropper.scss";
+
+@import './common';
+@import './components/index';
+@import './tools/index';
+
+
+
+
+

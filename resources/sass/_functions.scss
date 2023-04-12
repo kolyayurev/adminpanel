@@ -1,0 +1,12 @@
+
+@function z($type) {
+  @if map_has_key($z-index, $type) {
+    @return map_get($z-index, $type);
+  }
+  @else
+  {
+    @error 'Wrong z-index type "#{$type}" in list; ';
+    @return null;
+  }
+}
+

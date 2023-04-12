@@ -1,0 +1,5 @@
+{
+    "php.version": "8.0",
+    "intelephense.environment.phpVersion": "8.0",
+    "php.validate.executablePath": "/usr/bin/php8.0"
+}

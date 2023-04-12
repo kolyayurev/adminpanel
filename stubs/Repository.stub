@@ -1,0 +1,22 @@
+<?php
+
+namespace DummyNamespace;
+
+use DummyModelNamespace;
+use Illuminate\Http\Request;
+use KY\AdminPanel\Repositories\BaseRepository;
+use KY\AdminPanel\Contracts\DataTypeContract;
+
+class DummyClass extends BaseRepository
+{
+    public function modelClass():string
+    {
+        return DummyModel::class;
+    }
+
+    public function getDataTableFilter(Request $request, DataTypeContract $dataType)
+    {
+        return parent::getDataTableFilter($request,$dataType);
+    }
+
+}

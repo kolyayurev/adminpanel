@@ -1,0 +1,40 @@
+.files-item{
+    position: relative;
+    cursor: pointer;
+    min-width: 250px;
+    width: 260px;
+    margin: 5px;
+    height: 100px;
+    @include media-breakpoint-down(md) {
+        max-height: none;
+    }
+    .el-card__body{
+        padding: 15px;
+        height: 100%;
+    }
+    .el-image__inner{
+        max-height: 60px;
+    }
+    &.selected, &:hover{
+        background-color: var(--bs-primary-bg-subtle);
+    }
+    &__icon{
+        display: flex !important;
+        align-items: start;
+        justify-content: center;
+        padding: 5px;
+        font-size: 30px;
+    }
+    &__image{
+        width: 100%;
+    }
+    &__details{
+        overflow:hidden;
+    }
+    &__remove{
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 4px;
+    }
+}

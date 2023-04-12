@@ -1,0 +1,1 @@
+<hr {{ $block->getClass() }}>

@@ -1,0 +1,37 @@
+.array-builder-field{
+    &__add-button{
+        display: block;
+        margin-bottom: 10px
+    }
+}
+.list-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    padding: 5px;
+    margin-bottom: 5px;
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    border-radius: var(--bs-card-border-radius);
+    &__icon{
+
+    }
+    &__title{
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+    &__buttons{
+        display: flex;
+        align-items: center;
+    }
+}
+.list-item-empty{
+    padding: 20px;
+    border: 2px dashed var(--el-border-color);
+    border-radius: var(--bs-card-border-radius);
+}
+.list-item-ghost{
+    border: 2px dashed var(--el-border-color);
+    border-radius: var(--bs-card-border-radius);
+}

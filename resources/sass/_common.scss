@@ -1,0 +1,18 @@
+.adminpanel{
+    position: relative;
+}
+.ap-navbar{
+    z-index: z(navbar);
+}
+.ap-loader{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: z(loader);
+    background-color: var(--bs-body-bg);
+}
