@@ -6,17 +6,14 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Filesystem\Filesystem;
 use KY\AdminPanel\Contracts\DataTypeContract;
-use KY\AdminPanel\Contracts\FormFieldContract;
 use KY\AdminPanel\Contracts\MenuContract;
 use KY\AdminPanel\Contracts\PageTypeContract;
-use KY\AdminPanel\MenuInterface;
 use KY\AdminPanel\Models\Permission;
 use KY\AdminPanel\Models\Role;
 use KY\AdminPanel\Models\Redirect;
 use KY\AdminPanel\Models\Sef;
 use KY\AdminPanel\Models\Seo;
 use KY\AdminPanel\Models\Setting;
-use KY\AdminPanel\Models\Test;
 use KY\AdminPanel\Models\Translation;
 use KY\AdminPanel\Models\User;
 
@@ -42,7 +39,6 @@ class AdminPanel
         'Sef'         => Sef::class,
         'Seo'         => Seo::class,
         'User'        => User::class,
-        'Test'        => Test::class,
         'Translation' => Translation::class,
     ];
 

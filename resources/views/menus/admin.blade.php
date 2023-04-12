@@ -47,11 +47,6 @@
         <a class="nav-link" href="{{ route('adminpanel.roles.index') }}">Роли</a>
     </li>
     @endcan
-    @can('list',AdminPanel::modelClass('Test'))
-        <li class="nav-item dropdown">
-            <a class="nav-link" href="{{ route('adminpanel.test.index') }}">Тест</a>
-        </li>
-    @endcan
     @can('view_dev')
         <li class="nav-item dropdown">
             <a class="nav-link" href="{{ route('adminpanel.tools.docs') }}">Docs</a>
