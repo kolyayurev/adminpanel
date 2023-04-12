@@ -184,7 +184,6 @@ class AdminPanelServiceProvider extends ServiceProvider
     {
         AdminPanelFacade::addDataType(UserDataType::class);
         AdminPanelFacade::addDataType(RoleDataType::class);
-        AdminPanelFacade::addDataType(TestDataType::class);
         AdminPanelFacade::addDataType(RedirectDataType::class);
         AdminPanelFacade::addDataType(SeoDataType::class);
         AdminPanelFacade::addDataType(SefDataType::class);

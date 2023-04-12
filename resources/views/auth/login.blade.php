@@ -56,7 +56,7 @@ body {
         btn.addEventListener('click', function(ev){
             if (form.checkValidity()) {
                 btn.querySelector('.signingin').className = 'signingin';
-                btn.querySelector('.signin').className = 'signin hidden';
+                btn.querySelector('.signin').className = 'signin visually-hidden';
             } else {
                 ev.preventDefault();
             }
