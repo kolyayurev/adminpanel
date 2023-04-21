@@ -10,18 +10,11 @@ class BaseMenu implements MenuContract
 {
     protected string $slug;
 
-    protected string $items;
-
-    public function addItem(){
-
-    }
-
-    public function handle(){
-
-    }
-    public function display($type = null, array $options = [])
+    public function items()
     {
+        return  collect([
 
+        ]);
     }
 
     public function getSlug():string

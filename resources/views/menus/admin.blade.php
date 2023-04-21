@@ -1,19 +1,16 @@
 <ul class="navbar-nav me-auto">
+    @if(count(AdminPanel::getPageTypes()))
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Контент
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li>
-                <a class="dropdown-item @if(request('name') === 'main') active @endif" href="{{ route('adminpanel.settings', 'main') }}">Главная</a>
-            </li>
-            @can('view_dev')
-            <li>
-                <a class="dropdown-item @if(request('name') === 'test') active @endif" href="{{ route('adminpanel.settings', 'test') }}">Тест</a>
-            </li>
-            @endcan
+            @foreach(AdminPanel::getPageTypes() as $pageType)
+                <li><a class="dropdown-item @if(request('name') === $pageType->getSlug()) active @endif" href="{{ route('adminpanel.settings', $pageType->getSlug()) }}">{{ $pageType->getTitle() }}</a></li>
+            @endforeach
         </ul>
     </li>
+    @endif
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarSeoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             SEO
@@ -37,22 +34,18 @@
 
         </ul>
     </li>
-    @can('list',AdminPanel::modelClass('User'))
-    <li class="nav-item dropdown">
-        <a class="nav-link" href="{{ route('adminpanel.users.index') }}">Пользователи</a>
-    </li>
-    @endcan
-    @can('list',AdminPanel::modelClass('Role'))
-    <li class="nav-item dropdown">
-        <a class="nav-link" href="{{ route('adminpanel.roles.index') }}">Роли</a>
-    </li>
-    @endcan
-    @can('view_dev')
-        <li class="nav-item dropdown">
-            <a class="nav-link" href="{{ route('adminpanel.tools.docs') }}">Docs</a>
+    @foreach(AdminPanel::getDataTypes() as $dataType)
+        @if(!in_array($dataType->getSlug(),['seo','sef','redirects']))
+        @can('list',$dataType->getModel())
+        <li class="nav-item ">
+            <a class="nav-link @if(request()->routeIs('adminpanel.'.$dataType->getSlug().'*')) active @endif"  href="{{ route('adminpanel.'.$dataType->getSlug().'.index') }}">{{ $dataType->getPluralTitle() }}</a>
         </li>
+        @endcan
+        @endif
+    @endforeach
+    @can('view_tools')
         <li class="nav-item dropdown">
-            <a class="nav-link" href="{{ route('adminpanel.media.index') }}">Media</a>
+            <a class="nav-link" href="{{ route('adminpanel.tools.index') }}"> Tools </a>
         </li>
     @endcan
 </ul>

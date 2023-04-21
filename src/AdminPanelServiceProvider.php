@@ -72,7 +72,7 @@ class AdminPanelServiceProvider extends ServiceProvider
 
         //TODO:check is admin route
         $this->registerDataTypes();
-//        AdminPanelFacade::addMenu(AdminMenu::class);
+        AdminPanelFacade::addMenu(AdminMenu::class);
 
     }
 
