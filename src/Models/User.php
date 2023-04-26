@@ -47,12 +47,5 @@ class User extends Authenticatable implements UserContract
         'email_verified_at' => 'datetime',
     ];
 
-    /**
-     * @return BelongsToMany
-     */
-    public function products(): BelongsToMany
-    {
-        return $this->belongsToMany(Product::class, 'accessory_product');
-    }
 
 }
