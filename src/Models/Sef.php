@@ -4,41 +4,31 @@ namespace KY\AdminPanel\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use KY\AdminPanel\Database\Factories\SefFactory;
 
+/**
+ * @property int $id
+ * @property string $url
+ * @property array|null $get_params
+ * @property string $alias
+ * @property int|bool $status
+ *
+ * @method static SefFactory factory($count = null, $state = [])
+ */
 class Sef extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'sef';
 
-    /**
-     * Disable timestamps fields.
-     *
-     * @var bool
-     */
     public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
     protected $fillable = [
         'url',
         'alias',
         'status'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'get_params' => 'array'
     ];

@@ -4,30 +4,31 @@ namespace KY\AdminPanel\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use KY\AdminPanel\Database\Factories\SeoFactory;
 
+/**
+ * @property int $id
+ * @property string $url
+ * @property array|null $get_params
+ * @property string|null $title
+ * @property string|null $h1
+ * @property string|null $seo_text
+ * @property string|null $meta_keywords
+ * @property string|null $meta_description
+ * @property string|null $meta_og_title
+ * @property string|null $meta_og_description
+ * @property int|bool|null $status
+ *
+ * @method static SeoFactory factory($count = null, $state = [])
+ */
 class Seo extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'seo';
 
-    /**
-     * Disable timestamps fields.
-     *
-     * @var bool
-     */
     public $timestamps = false;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
     protected $fillable = [
         'url',
         'get_params',
@@ -40,11 +41,6 @@ class Seo extends Model
         'meta_og_description',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'get_params' => 'array'
     ];
