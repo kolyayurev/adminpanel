@@ -15,10 +15,9 @@ trait CreatesDataTableTestDoubles
 {
     protected function createDataTypeTestDouble(string $slug = 'posts'): DataTypeContract
     {
-        return new class($slug) implements DataTypeContract {
-            public function __construct(private readonly string $slug)
-            {
-            }
+        return new class($slug) implements DataTypeContract
+        {
+            public function __construct(private readonly string $slug) {}
 
             public function getName(): string
             {
@@ -114,10 +113,9 @@ trait CreatesDataTableTestDoubles
 
     protected function createFormFieldTestDouble(string $name = 'title'): FormFieldContract
     {
-        return new class($name) implements FormFieldContract {
-            public function __construct(private readonly string $name)
-            {
-            }
+        return new class($name) implements FormFieldContract
+        {
+            public function __construct(private readonly string $name) {}
 
             public function get(string $key, mixed $default = null): mixed
             {
@@ -158,7 +156,8 @@ trait CreatesDataTableTestDoubles
 
     protected function createModelTestDouble(int $id = 7): Model
     {
-        $model = new class extends Model {
+        $model = new class extends Model
+        {
             public $timestamps = false;
         };
 
@@ -170,8 +169,10 @@ trait CreatesDataTableTestDoubles
 
     protected function createQueryTestDouble(): object
     {
-        return new class {
+        return new class
+        {
             public array $whereCalls = [];
+
             public array $orWhereCalls = [];
 
             public function where(string $column, string $operator, mixed $value): self

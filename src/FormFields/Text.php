@@ -4,19 +4,18 @@ namespace KY\AdminPanel\FormFields;
 
 class Text extends BaseFormField
 {
-    function default(string $default = null): self
+    public function default(?string $default = null): self
     {
         return $this->set('default', $default);
     }
 
-    function type(string $type = 'text'): self
+    public function type(string $type = 'text'): self
     {
-        return $this->set('type',$type);
+        return $this->set('type', $type);
     }
 
-    function required(bool $required = true): self
+    public function required(bool $required = true): self
     {
-        return $this->set('required',$required);
+        return $this->set('required', $required);
     }
-
 }

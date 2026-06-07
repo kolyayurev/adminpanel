@@ -1,13 +1,14 @@
 <?php
+
 return [
-    'checkbox'=>[
+    'checkbox' => [
         'on' => 'Да',
-        'off' => 'Нет'
+        'off' => 'Нет',
     ],
-    'coordinates' =>[
-        'placeholder' => 'Координаты'
+    'coordinates' => [
+        'placeholder' => 'Координаты',
     ],
-    'status'=>[
+    'status' => [
         'on' => 'Вкл',
         'off' => 'Выкл',
     ],

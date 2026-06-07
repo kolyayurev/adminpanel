@@ -1,8 +1,5 @@
 <?php
+
 namespace KY\AdminPanel\Blocks;
 
-
-class Row extends BaseBlock
-{
-
-}
+class Row extends BaseBlock {}

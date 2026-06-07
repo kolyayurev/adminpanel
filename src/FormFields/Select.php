@@ -13,7 +13,7 @@ class Select extends BaseFormField
         'value' => null,
         'name' => null,
         'label' => null,
-        'afterLabel'=> null,
+        'afterLabel' => null,
         'multilingual' => false,
         'instruction' => null,
         'hiddenOn' => [],
@@ -24,7 +24,7 @@ class Select extends BaseFormField
         'columnDefaultOrder' => null, // ['acs','desc']
         'columnOrderable' => true,
         'columnSearchable' => true,
-        'columnWidth' =>  null,
+        'columnWidth' => null,
         'columnEditable' => false,
     ];
 
@@ -33,52 +33,52 @@ class Select extends BaseFormField
         $this->filter = SelectFilter::make();
     }
 
-    public function getFilter() : FilterContract
+    public function getFilter(): FilterContract
     {
         $filter = parent::getFilter();
-        $filter->multiple(!empty($filter->get('multiple'))?$filter->get('multiple'):$this->isMultiple());
-        $filter->options(!empty($filter->get('options'))?$filter->get('options'):$this->getOptions());
+        $filter->multiple(! empty($filter->get('multiple')) ? $filter->get('multiple') : $this->isMultiple());
+        $filter->options(! empty($filter->get('options')) ? $filter->get('options') : $this->getOptions());
 
         return $filter;
     }
 
     public function getValue($model)
     {
-        return $this->isMultiple()?json_decode($model->{$this->get('name')}):$model->{$this->get('name')};
+        return $this->isMultiple() ? json_decode($model->{$this->get('name')}) : $model->{$this->get('name')};
     }
 
-    public function getOption($key):array
+    public function getOption($key): array
     {
-        return $this->get('options',[])[$key] ?? '';
+        return $this->get('options', [])[$key] ?? '';
     }
 
-    public function getOptions():array
+    public function getOptions(): array
     {
-        return $this->get('options',[]);
+        return $this->get('options', []);
     }
 
-    public function options(array $options):self
+    public function options(array $options): self
     {
-        return $this->set('options',$options);
+        return $this->set('options', $options);
     }
 
-    public function hasOptions():bool
+    public function hasOptions(): bool
     {
-        return !empty($this->get('options',[]));
+        return ! empty($this->get('options', []));
     }
 
-    public function isMultiple():bool
+    public function isMultiple(): bool
     {
-        return $this->get('multiple',false);
+        return $this->get('multiple', false);
     }
 
-    public function multiple(bool $multiple = true):self
+    public function multiple(bool $multiple = true): self
     {
-        return $this->set('multiple',$multiple);
+        return $this->set('multiple', $multiple);
     }
 
     public function prepareValue($value, Request $request, $model)
     {
-        return empty($value) ? ($this->get('default')??json_encode($value)) : json_encode($value);
+        return empty($value) ? ($this->get('default') ?? json_encode($value)) : json_encode($value);
     }
 }

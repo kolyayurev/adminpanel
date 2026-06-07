@@ -17,7 +17,7 @@ class HasFormFieldsTest extends TestCase
      */
     public function test_fields_returns_empty_collection_by_default(): void
     {
-        $fields = (new HasFormFieldsTestElement())->fields();
+        $fields = (new HasFormFieldsTestElement)->fields();
 
         $this->assertInstanceOf(Collection::class, $fields);
         $this->assertTrue($fields->isEmpty());
@@ -68,9 +68,7 @@ class HasFormFieldsTestElement
 {
     use HasFormFields;
 
-    public function __construct(private readonly ?Collection $fields = null)
-    {
-    }
+    public function __construct(private readonly ?Collection $fields = null) {}
 
     public function fields(): Collection
     {

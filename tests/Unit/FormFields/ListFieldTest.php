@@ -15,7 +15,7 @@ class ListFieldTest extends TestCase
      */
     public function test_construct_adds_default_text_field(): void
     {
-        $field = new ListField();
+        $field = new ListField;
 
         $this->assertCount(1, $field->getFields());
         $this->assertSame('text', $field->getFields()->first()->get('name'));

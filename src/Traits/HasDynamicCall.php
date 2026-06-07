@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace KY\AdminPanel\Traits;
@@ -7,7 +8,6 @@ use Closure;
 
 trait HasDynamicCall
 {
-
     public function __call(string $name, array $arguments)
     {
         $arguments = collect($arguments)->map(static fn ($argument) => $argument instanceof Closure ? $argument() : $argument);
@@ -20,8 +20,7 @@ trait HasDynamicCall
     }
 
     /**
-     * @param mixed $value
-     *
+     * @param  mixed  $value
      * @return static
      */
     public function set(string $key, $value = true): self
@@ -32,15 +31,11 @@ trait HasDynamicCall
     }
 
     /**
-     * @param mixed|null $value
-     *
+     * @param  mixed|null  $value
      * @return static|mixed|null
      */
-
     public function get(string $key, $default = null)
     {
         return $this->{$key} ?? $default;
     }
-
-
 }

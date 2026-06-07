@@ -11,44 +11,44 @@ class Alias extends BaseFormField
         'value' => null,
         'name' => null,
         'label' => null,
-        'changeOnTyping'=> false,
+        'changeOnTyping' => false,
         'forceUpdate' => false,
         'source' => 'name', // field name, can be multiple "name,desc"
-        'route' => null
+        'route' => null,
     ];
 
-    public function changeOnTyping(bool $changeOnTyping):self
+    public function changeOnTyping(bool $changeOnTyping): self
     {
-        return  $this->set('changeOnTyping',$changeOnTyping);
+        return $this->set('changeOnTyping', $changeOnTyping);
     }
 
-    public function forceUpdate(bool $forceUpdate):self
+    public function forceUpdate(bool $forceUpdate): self
     {
-        return  $this->set('forceUpdate',$forceUpdate);
+        return $this->set('forceUpdate', $forceUpdate);
     }
 
-    public function source(string $source):self
+    public function source(string $source): self
     {
-        return  $this->set('source',$source);
+        return $this->set('source', $source);
     }
 
-    public function route(string $route):self
+    public function route(string $route): self
     {
-        return  $this->set('route',$route);
+        return $this->set('route', $route);
     }
 
-    public function getRoute():string
+    public function getRoute(): string
     {
-        return  $this->get('route');
+        return $this->get('route');
     }
 
-    public function hasRoute():bool
+    public function hasRoute(): bool
     {
-        return  !empty($this->get('route'));
+        return ! empty($this->get('route'));
     }
 
-    public function buildRoute(Model $model):string
+    public function buildRoute(Model $model): string
     {
-        return route($this->getRoute(),$model->{$this->get('name')});
+        return route($this->getRoute(), $model->{$this->get('name')});
     }
 }

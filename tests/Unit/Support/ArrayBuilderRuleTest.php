@@ -15,7 +15,7 @@ class ArrayBuilderRuleTest extends TestCase
      */
     public function test_required_sets_required_flag_and_default_message(): void
     {
-        $rule = new ArrayBuilderRule();
+        $rule = new ArrayBuilderRule;
 
         $this->assertSame($rule, $rule->required());
 
@@ -31,7 +31,7 @@ class ArrayBuilderRuleTest extends TestCase
      */
     public function test_trigger_sets_trigger(): void
     {
-        $rule = (new ArrayBuilderRule())->trigger('change');
+        $rule = (new ArrayBuilderRule)->trigger('change');
 
         $this->assertSame('change', $rule->toArray()['trigger']);
     }
@@ -41,7 +41,7 @@ class ArrayBuilderRuleTest extends TestCase
      */
     public function test_to_array_returns_rule_state(): void
     {
-        $rule = (new ArrayBuilderRule())->required(false)->trigger('change');
+        $rule = (new ArrayBuilderRule)->required(false)->trigger('change');
 
         $this->assertSame([
             'required' => false,

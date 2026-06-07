@@ -26,10 +26,10 @@ class Sef extends Model
     protected $fillable = [
         'url',
         'alias',
-        'status'
+        'status',
     ];
 
     protected $casts = [
-        'get_params' => 'array'
+        'get_params' => 'array',
     ];
 }

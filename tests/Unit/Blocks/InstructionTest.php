@@ -16,7 +16,7 @@ class InstructionTest extends TestCase
      */
     public function test_text_sets_text(): void
     {
-        $instruction = new Instruction();
+        $instruction = new Instruction;
 
         $this->assertSame($instruction, $instruction->text('Read this'));
         $this->assertSame('Read this', $instruction->getText());

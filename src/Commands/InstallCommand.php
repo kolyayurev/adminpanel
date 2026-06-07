@@ -2,16 +2,16 @@
 
 namespace KY\AdminPanel\Commands;
 
-use KY\AdminPanel\Traits\Seedable;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
+use KY\AdminPanel\Traits\Seedable;
 
 class InstallCommand extends Command
 {
-
     use Seedable;
 
     protected $seedersPath = __DIR__.'/../../database/seeders/';
+
     /**
      * The console command name.
      *
@@ -40,7 +40,6 @@ class InstallCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
      *
      * @return void
      */
@@ -73,33 +72,28 @@ class InstallCommand extends Command
 
         $this->info('Adding routes to routes/web.php');
         $routesContents = $filesystem->get(base_path('routes/web.php'));
-        if (false === strpos($routesContents, 'AdminPanel::routes()')) {
+        if (strpos($routesContents, 'AdminPanel::routes()') === false) {
             $filesystem->append(
                 base_path('routes/web.php'),
                 "\n\nRoute::group(['prefix' => config('adminpanel.prefix')], function () {\n    AdminPanel::routes();\n});\n"
             );
         }
         $this->info('Adding breadcrumbs routes to routes/breadcrumbs.php');
-        if($filesystem->exists(base_path('routes/breadcrumbs.php')))
-        {
+        if ($filesystem->exists(base_path('routes/breadcrumbs.php'))) {
             $breadcrumbsRoutesContents = $filesystem->get(base_path('routes/breadcrumbs.php'));
-            if (false === strpos($breadcrumbsRoutesContents, 'AdminPanel::breadcrumbsRoutes()')) {
+            if (strpos($breadcrumbsRoutesContents, 'AdminPanel::breadcrumbsRoutes()') === false) {
                 $filesystem->append(
                     base_path('routes/breadcrumbs.php'),
                     "\n\nAdminPanel::breadcrumbsRoutes();\n"
                 );
             }
-        }
-        else
-        {
+        } else {
             $filesystem->put(
                 base_path('routes/breadcrumbs.php'),
-                 "<?php \n\nAdminPanel::breadcrumbsRoutes();\n",
+                "<?php \n\nAdminPanel::breadcrumbsRoutes();\n",
             );
 
         }
-
-
 
         $this->info('Seeding data into the database');
         $this->seed('AdminPanelDatabaseSeeder');

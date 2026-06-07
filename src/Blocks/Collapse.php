@@ -11,10 +11,9 @@ class Collapse extends Card
     public function getId(): string
     {
         if (empty($this->id)) {
-            $this->id = Str::lower($this->hasHeader()?Str::slug($this->getHeader()):Str::random(10));
+            $this->id = Str::lower($this->hasHeader() ? Str::slug($this->getHeader()) : Str::random(10));
         }
 
         return $this->id;
     }
-
 }

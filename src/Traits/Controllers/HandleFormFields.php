@@ -2,7 +2,7 @@
 
 namespace KY\AdminPanel\Traits\Controllers;
 
-use AdminPanel,DB;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -11,20 +11,20 @@ trait HandleFormFields
     public function storeData(Request $request, $dataType)
     {
         $fields = $this->dataType->getFieldsForStore();
-//        $this->removeHiddenField($fields,$this->dataType->getModel());
+        //        $this->removeHiddenField($fields,$this->dataType->getModel());
 
-        return $this->storeUpdateData($request,$dataType,$fields,$this->dataType->getModel());
+        return $this->storeUpdateData($request, $dataType, $fields, $this->dataType->getModel());
     }
 
-    public function updateData(Request $request, $dataType,$model)
+    public function updateData(Request $request, $dataType, $model)
     {
         $fields = $this->dataType->getFieldsForUpdate();
-//        $this->removeHiddenField($fields,$this->dataType->getModel());
+        //        $this->removeHiddenField($fields,$this->dataType->getModel());
 
-        return $this->storeUpdateData($request,$dataType,$fields,$model);
+        return $this->storeUpdateData($request, $dataType, $fields, $model);
     }
 
-    protected function storeUpdateData(Request $request, $dataType, $fields,$model)
+    protected function storeUpdateData(Request $request, $dataType, $fields, $model)
     {
 
         DB::beginTransaction();
@@ -36,25 +36,26 @@ trait HandleFormFields
             : [];
 
         // Remove id field
-        $fields = $fields->filter(function ($field) use ($model){
+        $fields = $fields->filter(function ($field) use ($model) {
             return $field->get('name') !== $model->getKeyName();
         });
 
         foreach ($fields as $field) {
-            $field->beforeSave($request,$model);
+            $field->beforeSave($request, $model);
         }
         foreach ($fields as $field) {
 
-            if(!$field->needSave() || !$request->has($field->get('name')))
+            if (! $field->needSave() || ! $request->has($field->get('name'))) {
                 continue;
+            }
 
-            $model->{$field->get('name')} = $field->prepareValueToSave($request,$model);
+            $model->{$field->get('name')} = $field->prepareValueToSave($request, $model);
         }
 
         $model->save();
 
         foreach ($fields as $field) {
-            $field->afterSave($request,$model);
+            $field->afterSave($request, $model);
         }
 
         // Save translations
@@ -67,32 +68,33 @@ trait HandleFormFields
         return $model;
     }
 
-
     /**
-     *
      * Remove fields for datatype, hat is not specified in `only` or `except` options
-     *
      */
-    protected function removeHiddenField($fields,$model)
+    protected function removeHiddenField($fields, $model)
     {
-        //TODO: add access functions to BaseFormField
+        // TODO: add access functions to BaseFormField
         foreach ($fields as $key => $field) {
             if (@$field->hasOnly()) {
-                if(!in_array($model->getKey(),$field->getOnly()) )
+                if (! in_array($model->getKey(), $field->getOnly())) {
                     $fields->forget($key);
+                }
             }
             if (@$field->hasExcept()) {
-                if(in_array($model->getKey(),$field->getExcept()))
+                if (in_array($model->getKey(), $field->getExcept())) {
                     $fields->forget($key);
+                }
             }
             if (@$field->hasRoles()) {
                 if (@$field->getOnlyRoles()) {
-                    if(!auth()->user()->hasRole($field->getOnlyRoles()))
+                    if (! auth()->user()->hasRole($field->getOnlyRoles())) {
                         $fields->forget($key);
+                    }
                 }
                 if (@$field->getExceptRoles()) {
-                    if(auth()->user()->hasRole($field->getExceptRoles()))
+                    if (auth()->user()->hasRole($field->getExceptRoles())) {
                         $fields->forget($key);
+                    }
                 }
             }
         }
@@ -103,12 +105,10 @@ trait HandleFormFields
     /**
      * Eagerload relationships.
      *
-     * @param mixed      $data Modal or Collections
-     * @param bool       $isModelTranslatable
-     *
+     * @param  mixed  $data  Modal or Collections
      * @return void
      */
-    protected function eagerLoadRelations($data,bool $isModelTranslatable = false)
+    protected function eagerLoadRelations($data, bool $isModelTranslatable = false)
     {
         // Eagerload Translations
         if (config('adminpanel.multilingual.enabled')) {
@@ -118,5 +118,4 @@ trait HandleFormFields
             }
         }
     }
-
 }

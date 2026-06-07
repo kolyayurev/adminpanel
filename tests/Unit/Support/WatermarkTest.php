@@ -17,7 +17,7 @@ class WatermarkTest extends TestCase
      */
     public function test_source_sets_source(): void
     {
-        $watermark = new Watermark();
+        $watermark = new Watermark;
 
         $this->assertFalse($watermark->hasSource());
         $this->assertSame($watermark, $watermark->source('watermark.png'));
@@ -31,7 +31,7 @@ class WatermarkTest extends TestCase
      */
     public function test_set_size_sets_size(): void
     {
-        $watermark = new Watermark();
+        $watermark = new Watermark;
 
         $this->assertSame(15, $watermark->getSize());
         $this->assertSame($watermark, $watermark->setSize(20));
@@ -46,7 +46,7 @@ class WatermarkTest extends TestCase
      */
     public function test_coordinates_set_x_and_y(): void
     {
-        $watermark = new Watermark();
+        $watermark = new Watermark;
 
         $this->assertSame($watermark, $watermark->x(10));
         $this->assertSame($watermark, $watermark->y(20));
@@ -60,7 +60,7 @@ class WatermarkTest extends TestCase
      */
     public function test_position_sets_position(): void
     {
-        $watermark = new Watermark();
+        $watermark = new Watermark;
 
         $this->assertSame('top-left', $watermark->getPosition());
         $this->assertSame($watermark, $watermark->position('bottom-right'));

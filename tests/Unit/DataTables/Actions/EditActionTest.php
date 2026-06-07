@@ -18,7 +18,7 @@ class EditActionTest extends TestCase
     {
         Route::get('/admin/posts/{post}/edit', static fn () => '')->name('adminpanel.posts.edit');
 
-        $action = new EditAction();
+        $action = new EditAction;
         $action->setup($this->createDataTypeTestDouble('posts'), $this->createModelTestDouble(7));
 
         $this->assertSame('http://localhost/admin/posts/7/edit', $action->getRoute());

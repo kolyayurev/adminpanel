@@ -4,8 +4,8 @@ namespace KY\AdminPanel\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use KY\AdminPanel\Contracts\RepositoryContract;
 use KY\AdminPanel\Contracts\DataTypeContract;
+use KY\AdminPanel\Contracts\RepositoryContract;
 
 abstract class BaseRepository implements RepositoryContract
 {
@@ -21,7 +21,7 @@ abstract class BaseRepository implements RepositoryContract
         return app($this->modelClass());
     }
 
-    public function modelClass():string
+    public function modelClass(): string
     {
         return Model::class;
     }
@@ -34,19 +34,21 @@ abstract class BaseRepository implements RepositoryContract
 
         return $model;
     }
-    public function getDataTableFilter(Request $request,DataTypeContract $dataType){
+
+    public function getDataTableFilter(Request $request, DataTypeContract $dataType)
+    {
 
         $query = $this->model->query();
-        //TODO: eager load translations
+        // TODO: eager load translations
 
-        foreach ($dataType->getColumns() as $column)
-        {
-            session()->put('datatable.'.$dataType->getSlug().'.'.$column->get('name'),$request->get($column->get('name')));
+        foreach ($dataType->getColumns() as $column) {
+            session()->put('datatable.'.$dataType->getSlug().'.'.$column->get('name'), $request->get($column->get('name')));
 
-            if($column->hasField()){
+            if ($column->hasField()) {
                 $field = $column->getField();
-                if($field->hasFilter())
-                    $field->getFilter()->search($request,$dataType,$field,$query);
+                if ($field->hasFilter()) {
+                    $field->getFilter()->search($request, $dataType, $field, $query);
+                }
             }
 
         }

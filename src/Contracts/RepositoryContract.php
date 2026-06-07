@@ -3,7 +3,6 @@
 namespace KY\AdminPanel\Contracts;
 
 use Illuminate\Http\Request;
-use KY\AdminPanel\Contracts\DataTypeContract;
 
 interface RepositoryContract
 {
@@ -12,16 +11,9 @@ interface RepositoryContract
      */
     public function model();
 
-    /**
-     * @return string
-     */
-    public function modelClass():string;
+    public function modelClass(): string;
 
-    /**
-     * @param $data
-     */
     public function create(array $data);
 
-    public function getDataTableFilter(Request $request,DataTypeContract $dataType);
-
+    public function getDataTableFilter(Request $request, DataTypeContract $dataType);
 }

@@ -17,7 +17,7 @@ class ArrayBuilderElementTest extends TestCase
      */
     public function test_name_sets_name(): void
     {
-        $element = new ArrayBuilderElement();
+        $element = new ArrayBuilderElement;
 
         $this->assertSame($element, $element->name('title'));
         $this->assertSame('title', $element->getName());
@@ -29,7 +29,7 @@ class ArrayBuilderElementTest extends TestCase
      */
     public function test_label_sets_label(): void
     {
-        $element = new ArrayBuilderElement();
+        $element = new ArrayBuilderElement;
 
         $this->assertSame($element, $element->label('Title'));
         $this->assertSame('Title', $element->getLabel());
@@ -41,7 +41,7 @@ class ArrayBuilderElementTest extends TestCase
      */
     public function test_component_sets_component(): void
     {
-        $element = new ArrayBuilderElement();
+        $element = new ArrayBuilderElement;
 
         $this->assertSame('el-input', $element->getComponent());
         $this->assertSame($element, $element->component('el-select'));
@@ -54,7 +54,7 @@ class ArrayBuilderElementTest extends TestCase
      */
     public function test_default_sets_default_value(): void
     {
-        $element = new ArrayBuilderElement();
+        $element = new ArrayBuilderElement;
 
         $this->assertSame($element, $element->default('Untitled'));
         $this->assertSame('Untitled', $element->getDefault());
@@ -67,8 +67,8 @@ class ArrayBuilderElementTest extends TestCase
      */
     public function test_rules_adds_only_array_builder_rules(): void
     {
-        $rule = (new ArrayBuilderRule())->required();
-        $element = new ArrayBuilderElement();
+        $rule = (new ArrayBuilderRule)->required();
+        $element = new ArrayBuilderElement;
 
         $this->assertSame($element, $element->rules($rule, 'ignored'));
 
@@ -81,7 +81,7 @@ class ArrayBuilderElementTest extends TestCase
      */
     public function test_props_sets_props(): void
     {
-        $element = new ArrayBuilderElement();
+        $element = new ArrayBuilderElement;
 
         $this->assertSame($element, $element->props(['clearable' => true]));
         $this->assertSame(['clearable' => true], $element->getProps());
@@ -93,7 +93,7 @@ class ArrayBuilderElementTest extends TestCase
      */
     public function test_col_sets_column_span(): void
     {
-        $element = new ArrayBuilderElement();
+        $element = new ArrayBuilderElement;
 
         $this->assertSame(24, $element->getCol());
         $this->assertSame($element, $element->col(12));
@@ -109,7 +109,7 @@ class ArrayBuilderElementTest extends TestCase
             ->label('Title')
             ->component('el-input')
             ->default('Untitled')
-            ->rules((new ArrayBuilderRule())->required())
+            ->rules((new ArrayBuilderRule)->required())
             ->props(['clearable' => true])
             ->col(12);
 

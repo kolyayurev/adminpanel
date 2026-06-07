@@ -31,7 +31,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_basic_getters_return_configured_values(): void
     {
-        $dataType = new BaseDataTypeTestElement();
+        $dataType = new BaseDataTypeTestElement;
 
         $this->assertSame('user', $dataType->getName());
         $this->assertSame('bi-user', $dataType->getIcon());
@@ -45,8 +45,8 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_get_slug_returns_configured_or_generated_slug(): void
     {
-        $this->assertSame('custom_users', (new BaseDataTypeTestElement())->getSlug());
-        $this->assertSame('base_data_type_generated', (new BaseDataTypeGenerated())->getSlug());
+        $this->assertSame('custom_users', (new BaseDataTypeTestElement)->getSlug());
+        $this->assertSame('base_data_type_generated', (new BaseDataTypeGenerated)->getSlug());
     }
 
     /**
@@ -54,7 +54,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_get_model_returns_repository_model(): void
     {
-        $this->assertSame('users', (new BaseDataTypeTestElement())->getModel()->getTable());
+        $this->assertSame('users', (new BaseDataTypeTestElement)->getModel()->getTable());
     }
 
     /**
@@ -65,7 +65,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_order_getters_return_order_configuration(): void
     {
-        $dataType = new BaseDataTypeTestElement();
+        $dataType = new BaseDataTypeTestElement;
 
         $this->assertSame('position', $dataType->getOrderColumn());
         $this->assertSame('name', $dataType->getOrderDisplayColumn());
@@ -79,7 +79,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_policy_and_controller_getters_return_defaults(): void
     {
-        $dataType = new BaseDataTypeTestElement();
+        $dataType = new BaseDataTypeTestElement;
 
         $this->assertSame(BasePolicy::class, $dataType->getPolicy());
         $this->assertSame(BaseDataController::class, $dataType->getController());
@@ -93,7 +93,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_view_getters_return_common_views(): void
     {
-        $dataType = new BaseDataTypeTestElement();
+        $dataType = new BaseDataTypeTestElement;
 
         $this->assertSame('adminpanel::datatypes.common.index', $dataType->getIndexView());
         $this->assertSame('adminpanel::datatypes.common.form', $dataType->getFormView());
@@ -108,7 +108,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_validator_uses_rules_messages_and_custom_attributes(): void
     {
-        $validator = (new BaseDataTypeTestElement())->validator(new Request(['name' => 'ab']));
+        $validator = (new BaseDataTypeTestElement)->validator(new Request(['name' => 'ab']));
 
         $this->assertTrue($validator->fails());
         $this->assertArrayHasKey('name', $validator->errors()->toArray());
@@ -124,7 +124,7 @@ class BaseDataTypeTest extends TestCase
             'name' => 'Name',
             'secret' => 'Secret',
             'raw' => 'Raw',
-        ], (new BaseDataTypeTestElement())->customAttributes());
+        ], (new BaseDataTypeTestElement)->customAttributes());
     }
 
     /**
@@ -132,7 +132,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_fields_returns_default_hidden_id_field(): void
     {
-        $field = (new BaseDataType())->fields()->first();
+        $field = (new BaseDataType)->fields()->first();
 
         $this->assertInstanceOf(Hidden::class, $field);
         $this->assertSame('id', $field->get('name'));
@@ -143,7 +143,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_get_form_fields_filters_fields_by_hidden_on(): void
     {
-        $fields = (new BaseDataTypeTestElement())->getFormFields('list');
+        $fields = (new BaseDataTypeTestElement)->getFormFields('list');
 
         $this->assertSame(['id', 'name', 'raw'], $fields->map(fn ($field) => $field->get('name'))->values()->all());
     }
@@ -154,7 +154,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_get_fields_for_save_excludes_primary_key_and_raw_fields(): void
     {
-        $dataType = new BaseDataTypeTestElement();
+        $dataType = new BaseDataTypeTestElement;
 
         $this->assertSame(['name', 'secret'], $dataType->getFieldsForStore()->map(fn ($field) => $field->get('name'))->values()->all());
         $this->assertSame(['name', 'secret'], $dataType->getFieldsForUpdate()->map(fn ($field) => $field->get('name'))->values()->all());
@@ -165,7 +165,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_get_fields_for_list_uses_fields_definition(): void
     {
-        $fields = (new BaseDataTypeTestElement())->getFieldsForList();
+        $fields = (new BaseDataTypeTestElement)->getFieldsForList();
 
         $this->assertSame(['id', 'name', 'raw'], $fields->map(fn ($field) => $field->get('name'))->values()->all());
     }
@@ -177,12 +177,12 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_actions_returns_default_actions(): void
     {
-        $actions = (new BaseDataTypeTestElement())->getActions();
+        $actions = (new BaseDataTypeTestElement)->getActions();
 
         $this->assertTrue($actions->contains(fn ($action) => $action instanceof EditAction));
         $this->assertTrue($actions->contains(fn ($action) => $action instanceof ShowAction));
         $this->assertTrue($actions->contains(fn ($action) => $action instanceof DeleteAction));
-        $this->assertTrue((new BaseDataTypeTestElement())->hasActions());
+        $this->assertTrue((new BaseDataTypeTestElement)->hasActions());
     }
 
     /**
@@ -192,7 +192,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_columns_returns_field_columns_and_actions_column(): void
     {
-        $dataType = new BaseDataTypeTestElement();
+        $dataType = new BaseDataTypeTestElement;
 
         $this->assertSame(['id', 'name', 'raw', 'actions'], $dataType->getColumnNames());
     }
@@ -202,7 +202,7 @@ class BaseDataTypeTest extends TestCase
      */
     public function test_get_columns_order_returns_columns_with_default_order(): void
     {
-        $this->assertSame([[1, 'desc']], (new BaseDataTypeTestElement())->getColumnsOrder());
+        $this->assertSame([[1, 'desc']], (new BaseDataTypeTestElement)->getColumnsOrder());
     }
 
     /**
@@ -213,7 +213,7 @@ class BaseDataTypeTest extends TestCase
         Route::get('/assets', fn () => '')->name('adminpanel.assets');
         Route::get('/table', fn () => '')->name('adminpanel.custom_users.table');
 
-        $options = (new BaseDataTypeTestElement())->getDataTablesOptions();
+        $options = (new BaseDataTypeTestElement)->getDataTablesOptions();
 
         $this->assertSame('http://localhost/table', $options['ajax']['url']);
         $this->assertSame(['id', 'name', 'raw', 'actions'], array_column($options['columns'], 'name'));
@@ -224,17 +224,24 @@ class BaseDataTypeTest extends TestCase
 class BaseDataTypeTestElement extends BaseDataType
 {
     protected string $name = 'user';
+
     protected string $icon = 'bi-user';
+
     protected string $title = 'Users';
+
     protected string $singleTitle = 'User';
+
     protected string $pluralTitle = 'Users';
+
     protected string $slug = 'custom_users';
+
     protected string $orderDisplayColumn = 'name';
+
     protected string $orderDirection = 'asc';
 
     public function __construct()
     {
-        $this->repository = new UserRepository();
+        $this->repository = new UserRepository;
     }
 
     public function layout(): Collection
@@ -263,11 +270,13 @@ class BaseDataTypeTestElement extends BaseDataType
 class BaseDataTypeGenerated extends BaseDataType
 {
     protected string $name = 'generated';
+
     protected string $title = 'Generated';
+
     protected string $orderDisplayColumn = 'name';
 
     public function __construct()
     {
-        $this->repository = new UserRepository();
+        $this->repository = new UserRepository;
     }
 }

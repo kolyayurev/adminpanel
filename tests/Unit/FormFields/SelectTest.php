@@ -17,7 +17,7 @@ class SelectTest extends TestCase
      */
     public function test_construct_sets_select_filter(): void
     {
-        $this->assertInstanceOf(SelectFilter::class, (new Select())->getFilter());
+        $this->assertInstanceOf(SelectFilter::class, (new Select)->getFilter());
     }
 
     /**
@@ -28,7 +28,7 @@ class SelectTest extends TestCase
      */
     public function test_options_sets_and_reads_options(): void
     {
-        $field = (new Select())->options(['draft' => ['Draft']]);
+        $field = (new Select)->options(['draft' => ['Draft']]);
 
         $this->assertTrue($field->hasOptions());
         $this->assertSame(['draft' => ['Draft']], $field->getOptions());
@@ -41,7 +41,7 @@ class SelectTest extends TestCase
      */
     public function test_multiple_sets_multiple_flag(): void
     {
-        $field = new Select();
+        $field = new Select;
 
         $this->assertFalse($field->isMultiple());
         $this->assertSame($field, $field->multiple());
@@ -87,9 +87,9 @@ class SelectTest extends TestCase
      */
     public function test_prepare_value_json_encodes_non_empty_value(): void
     {
-        $field = new Select();
+        $field = new Select;
 
-        $this->assertSame('["a","b"]', $field->prepareValue(['a', 'b'], new Request(), null));
+        $this->assertSame('["a","b"]', $field->prepareValue(['a', 'b'], new Request, null));
     }
 
     /**
@@ -97,8 +97,8 @@ class SelectTest extends TestCase
      */
     public function test_prepare_value_returns_default_for_empty_value_when_default_exists(): void
     {
-        $field = (new Select())->set('default', 'draft');
+        $field = (new Select)->set('default', 'draft');
 
-        $this->assertSame('draft', $field->prepareValue([], new Request(), null));
+        $this->assertSame('draft', $field->prepareValue([], new Request, null));
     }
 }

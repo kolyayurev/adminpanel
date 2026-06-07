@@ -5,7 +5,6 @@ namespace KY\AdminPanel\Commands;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputOption;
 
 #[AsCommand(name: 'adminpanel:make:pagetype')]
 class MakePageTypeCommand extends GeneratorCommand
@@ -27,6 +26,7 @@ class MakePageTypeCommand extends GeneratorCommand
     protected $signature = 'adminpanel:make:pagetype {name}';
 
     protected $type = 'PageType';
+
     /**
      * Get the stub file for the generator.
      *
@@ -53,19 +53,17 @@ class MakePageTypeCommand extends GeneratorCommand
     /**
      * Build the class with the given name.
      *
-     * @param string $name
-     *
+     * @param  string  $name
      * @return string
      */
     protected function buildClass($name)
     {
         $stub = $this->files->get($this->getStub());
 
-        return $this->replaceAttributes($stub,$name)
+        return $this->replaceAttributes($stub, $name)
             ->replaceNamespace($stub, $name)
             ->replaceClass($stub, $name.'PageType');
     }
-
 
     /**
      * Get the default namespace for the class.
@@ -75,13 +73,13 @@ class MakePageTypeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\AdminPanel\PageTypes';
+        return $rootNamespace.'\AdminPanel\PageTypes';
     }
 
-    protected function replaceAttributes(&$stub,$name)
+    protected function replaceAttributes(&$stub, $name)
     {
         $stub = str_replace('DummyTitle', Str::title($this->argument('name')), $stub);
-        $stub = str_replace('DummySlug',Str::slug($this->argument('name')), $stub);
+        $stub = str_replace('DummySlug', Str::slug($this->argument('name')), $stub);
 
         return $this;
     }

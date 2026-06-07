@@ -16,7 +16,7 @@ class GalleryTest extends TestCase
      */
     public function test_construct_sets_default_media_picker_and_title_field(): void
     {
-        $field = new Gallery();
+        $field = new Gallery;
 
         $this->assertInstanceOf(MediaPicker::class, $field->getMediaPicker());
         $this->assertSame('url', $field->getMediaPicker()->get('name'));
@@ -29,7 +29,7 @@ class GalleryTest extends TestCase
      */
     public function test_display_value_sets_display_value_attribute(): void
     {
-        $field = new Gallery();
+        $field = new Gallery;
 
         $this->assertSame($field, $field->displayValue('return item.name;'));
         $this->assertSame('return item.name;', $field->get('displayValue'));
@@ -49,7 +49,7 @@ class GalleryTest extends TestCase
      */
     public function test_media_picker_sets_media_picker(): void
     {
-        $field = new Gallery();
+        $field = new Gallery;
         $mediaPicker = MediaPicker::make('image');
 
         $this->assertSame($field, $field->mediaPicker($mediaPicker));
@@ -61,7 +61,7 @@ class GalleryTest extends TestCase
      */
     public function test_min_sets_min_attribute(): void
     {
-        $field = new Gallery();
+        $field = new Gallery;
 
         $this->assertSame($field, $field->min(2));
         $this->assertSame(2, $field->get('min'));
@@ -72,7 +72,7 @@ class GalleryTest extends TestCase
      */
     public function test_max_sets_max_attribute(): void
     {
-        $field = new Gallery();
+        $field = new Gallery;
 
         $this->assertSame($field, $field->max(4));
         $this->assertSame(4, $field->get('max'));

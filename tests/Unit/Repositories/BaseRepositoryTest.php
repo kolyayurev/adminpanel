@@ -4,6 +4,7 @@ namespace KY\AdminPanel\Tests\Unit\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use KY\AdminPanel\DataTypes\BaseDataType;
 use KY\AdminPanel\FormFields\Text;
 use KY\AdminPanel\Models\Redirect;
@@ -24,7 +25,7 @@ class BaseRepositoryTest extends TestCase
      */
     public function test_construct_sets_model_from_model_class(): void
     {
-        $repository = new BaseRepositoryTestRepository();
+        $repository = new BaseRepositoryTestRepository;
 
         $this->assertInstanceOf(Model::class, $this->getNonPublicProperty($repository, 'model'));
     }
@@ -34,7 +35,7 @@ class BaseRepositoryTest extends TestCase
      */
     public function test_create_persists_model_from_data(): void
     {
-        $repository = new RedirectRepository();
+        $repository = new RedirectRepository;
 
         $redirect = $repository->create([
             'from' => '/old',
@@ -58,7 +59,7 @@ class BaseRepositoryTest extends TestCase
         Redirect::factory()->create(['from' => '/old-page']);
         Redirect::factory()->create(['from' => '/other-page']);
 
-        $repository = new RedirectRepository();
+        $repository = new RedirectRepository;
         $dataType = new BaseRepositoryTestDataType($repository);
 
         $query = $repository->getDataTableFilter(new Request(['from' => 'old']), $dataType);
@@ -85,7 +86,7 @@ class BaseRepositoryTestDataType extends BaseDataType
         $this->repository = $repository;
     }
 
-    public function fields(): \Illuminate\Support\Collection
+    public function fields(): Collection
     {
         return collect([
             Text::make('from')->label('From'),

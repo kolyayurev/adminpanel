@@ -11,21 +11,15 @@ class SettingsTableSeeder extends Seeder
     public function run()
     {
         $setting = $this->findSetting('admin.icon');
-        if (!$setting->exists) {
+        if (! $setting->exists) {
             $setting->fill([
                 'display_name' => __('adminpanel::seeders.settings.admin.icon'),
-                'value'        => '',
-                'details'      => '',
+                'value' => '',
+                'details' => '',
             ])->save();
         }
     }
 
-    /**
-     *
-     * @param string $key
-     *
-     * @return
-     */
     protected function findSetting(string $key)
     {
         return Setting::firstOrNew(['key' => $key]);

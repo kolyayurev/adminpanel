@@ -28,7 +28,7 @@ class HasBlocksTest extends TestCase
      */
     public function test_add_block_appends_block(): void
     {
-        $block = new HasBlocksTestElement();
+        $block = new HasBlocksTestElement;
 
         $result = $block->addBlock('title');
 

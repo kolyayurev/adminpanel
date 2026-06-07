@@ -4,7 +4,6 @@ namespace KY\AdminPanel\Tests\Unit\FormFields;
 
 use Illuminate\Http\Request;
 use KY\AdminPanel\DataTables\Filters\InputFilter;
-use KY\AdminPanel\FormFields\BaseFormField;
 use KY\AdminPanel\FormFields\Text;
 use KY\AdminPanel\Tests\TestCase;
 
@@ -19,7 +18,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_construct_sets_default_input_filter(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertTrue($field->hasFilter());
         $this->assertInstanceOf(InputFilter::class, $field->getFilter());
@@ -42,7 +41,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_label_sets_label(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertSame($field, $field->label('Title'));
         $this->assertSame('Title', $field->getLabel());
@@ -55,7 +54,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_after_label_returns_explicit_or_default_after_label(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertNull($field->getAfterLabel());
         $this->assertSame($field, $field->afterLabel('After'));
@@ -67,7 +66,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_get_slug_returns_snake_case_class_name(): void
     {
-        $this->assertSame('text', (new Text())->getSlug());
+        $this->assertSame('text', (new Text)->getSlug());
     }
 
     /**
@@ -100,7 +99,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_multilingual_sets_multilingual_flag(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertTrue($field->isMultilingual());
         $this->assertSame($field, $field->multilingual(false));
@@ -112,7 +111,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_instruction_sets_instruction_attribute(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertSame($field, $field->instruction('Use short text'));
         $this->assertSame('Use short text', $field->get('instruction'));
@@ -123,7 +122,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_hidden_on_sets_hidden_on_attribute(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertSame($field, $field->hiddenOn(['index']));
         $this->assertSame(['index'], $field->get('hiddenOn'));
@@ -135,7 +134,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_column_default_order_sets_column_default_order(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertNull($field->getColumnDefaultOrder());
         $this->assertSame($field, $field->columnDefaultOrder('desc'));
@@ -148,7 +147,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_column_orderable_sets_column_orderable_flag(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertTrue($field->getColumnOrderable());
         $this->assertSame($field, $field->columnOrderable(false));
@@ -161,7 +160,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_column_searchable_sets_column_searchable_flag(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertTrue($field->getColumnSearchable());
         $this->assertSame($field, $field->columnSearchable(false));
@@ -174,7 +173,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_column_width_sets_column_width(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertSame('1', $field->getColumnWidth());
         $this->assertSame($field, $field->columnWidth('120px'));
@@ -187,7 +186,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_column_editable_sets_column_editable_flag(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertFalse($field->columnIsEditable());
         $this->assertSame($field, $field->columnEditable());
@@ -202,7 +201,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_get_view_by_type_returns_custom_existing_views_or_default_views(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertSame('adminpanel::formfields.text.cell', $field->getViewByType('cell'));
         $this->assertSame('adminpanel::formfields.text.form', $field->getViewByType('form'));
@@ -222,7 +221,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_check_view_returns_view_existence(): void
     {
-        $field = new Text();
+        $field = new Text;
 
         $this->assertTrue($this->callNonPublicMethod($field, 'checkView', ['adminpanel::formfields.text.form']));
         $this->assertFalse($this->callNonPublicMethod($field, 'checkView', ['adminpanel::missing']));
@@ -233,7 +232,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_before_create_content_is_noop_hook(): void
     {
-        $this->assertNull((new Text())->beforeCreateContent(null, null));
+        $this->assertNull((new Text)->beforeCreateContent(null, null));
     }
 
     /**
@@ -241,7 +240,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_need_save_returns_true(): void
     {
-        $this->assertTrue((new Text())->needSave());
+        $this->assertTrue((new Text)->needSave());
     }
 
     /**
@@ -249,7 +248,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_before_prepare_returns_value(): void
     {
-        $this->assertSame('value', (new Text())->beforePrepare('value', new Request(), null));
+        $this->assertSame('value', (new Text)->beforePrepare('value', new Request, null));
     }
 
     /**
@@ -257,10 +256,10 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_prepare_value_returns_value_or_default_for_empty_value(): void
     {
-        $field = (new Text())->default('Default');
+        $field = (new Text)->default('Default');
 
-        $this->assertSame('Actual', $field->prepareValue('Actual', new Request(), null));
-        $this->assertSame('Default', $field->prepareValue('', new Request(), null));
+        $this->assertSame('Actual', $field->prepareValue('Actual', new Request, null));
+        $this->assertSame('Default', $field->prepareValue('', new Request, null));
     }
 
     /**
@@ -268,7 +267,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_after_prepare_returns_value(): void
     {
-        $this->assertSame('value', (new Text())->afterPrepare('value', new Request(), null));
+        $this->assertSame('value', (new Text)->afterPrepare('value', new Request, null));
     }
 
     /**
@@ -276,7 +275,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_before_save_is_noop_hook(): void
     {
-        $this->assertNull((new Text())->beforeSave(new Request(), null));
+        $this->assertNull((new Text)->beforeSave(new Request, null));
     }
 
     /**
@@ -295,7 +294,7 @@ class BaseFormFieldTest extends TestCase
      */
     public function test_after_save_is_noop_hook(): void
     {
-        $this->assertNull((new Text())->afterSave(new Request(), null));
+        $this->assertNull((new Text)->afterSave(new Request, null));
     }
 
     /**

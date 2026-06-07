@@ -2,11 +2,11 @@
 
 namespace KY\AdminPanel\Http\Controllers;
 
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\JsonResponse;
-use KY\AdminPanel\Facades\AdminPanel;
 
 class AuthController extends Controller
 {
@@ -64,6 +64,7 @@ class AuthController extends Controller
             ? new JsonResponse([], 204)
             : redirect('/');
     }
+
     /*
      * Preempts $redirectTo member variable (from RedirectsUsers trait)
      */
@@ -75,7 +76,7 @@ class AuthController extends Controller
     /**
      * Get the guard to be used during authentication.
      *
-     * @return \Illuminate\Contracts\Auth\StatefulGuard
+     * @return StatefulGuard
      */
     protected function guard()
     {

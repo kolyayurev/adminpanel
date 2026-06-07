@@ -2,12 +2,11 @@
 
 namespace KY\AdminPanel\FormFields;
 
-use Str;
 use Illuminate\Database\Eloquent\Model;
-use KY\AdminPanel\Contracts\FilterContract;
-use KY\AdminPanel\DataTables\Filters\InputFilter;
-use KY\AdminPanel\DataTables\Filters\SelectFilter;
 use Illuminate\Http\Request;
+use KY\AdminPanel\Contracts\FilterContract;
+use KY\AdminPanel\DataTables\Filters\SelectFilter;
+use Str;
 
 class Relation extends BaseFormField
 {
@@ -20,7 +19,7 @@ class Relation extends BaseFormField
         'relatedModel' => null,
         'table' => null, // related model table
         'column' => null,
-        'key' => null,// related model key
+        'key' => null, // related model key
         'pivotTable' => null,
         'foreignPivotKey' => null,
         'relatedPivotKey' => null,
@@ -29,8 +28,8 @@ class Relation extends BaseFormField
         'pivot' => false,
         'taggable' => false,
 
-        'sortField'=>null,
-        'sortDirection'=>'asc',
+        'sortField' => null,
+        'sortDirection' => 'asc',
     ];
 
     public function __construct()
@@ -38,36 +37,38 @@ class Relation extends BaseFormField
         $this->filter = SelectFilter::make()->handler(null);
     }
 
-    public function getFilter() : FilterContract
+    public function getFilter(): FilterContract
     {
         $filter = parent::getFilter();
-        $filter->template($filter->get('template','adminpanel::datatables.filters.relation'));
+        $filter->template($filter->get('template', 'adminpanel::datatables.filters.relation'));
 
-        if(!$filter->hasHandler())
-            $filter->setHandler(function ($request, $dataType,$field, $query){
+        if (! $filter->hasHandler()) {
+            $filter->setHandler(function ($request, $dataType, $field, $query) {
                 // TODO: eager load
-//                if ($column->isBelongsTo())
-//                    $query->with(Str::singular($column->get('table')));
+                //                if ($column->isBelongsTo())
+                //                    $query->with(Str::singular($column->get('table')));
                 if ($request->filled($field->get('name'))) {
-                    if ($field->isBelongsTo())
+                    if ($field->isBelongsTo()) {
                         $query->where($field->get('name'), $request->get($field->get('name')));
+                    }
                     if ($field->isHasOne() || $field->isHasMany()) {
                         $ids = app($field->get('relatedModel'))->whereIn($field->get('key'), explode(',', $request->get($field->get('name'))))->pluck($field->get('column'));
                         $query->where(app($field->get('model'))->getKeyName(), $ids->toArray());
                     }
                     // TODO: isBelongsToMany
-//                    if($column->isBelongsToMany()){
-//
-//                    }
+                    //                    if($column->isBelongsToMany()){
+                    //
+                    //                    }
                 }
             });
+        }
 
         return $filter;
     }
 
-    function getColumnOrderable() : bool
+    public function getColumnOrderable(): bool
     {
-        return $this->get('columnOrderable',$this->isBelongsTo());
+        return $this->get('columnOrderable', $this->isBelongsTo());
     }
 
     public function model($model): self
@@ -89,35 +90,39 @@ class Relation extends BaseFormField
     public function type($type): self
     {
         $this->set('type', $type);
+
         return $this;
     }
 
     public function column($column): self
     {
         $this->set('column', $column);
+
         return $this;
     }
 
     public function pivotTable($table): self
     {
         $this->set('pivotTable', $table);
+
         return $this;
     }
 
     public function displayedField($field): self
     {
         $this->set('displayedField', $field);
+
         return $this;
     }
 
-    function required(bool $required = true): self
+    public function required(bool $required = true): self
     {
-        return $this->set('required',$required);
+        return $this->set('required', $required);
     }
 
     /**
-     * @param Model $model
-     * @param Model $related
+     * @param  Model  $model
+     * @param  Model  $related
      * @return $this
      */
     public function belongsTo($model, $related): self
@@ -126,11 +131,13 @@ class Relation extends BaseFormField
         $this->model($model);
         $this->relatedModel($related);
         $this->column($this->get('name'));
+
         return $this;
     }
+
     /**
-     * @param Model $model
-     * @param Model $related
+     * @param  Model  $model
+     * @param  Model  $related
      * @return $this
      */
     public function hasOne($model, $related): self
@@ -138,11 +145,13 @@ class Relation extends BaseFormField
         $this->type('hasOne');
         $this->model($model);
         $this->relatedModel($related);
+
         return $this;
     }
+
     /**
-     * @param Model $model
-     * @param Model $related
+     * @param  Model  $model
+     * @param  Model  $related
      * @return $this
      */
     public function hasMany($model, $related): self
@@ -150,12 +159,13 @@ class Relation extends BaseFormField
         $this->type('hasMany');
         $this->model($model);
         $this->relatedModel($related);
+
         return $this;
     }
 
     /**
-     * @param Model $model
-     * @param Model $related
+     * @param  Model  $model
+     * @param  Model  $related
      * @return $this
      */
     public function belongsToMany($model, $related): self
@@ -167,6 +177,7 @@ class Relation extends BaseFormField
         $this->pivot();
         $this->column('id');
         $this->key('id');
+
         return $this;
     }
 
@@ -174,6 +185,7 @@ class Relation extends BaseFormField
     {
         return $this->get('type') === 'belongsTo';
     }
+
     public function isHasOne(): bool
     {
         return $this->get('type') === 'hasOne';
@@ -193,7 +205,7 @@ class Relation extends BaseFormField
     {
         $segments = [
             Str::snake(class_basename($model)),
-            Str::snake(class_basename($related))
+            Str::snake(class_basename($related)),
         ];
 
         sort($segments);
@@ -201,12 +213,13 @@ class Relation extends BaseFormField
         $pivotTable = strtolower(implode('_', $segments));
 
         $this->pivotTable($pivotTable);
+
         return $this;
     }
 
-    public function needSave() : bool
+    public function needSave(): bool
     {
-        return !$this->isBelongsToMany();
+        return ! $this->isBelongsToMany();
     }
 
     public function afterSave(Request $request, $model)

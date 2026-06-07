@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace KY\AdminPanel\Traits;
@@ -10,9 +11,6 @@ use KY\AdminPanel\Blocks\Row;
 
 trait HasLayout
 {
-    /**
-     * @return Collection
-     */
     public function layout(): Collection
     {
         return collect([
@@ -20,17 +18,12 @@ trait HasLayout
                 Col::blocks(
                     Card::blocks('*')
                 )
-            )
+            ),
         ]);
     }
 
-
-    /**
-     * @return Collection
-     */
-    public function getLayout() : Collection
+    public function getLayout(): Collection
     {
         return $this->layout();
     }
-
 }

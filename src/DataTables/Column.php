@@ -4,14 +4,12 @@ namespace KY\AdminPanel\DataTables;
 
 use Illuminate\Contracts\Support\Arrayable;
 use KY\AdminPanel\Contracts\FormFieldContract;
-use KY\AdminPanel\DataTables\Filters\BaseFilter;
 use KY\AdminPanel\Traits\Attributable;
-use KY\AdminPanel\Traits\HasDynamicCall;
 use KY\AdminPanel\Traits\Makeable;
 
 class Column implements Arrayable
 {
-    use Makeable,Attributable;
+    use Attributable,Makeable;
 
     protected $attributes = [
         'name' => '',
@@ -21,81 +19,80 @@ class Column implements Arrayable
         'orderable' => true,
         'width' => 'auto',
         'defaultOrder' => null,
-        'editable' => false
+        'editable' => false,
     ];
 
     protected ?FormFieldContract $field;
 
-    function name(string $name) : self
+    public function name(string $name): self
     {
-        $this->set('name',$name);
-        $this->set('data',$name);
+        $this->set('name', $name);
+        $this->set('data', $name);
+
         return $this;
     }
-    function data(string $data) : self
+
+    public function data(string $data): self
     {
-        return $this->set('data',$data);
+        return $this->set('data', $data);
     }
 
-    function title(string $title) : self
+    public function title(string $title): self
     {
-        return $this->set('title',$title);
+        return $this->set('title', $title);
     }
 
-    function searchable(bool $searchable) : self
+    public function searchable(bool $searchable): self
     {
-        return $this->set('searchable',$searchable);
-    }
-    function orderable(bool $orderable) : self
-    {
-        return $this->set('orderable',$orderable);
+        return $this->set('searchable', $searchable);
     }
 
-    function width(string $width) : self
+    public function orderable(bool $orderable): self
     {
-        return $this->set('width',$width);
+        return $this->set('orderable', $orderable);
     }
 
-    function defaultOrder(?string $defaultOrder) : self
+    public function width(string $width): self
     {
-        return $this->set('defaultOrder',$defaultOrder);
+        return $this->set('width', $width);
     }
 
-    function hasDefaultOrder() : bool
+    public function defaultOrder(?string $defaultOrder): self
     {
-        return !empty($this->get('defaultOrder'));
+        return $this->set('defaultOrder', $defaultOrder);
     }
 
-    function editable(bool $editable) : self
+    public function hasDefaultOrder(): bool
     {
-        return  $this->set('editable',$editable);
+        return ! empty($this->get('defaultOrder'));
     }
 
-    function isEditable() : bool
+    public function editable(bool $editable): self
     {
-        return  $this->get('editable');
+        return $this->set('editable', $editable);
     }
 
-    public function getField() : ?FormFieldContract
+    public function isEditable(): bool
+    {
+        return $this->get('editable');
+    }
+
+    public function getField(): ?FormFieldContract
     {
         return $this->field;
     }
 
-    /**
-     * @param FormFieldContract $field
-     * @return self
-     */
-    public function field(FormFieldContract $field) : self
+    public function field(FormFieldContract $field): self
     {
         $this->field = $field;
+
         return $this;
     }
 
-    public function hasField() : bool
+    public function hasField(): bool
     {
-        return !empty($this->field) && $this->field instanceof FormFieldContract;
+        return ! empty($this->field) && $this->field instanceof FormFieldContract;
     }
-
 
     public function toArray(): array
     {

@@ -18,7 +18,7 @@ class BaseFilterTest extends TestCase
      */
     public function test_name_sets_name(): void
     {
-        $filter = new BaseFilterTestElement();
+        $filter = new BaseFilterTestElement;
 
         $this->assertSame($filter, $filter->name('title'));
         $this->assertSame('title', $filter->getName());
@@ -30,7 +30,7 @@ class BaseFilterTest extends TestCase
      */
     public function test_width_sets_width(): void
     {
-        $filter = new BaseFilterTestElement();
+        $filter = new BaseFilterTestElement;
 
         $this->assertSame($filter, $filter->width('200px'));
         $this->assertSame('200px', $filter->getWidth());
@@ -42,7 +42,7 @@ class BaseFilterTest extends TestCase
      */
     public function test_placeholder_sets_placeholder(): void
     {
-        $filter = new BaseFilterTestElement();
+        $filter = new BaseFilterTestElement;
 
         $this->assertSame($filter, $filter->placeholder('Search'));
         $this->assertSame('Search', $filter->getPlaceholder());
@@ -54,7 +54,7 @@ class BaseFilterTest extends TestCase
      */
     public function test_template_sets_template(): void
     {
-        $filter = new BaseFilterTestElement();
+        $filter = new BaseFilterTestElement;
 
         $this->assertSame($filter, $filter->template('custom.filter'));
         $this->assertSame('custom.filter', $filter->getTemplate());
@@ -67,7 +67,7 @@ class BaseFilterTest extends TestCase
     {
         $this->expectException(TypeError::class);
 
-        (new BaseFilterTestElement())->attributes(['class' => 'form-control']);
+        (new BaseFilterTestElement)->attributes(['class' => 'form-control']);
     }
 
     /**
@@ -75,7 +75,7 @@ class BaseFilterTest extends TestCase
      */
     public function test_get_attributes_returns_attributes_after_private_property_set(): void
     {
-        $filter = new BaseFilterTestElement();
+        $filter = new BaseFilterTestElement;
         $this->setNonPublicProperty($filter, 'attributes', ['class' => 'form-control']);
 
         $this->assertSame(['class' => 'form-control'], $filter->getAttributes());
@@ -86,7 +86,7 @@ class BaseFilterTest extends TestCase
      */
     public function test_convert_attributes_to_html_concatenates_attributes(): void
     {
-        $filter = new BaseFilterTestElement();
+        $filter = new BaseFilterTestElement;
         $this->setNonPublicProperty($filter, 'attributes', [
             'class' => 'form-control',
             'data-id' => 7,
@@ -101,11 +101,10 @@ class BaseFilterTest extends TestCase
      */
     public function test_set_handler_sets_handler(): void
     {
-        $filter = new BaseFilterTestElement();
+        $filter = new BaseFilterTestElement;
 
         $this->assertFalse($filter->hasHandler());
-        $this->assertSame($filter, $filter->setHandler(static function (): void {
-        }));
+        $this->assertSame($filter, $filter->setHandler(static function (): void {}));
         $this->assertTrue($filter->hasHandler());
     }
 
@@ -114,7 +113,7 @@ class BaseFilterTest extends TestCase
      */
     public function test_search_calls_handler_when_handler_exists(): void
     {
-        $filter = new BaseFilterTestElement();
+        $filter = new BaseFilterTestElement;
         $query = $this->createQueryTestDouble();
         $filter->setHandler(static function (Request $request, $dataType, $field, $query): void {
             $query->where('handled', '=', $request->get('value'));
@@ -135,6 +134,4 @@ class BaseFilterTest extends TestCase
     }
 }
 
-class BaseFilterTestElement extends BaseFilter
-{
-}
+class BaseFilterTestElement extends BaseFilter {}

@@ -17,7 +17,7 @@ class InputFilterTest extends TestCase
      */
     public function test_construct_sets_default_handler_and_template(): void
     {
-        $filter = new InputFilter();
+        $filter = new InputFilter;
 
         $this->assertTrue($filter->hasHandler());
         $this->assertSame('adminpanel::datatables.filters.input', $filter->getTemplate());
@@ -28,7 +28,7 @@ class InputFilterTest extends TestCase
      */
     public function test_construct_handler_adds_like_where_when_request_filled(): void
     {
-        $filter = new InputFilter();
+        $filter = new InputFilter;
         $query = $this->createQueryTestDouble();
 
         $filter->search(

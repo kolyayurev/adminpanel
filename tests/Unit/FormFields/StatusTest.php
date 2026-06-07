@@ -16,9 +16,9 @@ class StatusTest extends TestCase
      */
     public function test_prepare_value_converts_truthy_one_to_integer(): void
     {
-        $field = new Status();
+        $field = new Status;
 
-        $this->assertSame(1, $field->prepareValue('1', new Request(), null));
-        $this->assertSame(0, $field->prepareValue('on', new Request(), null));
+        $this->assertSame(1, $field->prepareValue('1', new Request, null));
+        $this->assertSame(0, $field->prepareValue('on', new Request, null));
     }
 }

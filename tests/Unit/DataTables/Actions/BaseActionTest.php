@@ -15,7 +15,7 @@ class BaseActionTest extends TestCase
      */
     public function test_setup_stores_data_type_and_model(): void
     {
-        $action = new BaseActionTestElement();
+        $action = new BaseActionTestElement;
         $dataType = $this->createDataTypeTestDouble('posts');
         $model = $this->createModelTestDouble(12);
 
@@ -31,7 +31,7 @@ class BaseActionTest extends TestCase
      */
     public function test_tag_sets_tag(): void
     {
-        $action = new BaseActionTestElement();
+        $action = new BaseActionTestElement;
 
         $this->assertSame('a', $action->getTag());
         $this->assertSame($action, $action->tag('button'));
@@ -44,7 +44,7 @@ class BaseActionTest extends TestCase
      */
     public function test_icon_sets_icon(): void
     {
-        $action = new BaseActionTestElement();
+        $action = new BaseActionTestElement;
 
         $this->assertSame($action, $action->icon('pencil'));
         $this->assertSame('pencil', $action->getIcon());
@@ -56,7 +56,7 @@ class BaseActionTest extends TestCase
      */
     public function test_color_sets_color(): void
     {
-        $action = new BaseActionTestElement();
+        $action = new BaseActionTestElement;
 
         $this->assertSame($action, $action->color('primary'));
         $this->assertSame('primary', $action->getColor());
@@ -68,7 +68,7 @@ class BaseActionTest extends TestCase
      */
     public function test_title_sets_title(): void
     {
-        $action = new BaseActionTestElement();
+        $action = new BaseActionTestElement;
 
         $this->assertSame($action, $action->title('Edit'));
         $this->assertSame('Edit', $action->getTitle());
@@ -80,7 +80,7 @@ class BaseActionTest extends TestCase
      */
     public function test_route_sets_route(): void
     {
-        $action = new BaseActionTestElement();
+        $action = new BaseActionTestElement;
 
         $this->assertSame($action, $action->route('/admin/posts/1/edit'));
         $this->assertSame('/admin/posts/1/edit', $action->getRoute());
@@ -92,7 +92,7 @@ class BaseActionTest extends TestCase
      */
     public function test_policy_name_sets_policy_name(): void
     {
-        $action = new BaseActionTestElement();
+        $action = new BaseActionTestElement;
 
         $this->assertSame($action, $action->policyName('update'));
         $this->assertSame('update', $action->getPolicyName());
@@ -104,7 +104,7 @@ class BaseActionTest extends TestCase
      */
     public function test_template_returns_default_or_custom_template(): void
     {
-        $action = new BaseActionTestElement();
+        $action = new BaseActionTestElement;
 
         $this->assertSame('adminpanel::datatables.actions.button', $action->getTemplate());
         $this->assertSame($action, $action->template('custom.action'));
@@ -117,7 +117,7 @@ class BaseActionTest extends TestCase
      */
     public function test_attributes_sets_attributes(): void
     {
-        $action = new BaseActionTestElement();
+        $action = new BaseActionTestElement;
 
         $this->assertSame($action, $action->attributes(['class' => 'btn']));
         $this->assertSame(['class' => 'btn'], $action->getAttributes());
@@ -128,7 +128,7 @@ class BaseActionTest extends TestCase
      */
     public function test_convert_attributes_to_html_concatenates_attributes(): void
     {
-        $action = (new BaseActionTestElement())->attributes([
+        $action = (new BaseActionTestElement)->attributes([
             'class' => 'btn',
             'data-id' => 7,
         ]);
@@ -137,6 +137,4 @@ class BaseActionTest extends TestCase
     }
 }
 
-class BaseActionTestElement extends BaseAction
-{
-}
+class BaseActionTestElement extends BaseAction {}

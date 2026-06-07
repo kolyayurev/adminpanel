@@ -2,6 +2,4 @@
 
 namespace KY\AdminPanel\Contracts;
 
-interface ElementContract
-{
-}
+interface ElementContract {}

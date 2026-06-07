@@ -15,7 +15,7 @@ class HasDynamicCallTest extends TestCase
      */
     public function test_call_sets_dynamic_property_from_first_argument(): void
     {
-        $element = new HasDynamicCallTestElement();
+        $element = new HasDynamicCallTestElement;
 
         $result = $element->placeholder('Enter title');
 
@@ -28,7 +28,7 @@ class HasDynamicCallTest extends TestCase
      */
     public function test_call_sets_true_when_argument_missing(): void
     {
-        $element = new HasDynamicCallTestElement();
+        $element = new HasDynamicCallTestElement;
 
         $element->required();
 
@@ -40,7 +40,7 @@ class HasDynamicCallTest extends TestCase
      */
     public function test_call_resolves_closure_argument(): void
     {
-        $element = new HasDynamicCallTestElement();
+        $element = new HasDynamicCallTestElement;
         $closure = static fn (): string => 'resolved';
 
         $element->value($closure);
@@ -53,7 +53,7 @@ class HasDynamicCallTest extends TestCase
      */
     public function test_set_assigns_dynamic_property(): void
     {
-        $element = new HasDynamicCallTestElement();
+        $element = new HasDynamicCallTestElement;
 
         $result = $element->set('name', 'title');
 
@@ -66,7 +66,7 @@ class HasDynamicCallTest extends TestCase
      */
     public function test_get_returns_property_or_default(): void
     {
-        $element = new HasDynamicCallTestElement();
+        $element = new HasDynamicCallTestElement;
         $element->set('name', 'title');
 
         $this->assertSame('title', $element->get('name'));

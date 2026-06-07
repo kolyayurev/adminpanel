@@ -15,7 +15,7 @@ class AccordionTest extends TestCase
      */
     public function test_get_id_returns_default_id(): void
     {
-        $this->assertSame('accordion', (new Accordion())->getId());
+        $this->assertSame('accordion', (new Accordion)->getId());
     }
 
     /**
@@ -24,7 +24,7 @@ class AccordionTest extends TestCase
      */
     public function test_id_sets_custom_id(): void
     {
-        $accordion = new Accordion();
+        $accordion = new Accordion;
 
         $this->assertSame($accordion, $accordion->id('settings'));
         $this->assertSame('settings', $accordion->getId());

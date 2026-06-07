@@ -16,7 +16,7 @@ class ArrayBuilderTest extends TestCase
      */
     public function test_construct_adds_default_title_field(): void
     {
-        $field = new ArrayBuilder();
+        $field = new ArrayBuilder;
 
         $this->assertCount(1, $field->getFields());
         $this->assertSame('title', $field->getFields()->first()->get('name'));
@@ -27,7 +27,7 @@ class ArrayBuilderTest extends TestCase
      */
     public function test_min_sets_min_attribute(): void
     {
-        $field = new ArrayBuilder();
+        $field = new ArrayBuilder;
 
         $this->assertSame($field, $field->min(2));
         $this->assertSame(2, $field->get('min'));
@@ -38,7 +38,7 @@ class ArrayBuilderTest extends TestCase
      */
     public function test_max_sets_max_attribute(): void
     {
-        $field = new ArrayBuilder();
+        $field = new ArrayBuilder;
 
         $this->assertSame($field, $field->max(5));
         $this->assertSame(5, $field->get('max'));
@@ -49,7 +49,7 @@ class ArrayBuilderTest extends TestCase
      */
     public function test_display_value_sets_display_value_attribute(): void
     {
-        $field = new ArrayBuilder();
+        $field = new ArrayBuilder;
 
         $this->assertSame($field, $field->displayValue('return item.name;'));
         $this->assertSame('return item.name;', $field->get('displayValue'));
@@ -60,7 +60,7 @@ class ArrayBuilderTest extends TestCase
      */
     public function test_fields_replaces_default_fields_with_given_elements(): void
     {
-        $field = new ArrayBuilder();
+        $field = new ArrayBuilder;
         $element = ArrayBuilderElement::make('name');
 
         $field->fields($element);

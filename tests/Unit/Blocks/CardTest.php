@@ -16,7 +16,7 @@ class CardTest extends TestCase
      */
     public function test_header_sets_header(): void
     {
-        $card = new Card();
+        $card = new Card;
 
         $result = $card->header('Main');
 
@@ -29,7 +29,7 @@ class CardTest extends TestCase
      */
     public function test_has_header_returns_true_only_when_header_exists(): void
     {
-        $card = new Card();
+        $card = new Card;
 
         $this->assertFalse($card->hasHeader());
         $card->header('Main');

@@ -18,7 +18,7 @@ class HasWatermarkTest extends TestCase
      */
     public function test_has_watermark_returns_false_without_watermark(): void
     {
-        $element = new HasWatermarkTestElement();
+        $element = new HasWatermarkTestElement;
 
         $this->assertFalse($element->hasWatermark());
         $this->assertNull($element->getWatermark());
@@ -31,7 +31,7 @@ class HasWatermarkTest extends TestCase
      */
     public function test_watermark_sets_watermark(): void
     {
-        $element = new HasWatermarkTestElement();
+        $element = new HasWatermarkTestElement;
         $watermark = Watermark::make()->source('watermark.png');
 
         $this->assertSame($element, $element->watermark($watermark));

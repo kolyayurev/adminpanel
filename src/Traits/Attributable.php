@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace KY\AdminPanel\Traits;
 
 trait Attributable
 {
-//    protected $attributes = [];
+    //    protected $attributes = [];
 
     public function __call(string $name, array $arguments)
     {
@@ -19,8 +20,7 @@ trait Attributable
     }
 
     /**
-     * @param mixed $value
-     *
+     * @param  mixed  $value
      * @return static
      */
     public function set(string $key, $value = true): self
@@ -31,17 +31,15 @@ trait Attributable
     }
 
     /**
-     * @param mixed|null $value
-     *
+     * @param  mixed|null  $value
      * @return static|mixed|null
      */
-
     public function get(string $key, $default = null)
     {
         return $this->attributes[$key] ?? $default;
     }
 
-    public function getAttributes() : array
+    public function getAttributes(): array
     {
         return $this->attributes;
     }

@@ -16,7 +16,7 @@ class ColTest extends TestCase
      */
     public function test_xs_sets_validated_xs_columns(): void
     {
-        $col = new Col();
+        $col = new Col;
 
         $this->assertSame($col, $col->xs(6));
         $this->assertSame(6, $col->getXs());
@@ -28,7 +28,7 @@ class ColTest extends TestCase
      */
     public function test_sm_sets_validated_sm_columns(): void
     {
-        $col = new Col();
+        $col = new Col;
 
         $this->assertSame($col, $col->sm(5));
         $this->assertSame(5, $col->getSm());
@@ -40,7 +40,7 @@ class ColTest extends TestCase
      */
     public function test_md_sets_validated_md_columns(): void
     {
-        $col = new Col();
+        $col = new Col;
 
         $this->assertSame($col, $col->md(4));
         $this->assertSame(4, $col->getMd());
@@ -52,7 +52,7 @@ class ColTest extends TestCase
      */
     public function test_lg_sets_validated_lg_columns(): void
     {
-        $col = new Col();
+        $col = new Col;
 
         $this->assertSame($col, $col->lg(3));
         $this->assertSame(3, $col->getLg());
@@ -63,7 +63,7 @@ class ColTest extends TestCase
      */
     public function test_get_columns_returns_bootstrap_column_classes(): void
     {
-        $col = (new Col())->xs(6)->sm(5)->md(4)->lg(3);
+        $col = (new Col)->xs(6)->sm(5)->md(4)->lg(3);
 
         $this->assertSame('col-6 col-sm-5 col-md-4 col-lg-3', $col->getColumns());
     }
@@ -73,7 +73,7 @@ class ColTest extends TestCase
      */
     public function test_validate_returns_twelve_for_out_of_range_values(): void
     {
-        $col = new Col();
+        $col = new Col;
 
         $this->assertSame(12, $this->callNonPublicMethod($col, 'validate', [0]));
         $this->assertSame(12, $this->callNonPublicMethod($col, 'validate', [13]));

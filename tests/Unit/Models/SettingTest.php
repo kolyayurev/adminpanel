@@ -21,7 +21,7 @@ class SettingTest extends TestCase
         Setting::factory()->create(['key' => 'site_title']);
         Setting::factory()->create(['key' => 'footer_text']);
 
-        $attributes = (new Setting())->getTranslatableAttributes();
+        $attributes = (new Setting)->getTranslatableAttributes();
 
         $this->assertEqualsCanonicalizing(['value', 'site_title', 'footer_text'], $attributes);
     }
@@ -57,7 +57,7 @@ class SettingTest extends TestCase
     {
         $setting = Setting::factory()->create(['key' => 'site_title']);
 
-        $this->assertFalse($setting->prepareSettingTranslation(new Request(), 'site_title'));
+        $this->assertFalse($setting->prepareSettingTranslation(new Request, 'site_title'));
     }
 
     /**

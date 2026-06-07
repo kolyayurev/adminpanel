@@ -2,11 +2,12 @@
 
 namespace KY\AdminPanel\Traits;
 
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Illuminate\Database\Eloquent\Collection;
 use KY\AdminPanel\Facades\AdminPanel;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 /**
- * @property  \Illuminate\Database\Eloquent\Collection  roles
+ * @property  Collection  roles
  */
 trait AdminPanelUser
 {
@@ -39,8 +40,7 @@ trait AdminPanelUser
     /**
      * Check if User has a Role(s) associated.
      *
-     * @param string|array $name The role(s) to check.
-     *
+     * @param  string|array  $name  The role(s) to check.
      * @return bool
      */
     public function hasRole($name)
@@ -59,7 +59,7 @@ trait AdminPanelUser
     /**
      * Set default User Role.
      *
-     * @param string $name The role name to associate.
+     * @param  string  $name  The role name to associate.
      */
     public function setRole($name)
     {
@@ -78,15 +78,15 @@ trait AdminPanelUser
         $this->loadPermissionsRelations();
 
         $_permissions = $this->roles_all()
-                              ->pluck('permissions')->flatten()
-                              ->pluck('key')->unique()->toArray();
+            ->pluck('permissions')->flatten()
+            ->pluck('key')->unique()->toArray();
 
         return in_array($name, $_permissions);
     }
 
     public function hasPermissionOrFail($name)
     {
-        if (!$this->hasPermission($name)) {
+        if (! $this->hasPermission($name)) {
             throw new UnauthorizedHttpException(null);
         }
 
@@ -95,7 +95,7 @@ trait AdminPanelUser
 
     public function hasPermissionOrAbort($name, $statusCode = 403)
     {
-        if (!$this->hasPermission($name)) {
+        if (! $this->hasPermission($name)) {
             return abort($statusCode);
         }
 
@@ -104,11 +104,11 @@ trait AdminPanelUser
 
     private function loadRolesRelations()
     {
-        if (!$this->relationLoaded('role')) {
+        if (! $this->relationLoaded('role')) {
             $this->load('role');
         }
 
-        if (!$this->relationLoaded('roles')) {
+        if (! $this->relationLoaded('roles')) {
             $this->load('roles');
         }
     }
@@ -117,7 +117,7 @@ trait AdminPanelUser
     {
         $this->loadRolesRelations();
 
-        if ($this->role && !$this->role->relationLoaded('permissions')) {
+        if ($this->role && ! $this->role->relationLoaded('permissions')) {
             $this->role->load('permissions');
             $this->load('roles.permissions');
         }

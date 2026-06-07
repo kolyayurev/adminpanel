@@ -17,7 +17,7 @@ class CheckboxTest extends TestCase
      */
     public function test_construct_sets_select_filter(): void
     {
-        $this->assertInstanceOf(SelectFilter::class, (new Checkbox())->getFilter());
+        $this->assertInstanceOf(SelectFilter::class, (new Checkbox)->getFilter());
     }
 
     /**
@@ -35,7 +35,7 @@ class CheckboxTest extends TestCase
      */
     public function test_default_sets_default_attribute(): void
     {
-        $field = new Checkbox();
+        $field = new Checkbox;
 
         $this->assertSame($field, $field->default(true));
         $this->assertTrue($field->get('default'));
@@ -46,7 +46,7 @@ class CheckboxTest extends TestCase
      */
     public function test_text_on_sets_text_on_attribute(): void
     {
-        $field = new Checkbox();
+        $field = new Checkbox;
 
         $this->assertSame($field, $field->textOn('Enabled'));
         $this->assertSame('Enabled', $field->get('textOn'));
@@ -57,7 +57,7 @@ class CheckboxTest extends TestCase
      */
     public function test_text_off_sets_text_off_attribute(): void
     {
-        $field = new Checkbox();
+        $field = new Checkbox;
 
         $this->assertSame($field, $field->textOff('Disabled'));
         $this->assertSame('Disabled', $field->get('textOff'));
@@ -68,9 +68,9 @@ class CheckboxTest extends TestCase
      */
     public function test_prepare_value_converts_on_marker_to_integer(): void
     {
-        $field = new Checkbox();
+        $field = new Checkbox;
 
-        $this->assertSame(1, $field->prepareValue('on', new Request(), null));
-        $this->assertSame(0, $field->prepareValue(null, new Request(), null));
+        $this->assertSame(1, $field->prepareValue('on', new Request, null));
+        $this->assertSame(0, $field->prepareValue(null, new Request, null));
     }
 }

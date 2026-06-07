@@ -3,8 +3,6 @@
 namespace KY\AdminPanel\FormFields;
 
 use Illuminate\Http\Request;
-use KY\AdminPanel\Contracts\FilterContract;
-use KY\AdminPanel\DataTables\Filters\SelectFilter;
 
 class Status extends Checkbox
 {
@@ -18,7 +16,8 @@ class Status extends Checkbox
         'editable' => true,
     ];
 
-    public function prepareValue($value,Request $request,$model){
+    public function prepareValue($value, Request $request, $model)
+    {
         return (int) ($value == 1);
     }
 }

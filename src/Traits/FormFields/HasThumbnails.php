@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace KY\AdminPanel\Traits\FormFields;
@@ -8,40 +9,43 @@ use KY\AdminPanel\Support\Trumbnail;
 
 trait HasThumbnails
 {
-//    protected $attributes = [
-//        'thumbnails'=>[],
-//    ];
-    public function addThumbnail(Trumbnail $thumbnail):self
+    //    protected $attributes = [
+    //        'thumbnails'=>[],
+    //    ];
+    public function addThumbnail(Trumbnail $thumbnail): self
     {
         $thumbnails = $this->get('thumbnails');
 
         $thumbnails[] = $thumbnail;
-        $this->set('thumbnails',$thumbnails);
+        $this->set('thumbnails', $thumbnails);
 
         return $this;
     }
 
-    public function getThumbnails():Collection{
-        return  collect($this->get('thumbnails'));
-    }
-
-    public function getFirstThumbnails():Trumbnail{
-        return  $this->getThumbnails()->first();
-    }
-
-    public function hasThumbnails():bool
+    public function getThumbnails(): Collection
     {
-        return  !!collect($this->get('thumbnails'))->count();
+        return collect($this->get('thumbnails'));
     }
 
-    public function getThumbnailsName() : array
+    public function getFirstThumbnails(): Trumbnail
     {
-        return $this->getThumbnails()->map(function($thumbnail){
+        return $this->getThumbnails()->first();
+    }
+
+    public function hasThumbnails(): bool
+    {
+        return (bool) collect($this->get('thumbnails'))->count();
+    }
+
+    public function getThumbnailsName(): array
+    {
+        return $this->getThumbnails()->map(function ($thumbnail) {
             return $thumbnail->get('name');
         })->toArray();
 
     }
-    public function thumbnails():self
+
+    public function thumbnails(): self
     {
         $args = func_get_args();
         foreach ($args as $index => $arg) {
@@ -49,6 +53,7 @@ trait HasThumbnails
                 $this->addThumbnail($arg);
             }
         }
+
         return $this;
     }
 }

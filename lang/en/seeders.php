@@ -2,13 +2,13 @@
 
 return [
 
-    'roles'      => [
+    'roles' => [
         'admin' => 'Administrator',
-        'user'  => 'Normal User',
+        'user' => 'Normal User',
     ],
-    'settings'   => [
+    'settings' => [
         'admin' => [
-            'icon'  => 'Admin Icon Image',
+            'icon' => 'Admin Icon Image',
         ],
 
     ],

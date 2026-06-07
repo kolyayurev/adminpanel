@@ -3,19 +3,19 @@
 namespace KY\AdminPanel\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use KY\AdminPanel\AdminPanelServiceProvider;
 use KY\AdminPanel\Tests\Utils\Traits\CreatesAdminPanelModels;
 use KY\AdminPanel\Tests\Utils\Traits\CreatesDataTableTestDoubles;
 use KY\AdminPanel\Tests\Utils\Traits\ReflationTestTrait;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
     use CreatesAdminPanelModels;
     use CreatesDataTableTestDoubles;
-    use RefreshDatabase;
     use ReflationTestTrait;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {

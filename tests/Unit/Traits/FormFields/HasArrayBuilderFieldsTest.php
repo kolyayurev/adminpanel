@@ -17,7 +17,7 @@ class HasArrayBuilderFieldsTest extends TestCase
      */
     public function test_get_fields_returns_collection(): void
     {
-        $element = new HasArrayBuilderFieldsTestElement();
+        $element = new HasArrayBuilderFieldsTestElement;
 
         $this->assertInstanceOf(Collection::class, $element->getFields());
         $this->assertTrue($element->getFields()->isEmpty());
@@ -28,7 +28,7 @@ class HasArrayBuilderFieldsTest extends TestCase
      */
     public function test_add_field_adds_only_array_builder_elements(): void
     {
-        $element = new HasArrayBuilderFieldsTestElement();
+        $element = new HasArrayBuilderFieldsTestElement;
         $field = ArrayBuilderElement::make('title');
 
         $this->assertSame($element, $element->addField('ignored'));
@@ -42,7 +42,7 @@ class HasArrayBuilderFieldsTest extends TestCase
      */
     public function test_fields_replaces_fields_with_given_elements(): void
     {
-        $element = new HasArrayBuilderFieldsTestElement();
+        $element = new HasArrayBuilderFieldsTestElement;
         $title = ArrayBuilderElement::make('title');
         $body = ArrayBuilderElement::make('body');
 

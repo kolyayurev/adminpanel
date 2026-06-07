@@ -42,6 +42,6 @@ class Seo extends Model
     ];
 
     protected $casts = [
-        'get_params' => 'array'
+        'get_params' => 'array',
     ];
 }

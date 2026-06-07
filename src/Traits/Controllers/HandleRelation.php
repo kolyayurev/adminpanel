@@ -2,28 +2,25 @@
 
 namespace KY\AdminPanel\Traits\Controllers;
 
-use AdminPanel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 trait HandleRelation
 {
     /**
      * Get relations data.
      *
-     * @param Request $request
      *
      * @return mixed
      */
     public function relation(Request $request)
     {
-        $page       = $request->input('page');
-        $on_page    = $request->input('on_page', 50);
-        $search     = $request->input('search', false);
-        $method     = $request->input('method', 'create');
+        $page = $request->input('page');
+        $on_page = $request->input('on_page', 50);
+        $search = $request->input('search', false);
+        $method = $request->input('method', 'create');
 
         $model = $this->dataType->getModel();
-        if (!in_array($method,['create','list'])) {
+        if (! in_array($method, ['create', 'list'])) {
             $model = $model->find($request->input('id'));
         }
         $this->authorize($method, $model);
@@ -47,16 +44,16 @@ trait HandleRelation
                 }
 
                 $results = [];
-                if (!$field->get('required') && !$search && $page == 1) {
+                if (! $field->get('required') && ! $search && $page == 1) {
                     $results[] = [
-                        'id'   => '',
+                        'id' => '',
                         'text' => ap_trans('common.none'),
                     ];
                 }
 
                 // Sort results
-                if (!empty($field->get('sortField'))) {
-                    if (!empty($field->get('sortDirection')) && strtolower($field->get('sortDirection')) == 'desc') {
+                if (! empty($field->get('sortField'))) {
+                    if (! empty($field->get('sortDirection')) && strtolower($field->get('sortDirection')) == 'desc') {
                         $relationOptions = $relationOptions->sortByDesc($field->get('sortField'));
                     } else {
                         $relationOptions = $relationOptions->sortBy($field->get('sortField'));
@@ -65,21 +62,21 @@ trait HandleRelation
 
                 foreach ($relationOptions as $relationOption) {
                     $results[] = [
-                        'id'   => $relationOption->{$field->get('key')},
+                        'id' => $relationOption->{$field->get('key')},
                         'text' => $relationOption->{$field->get('displayedField')},
                     ];
                 }
 
                 return response()->json([
-                    'results'    => $results,
+                    'results' => $results,
                     'pagination' => [
                         'more' => ($total_count > ($skip + $on_page)),
                     ],
                 ]);
             }
         }
+
         // No result found, return empty array
         return response()->json([], 404);
     }
-
 }

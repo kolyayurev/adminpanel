@@ -15,7 +15,7 @@ class DeleteActionTest extends TestCase
      */
     public function test_get_attributes_returns_default_delete_attributes(): void
     {
-        $action = new DeleteAction();
+        $action = new DeleteAction;
         $action->setup($this->createDataTypeTestDouble('posts'), $this->createModelTestDouble(7));
 
         $this->assertSame([
@@ -31,7 +31,7 @@ class DeleteActionTest extends TestCase
      */
     public function test_get_attributes_prefers_custom_attributes(): void
     {
-        $action = new DeleteAction();
+        $action = new DeleteAction;
 
         $action->attributes(['class' => 'custom']);
 

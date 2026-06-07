@@ -18,7 +18,7 @@ class HasLayoutTest extends TestCase
      */
     public function test_layout_returns_default_row_col_card_layout(): void
     {
-        $layout = (new HasLayoutTestElement())->layout();
+        $layout = (new HasLayoutTestElement)->layout();
 
         $row = $layout->first();
         $col = $row->getBlocks()->first();
@@ -35,7 +35,7 @@ class HasLayoutTest extends TestCase
      */
     public function test_get_layout_returns_layout(): void
     {
-        $element = new HasLayoutTestElement();
+        $element = new HasLayoutTestElement;
 
         $this->assertEquals($element->layout(), $element->getLayout());
     }

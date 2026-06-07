@@ -2,12 +2,11 @@
 
 namespace KY\AdminPanel\FormFields;
 
-use APMedia,AdminPanel;
+use AdminPanel;
+use APMedia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use KY\AdminPanel\Support\Watermark;
 use KY\AdminPanel\Traits\FormFields\HasThumbnails;
 use KY\AdminPanel\Traits\FormFields\HasWatermark;
 
@@ -19,10 +18,10 @@ class MediaPicker extends BaseFormField
         'value' => null,
         'name' => null,
         'label' => null,
-        'afterLabel'=> null,
+        'afterLabel' => null,
         'mode' => 'simple', // ['full','simple']
         'basePath' => '/',
-        'filename' => null, //'{random:10}'
+        'filename' => null, // '{random:10}'
         'allowMultiSelect' => false,
         'allowUpload' => true,
         'allowMove' => false,
@@ -48,68 +47,67 @@ class MediaPicker extends BaseFormField
         'quality' => 90,
     ];
 
-    function buildAfterLabel(): ?string
+    public function buildAfterLabel(): ?string
     {
         $afterLabel = '';
         $accept = $this->get('accept');
         $accept = $this->get('accept');
-        $afterLabel .=str_replace(['.',','],['','/'],$accept);
-        if($this->hasThumbnails()){
+        $afterLabel .= str_replace(['.', ','], ['', '/'], $accept);
+        if ($this->hasThumbnails()) {
             $thumbnail = $this->getFirstThumbnails();
-            //TODO: remake
-            if($thumbnail->hasWidth() && $thumbnail->hasHeight())
+            // TODO: remake
+            if ($thumbnail->hasWidth() && $thumbnail->hasHeight()) {
                 $afterLabel .= ' '.$thumbnail->getWidth().'x'.$thumbnail->getHeight().'px';
+            }
 
         }
 
-        return !empty($afterLabel)?'('.$afterLabel.')':$afterLabel;
+        return ! empty($afterLabel) ? '('.$afterLabel.')' : $afterLabel;
     }
 
-    function basePath(string $basePath): self
+    public function basePath(string $basePath): self
     {
-        return $this->set('basePath',$basePath);
+        return $this->set('basePath', $basePath);
     }
 
-    function hasBasePath(): bool
+    public function hasBasePath(): bool
     {
-        return !empty($this->get('basePath'));
+        return ! empty($this->get('basePath'));
     }
 
-    function single(): self
+    public function single(): self
     {
-        return $this->set('max',1);
-    }
-    function hideThumbnails($value = true): self
-    {
-        return $this->set('hideThumbnails',$value);
+        return $this->set('max', 1);
     }
 
-    function allowedTypes(array $allowedTypes): self
+    public function hideThumbnails($value = true): self
     {
-        return $this->set('allowedTypes',$allowedTypes);
+        return $this->set('hideThumbnails', $value);
     }
 
-    function isMultiSelect(): bool
+    public function allowedTypes(array $allowedTypes): self
+    {
+        return $this->set('allowedTypes', $allowedTypes);
+    }
+
+    public function isMultiSelect(): bool
     {
         return $this->get('max') > 1;
     }
 
-    function getBasePath(): string
+    public function getBasePath(): string
     {
-        return !empty($this->get('basePath')) ? $this->get('basePath') : '/images/';
+        return ! empty($this->get('basePath')) ? $this->get('basePath') : '/images/';
     }
 
-    /**
-     * @return array
-     */
-    function getOptions(): array
+    public function getOptions(): array
     {
         $options = $this->toArray();
         $options['basePath'] = $this->getBasePath();
         $options['allowMultiSelect'] = $this->isMultiSelect();
-        $options['element'] = 'input[name="' . $this->get('name') . '"]';
+        $options['element'] = 'input[name="'.$this->get('name').'"]';
         $thumbnails = [];
-        foreach ($this->getThumbnails() as $thumbnail){
+        foreach ($this->getThumbnails() as $thumbnail) {
             $thumbnails[] = $thumbnail->toArray();
         }
         $options['thumbnails'] = $thumbnails;
@@ -118,22 +116,22 @@ class MediaPicker extends BaseFormField
         return $options;
     }
 
-
     public function uuidSessionName($model): string
     {
-        return class_basename($model).'_'.$this->getId() . '_uuid';
+        return class_basename($model).'_'.$this->getId().'_uuid';
     }
+
     public function prepareBasePath($model): void
     {
         if ($this->hasBasePath()) {
 
-            if (!$model->getKey()) {
-                $uuid = session()->exists($this->uuidSessionName($model)) ? session($this->uuidSessionName($model)) : (string)Str::uuid();
-                $basePath = APMedia::preparePath($this->get('basePath'),$uuid);
-                session()->put($this->getId() . '_path', $basePath);
+            if (! $model->getKey()) {
+                $uuid = session()->exists($this->uuidSessionName($model)) ? session($this->uuidSessionName($model)) : (string) Str::uuid();
+                $basePath = APMedia::preparePath($this->get('basePath'), $uuid);
+                session()->put($this->getId().'_path', $basePath);
                 session()->put($this->uuidSessionName($model), $uuid);
             } else {
-                $basePath = APMedia::preparePath($this->get('basePath'),$model->getKey());
+                $basePath = APMedia::preparePath($this->get('basePath'), $model->getKey());
             }
             $this->basePath($basePath);
         }
@@ -182,41 +180,43 @@ class MediaPicker extends BaseFormField
 
             $settingClass = AdminPanel::modelClass('Setting');
 
-            if($model instanceof $settingClass)
+            if ($model instanceof $settingClass) {
                 $model->value = $value;
-            else
+            } else {
                 $model->{$this->get('name')} = $value;
+            }
 
             $model->save();
 
             $this->moveTempFiles($model);
         }
     }
+
     public function hasTempFiles(): bool
     {
         return session()->has($this->getId().'_path') && session()->has($this->getId().'_uuid');
     }
+
     public function moveTempFiles($model): void
     {
         if ($this->hasTempFiles()) {
             $storage = Storage::disk(config('adminpanel.storage.disk'));
             $uuid = session($this->uuidSessionName($model));
-            $oldPath = session($this->getId() . '_path');
+            $oldPath = session($this->getId().'_path');
             $newPath = str_replace($uuid, $model->getKey(), $oldPath);
 
-            if ($oldPath != $newPath && !$storage->exists($newPath)) {
-                session()->forget([$this->getId() . '_path', $this->getId() . '_uuid']);
+            if ($oldPath != $newPath && ! $storage->exists($newPath)) {
+                session()->forget([$this->getId().'_path', $this->getId().'_uuid']);
 
                 if ($storage->exists($oldPath)) {
                     $files = $storage->files($oldPath);
                     foreach ($files as $file) {
-                        $storage->move($file, str_replace('//', '/', $newPath . '/' . basename($file)));
+                        $storage->move($file, str_replace('//', '/', $newPath.'/'.basename($file)));
                     }
-                    $folderPath = substr($oldPath, 0, strpos($oldPath, $uuid)) . $uuid;
+                    $folderPath = substr($oldPath, 0, strpos($oldPath, $uuid)).$uuid;
                     $storage->deleteDirectory($folderPath);
                 }
             }
         }
     }
-
 }

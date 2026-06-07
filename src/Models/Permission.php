@@ -30,7 +30,6 @@ class Permission extends Model
 
     public static function check($key)
     {
-       return self::where('key',$key)->exists();
+        return self::where('key', $key)->exists();
     }
-
 }

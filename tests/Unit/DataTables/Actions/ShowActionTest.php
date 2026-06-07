@@ -18,7 +18,7 @@ class ShowActionTest extends TestCase
     {
         Route::get('/admin/posts/{post}', static fn () => '')->name('adminpanel.posts.show');
 
-        $action = new ShowAction();
+        $action = new ShowAction;
         $action->setup($this->createDataTypeTestDouble('posts'), $this->createModelTestDouble(7));
 
         $this->assertSame('http://localhost/admin/posts/7', $action->getRoute());

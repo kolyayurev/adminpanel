@@ -2,17 +2,18 @@
 
 namespace KY\AdminPanel\Support;
 
+use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\Constraint;
-use KY\AdminPanel\Support\Trumbnail;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image as InterventionImage;
-//use Gregwar\Image\Image as GregwarImage;
+
+// use Gregwar\Image\Image as GregwarImage;
 
 class APMedia
 {
-
     /** @var string */
     private $filesystem;
 
@@ -28,17 +29,14 @@ class APMedia
     {
         $folder = $this->preparePath($folder, null, true);
 
-        $filename = $this->generateFileName($file, $folder,$settings['filename'] ?? '');
+        $filename = $this->generateFileName($file, $folder, $settings['filename'] ?? '');
 
-        return $this->storage->putFileAs($folder, $file,$filename . '.' . $file->getClientOriginalExtension());
+        return $this->storage->putFileAs($folder, $file, $filename.'.'.$file->getClientOriginalExtension());
     }
 
     /**
      * Save image in storage.
      *
-     * @param $file
-     * @param string $folder
-     * @param array $settings
      *
      * @return string $fullPath
      */
@@ -47,17 +45,17 @@ class APMedia
         $folder = $this->preparePath($folder, null, true);
         // TODO: refactor
         // Имя файла
-        $filename = $this->generateFileName($file, $folder,$settings['filename'] ?? '');
+        $filename = $this->generateFileName($file, $folder, $settings['filename'] ?? '');
 
         $image = InterventionImage::make($file)->orientate();
 
-        $fullPath = $folder . $filename . '.' . $file->getClientOriginalExtension();
+        $fullPath = $folder.$filename.'.'.$file->getClientOriginalExtension();
 
         $resizeWidth = null;
         $resizeHeight = null;
         if (array_key_exists('resize', $settings) && (
-                array_key_exists('width', $settings['resize']) || array_key_exists('height', $settings['resize'])
-            )) {
+            array_key_exists('width', $settings['resize']) || array_key_exists('height', $settings['resize'])
+        )) {
             if (array_key_exists('width', $settings['resize'])) {
                 $resizeWidth = $settings['resize']['width'];
             }
@@ -69,18 +67,16 @@ class APMedia
             $resizeHeight = $image->height();
         }
 
-
         $image = $image->resize(
             $resizeWidth,
             $resizeHeight,
             function (Constraint $constraint) use ($settings) {
                 $constraint->aspectRatio();
-                if (array_key_exists('upsize', $settings) && !$settings['upsize']) {
+                if (array_key_exists('upsize', $settings) && ! $settings['upsize']) {
                     $constraint->upsize();
                 }
             }
         );
-
 
         return $this->saveImage($image, $fullPath, $settings);
     }
@@ -93,45 +89,43 @@ class APMedia
             $this->storage->delete($path);
         }
 
-//        if ($this->is_animated_gif((string)$image)) {
-//            $this->storage->put($fullPath, (string)$image, 'public');
-//            $fullPathStatic = getImageThumb($fullPath,'static');
-//            $this->storage->put($fullPathStatic, (string)$image, 'public');
-//        } else {
-        $this->storage->put($path, (string)$image, 'public');
-//        }
+        //        if ($this->is_animated_gif((string)$image)) {
+        //            $this->storage->put($fullPath, (string)$image, 'public');
+        //            $fullPathStatic = getImageThumb($fullPath,'static');
+        //            $this->storage->put($fullPathStatic, (string)$image, 'public');
+        //        } else {
+        $this->storage->put($path, (string) $image, 'public');
+        //        }
 
         return $path;
     }
 
-
-    /**
-     * @param string $filePath
-     * @param Trumbnail $thumbnail
-     * @return string
-     */
     public function thumbnail(string $filePath, Trumbnail $thumbnail): string
     {
         $fullPath = null;
 
         if ($this->getExtFromPath($filePath) !== 'svg') {
-            if ($thumbnail->isCrop())
+            if ($thumbnail->isCrop()) {
                 $fullPath = $this->crop($filePath, $thumbnail->toArray(), $thumbnail->get('name'));
+            }
 
-            if ($thumbnail->isScale())
+            if ($thumbnail->isScale()) {
                 $fullPath = $this->scale($filePath, $thumbnail->toArray(), $thumbnail->get('name'));
+            }
 
-            if ($thumbnail->isResize())
+            if ($thumbnail->isResize()) {
                 $fullPath = $this->resize($filePath, $thumbnail->toArray(), $thumbnail->get('name'));
+            }
 
-            if ($thumbnail->isFit())
+            if ($thumbnail->isFit()) {
                 $fullPath = $this->fit($filePath, $thumbnail->toArray(), $thumbnail->get('name'));
+            }
 
         }
 
-
         return $fullPath;
     }
+
     public function thumbnailByArray(string $filePath, array $thumbnail): string
     {
         $fullPath = null;
@@ -157,14 +151,11 @@ class APMedia
     }
 
     /**
-     * @param string $filePath
-     * @param int $scale
-     * @param string $suffix
-     * @return string
+     * @param  int  $scale
      */
-    public function scale(string $filePath, array $settings, string $suffix = null): string
+    public function scale(string $filePath, array $settings, ?string $suffix = null): string
     {
-//        dump('scale',$settings);
+        //        dump('scale',$settings);
 
         $image = InterventionImage::make($this->storage->path($filePath))->orientate();
 
@@ -177,23 +168,23 @@ class APMedia
             $resizeHeight,
             function (Constraint $constraint) use ($settings) {
                 $constraint->aspectRatio();
-                if (array_key_exists('upsize', $settings) && !$settings['upsize']) {
+                if (array_key_exists('upsize', $settings) && ! $settings['upsize']) {
                     $constraint->upsize();
                 }
             }
         );
-//        $image->resizeCanvas($resizeWidth, $resizeHeight, $settings['position'] ?? 'center', false, 'rgba(0, 0, 0, 0)');
+        //        $image->resizeCanvas($resizeWidth, $resizeHeight, $settings['position'] ?? 'center', false, 'rgba(0, 0, 0, 0)');
 
         $fullPath = $this->getImageThumb($filePath, $suffix);
 
         return $this->saveImage($image, $fullPath, $settings);
     }
 
-    public function crop(string $filePath, array $settings, string $suffix = null): string
+    public function crop(string $filePath, array $settings, ?string $suffix = null): string
     {
         $image = InterventionImage::make($this->storage->path($filePath))->orientate();
 
-        //TODO: refactor
+        // TODO: refactor
         $fullPath = $this->getImageThumb($filePath, $suffix);
 
         if ($image->width() < $settings['width'] || $image->height() < $settings['height']) {
@@ -203,7 +194,7 @@ class APMedia
                 function ($constraint) {
                     $constraint->aspectRatio();
                 },
-                $settings['position']  ?? 'center'
+                $settings['position'] ?? 'center'
             );
         }
 
@@ -212,9 +203,9 @@ class APMedia
             $settings['height'],
             $settings['x'],
             $settings['y']
-        );//->trim('transparent');
+        ); // ->trim('transparent');
 
-        if (!empty($settings['resultWidth']) && !empty($settings['resultHeight'])) {
+        if (! empty($settings['resultWidth']) && ! empty($settings['resultHeight'])) {
             if ($image->width() != $settings['resultWidth'] || $image->height() != $settings['resultHeight']) {
                 $image->fit(
                     $settings['resultWidth'],
@@ -222,7 +213,7 @@ class APMedia
                     function ($constraint) {
                         $constraint->aspectRatio();
                     },
-                    $settings['position']  ?? 'center'
+                    $settings['position'] ?? 'center'
                 );
             }
 
@@ -231,11 +222,10 @@ class APMedia
         return $this->saveImage($image, $fullPath, $settings);
     }
 
-    public function resize(string $filePath, array $settings, string $suffix = null): string
+    public function resize(string $filePath, array $settings, ?string $suffix = null): string
     {
         $image = InterventionImage::make($this->storage->path($filePath))->orientate();
-//        dd('resize',$settings);
-
+        //        dd('resize',$settings);
 
         if ($image->width() < $settings['width'] || $image->height() < $settings['height']) {
             $image->resizeCanvas($settings['width'], $settings['height'], $settings['position'] ?? 'center', false, 'rgba(0, 0, 0, 0)');
@@ -245,7 +235,7 @@ class APMedia
                 ($settings['height'] ?? null),
                 function ($constraint) use ($settings) {
                     $constraint->aspectRatio();
-                    if (!($settings['upsize'] ?? true)) {
+                    if (! ($settings['upsize'] ?? true)) {
                         $constraint->upsize();
                     }
                 }
@@ -257,18 +247,18 @@ class APMedia
         return $this->saveImage($image, $fullPath, $settings);
     }
 
-    public function fit(string $filePath, array $settings, string $suffix = null): string
+    public function fit(string $filePath, array $settings, ?string $suffix = null): string
     {
         $image = InterventionImage::make($this->storage->path($filePath))->orientate();
 
-//        dd('fit',$settings);
+        //        dd('fit',$settings);
         $image->fit(
             $settings['width'],
             ($settings['height'] ?? null),
             function ($constraint) {
                 $constraint->aspectRatio();
             },
-            $settings['position']  ?? 'center'
+            $settings['position'] ?? 'center'
         );
 
         $fullPath = $this->getImageThumb($filePath, $suffix);
@@ -279,7 +269,7 @@ class APMedia
     public function deleteImage(string $removeImage)
     {
         // Удаляем старые изображения
-        if (!empty($removeImage)) {
+        if (! empty($removeImage)) {
             $this->storage->delete([
                 $removeImage,
             ]);
@@ -294,7 +284,7 @@ class APMedia
 
         if (Str::contains($path, '{date:')) {
             $path = preg_replace_callback('/\{date:([^\/\}]*)\}/', function ($date) {
-                return \Carbon\Carbon::now()->format($date[1]);
+                return Carbon::now()->format($date[1]);
             }, $path);
         }
         if (Str::contains($path, '{random:')) {
@@ -303,38 +293,39 @@ class APMedia
             }, $path);
         }
 
-        if (!Str::endsWith($path, '/') && $endSlash)
+        if (! Str::endsWith($path, '/') && $endSlash) {
             $path .= '/';
+        }
 
         return $path;
     }
 
     /**
-     * @param \Illuminate\Http\UploadedFile $file
-     * @param $path
-     *
+     * @param  UploadedFile  $file
+     * @param  $path
      * @return string
      */
     protected function generateFileName($file, $folder, $filename = null)
     {
         if (empty($filename)) {
-            $filename = basename($file->getClientOriginalName(), '.' . $file->getClientOriginalExtension());
-            $filename = str_replace(' ', '-',$filename);
+            $filename = basename($file->getClientOriginalName(), '.'.$file->getClientOriginalExtension());
+            $filename = str_replace(' ', '-', $filename);
             $filename_counter = 1;
 
             // Make sure the filename does not exist, if it does make sure to add a number to the end 1, 2, 3, etc...
-            while ($this->storage->exists($folder . $filename . '.' . $file->getClientOriginalExtension())) {
-                $filename = basename($file->getClientOriginalName(), '.' . $file->getClientOriginalExtension()) . (string)($filename_counter++);
+            while ($this->storage->exists($folder.$filename.'.'.$file->getClientOriginalExtension())) {
+                $filename = basename($file->getClientOriginalName(), '.'.$file->getClientOriginalExtension()).(string) ($filename_counter++);
             }
         } else {
             $filename = $this->preparePath($filename);
 
             // Make sure the filename does not exist, if it does, just regenerate
-            while ($this->storage->exists($folder . $filename . '.' . $file->getClientOriginalExtension())) {
+            while ($this->storage->exists($folder.$filename.'.'.$file->getClientOriginalExtension())) {
                 $filename = Str::random(20);
             }
         }
-        return str_replace(' ', '-',$filename);
+
+        return str_replace(' ', '-', $filename);
     }
 
     private function is_animated_gif($file)
@@ -364,50 +355,39 @@ class APMedia
         return $frames > 1;
     }
 
-    /**
-     * @param ?string $path
-     * @param string $default
-     * @return string
-     */
     public function getUrl(?string $path, string $default = ''): string
     {
-        if (!empty($path)) {
+        if (! empty($path)) {
             return str_replace('\\', '/', Storage::url($path));
         }
 
         return $default;
     }
 
-    /**
-     *
-     * @param ?string $path
-     * @return string
-     */
-    public function getImageThumbUrl(?string $path, string $sufix = null): string
+    public function getImageThumbUrl(?string $path, ?string $sufix = null): string
     {
-        if (empty($path)) return '';
+        if (empty($path)) {
+            return '';
+        }
+
         return self::getUrl(self::getImageThumb($path, $sufix ?? config('adminpanel.media.default_thumb_name', 'thumb')));
     }
 
-    /**
-     *
-     * @param ?string $path
-     * @return string
-     */
-
-    public function getImageThumb(?string $path, string $suffix = null): string
+    public function getImageThumb(?string $path, ?string $suffix = null): string
     {
-        if (is_null($suffix)) return $path;
+        if (is_null($suffix)) {
+            return $path;
+        }
 
         $ext = $this->getExtFromPath($path);
 
-        $name = Str::replaceLast('.' . $ext, '', $path);
+        $name = Str::replaceLast('.'.$ext, '', $path);
 
-        return $name . '-' . Str::kebab($suffix) . '.' . $ext;
+        return $name.'-'.Str::kebab($suffix).'.'.$ext;
     }
 
     public function getExtFromPath(string $path): string
     {
-        return pathinfo($path, PATHINFO_EXTENSION);;
+        return pathinfo($path, PATHINFO_EXTENSION);
     }
 }

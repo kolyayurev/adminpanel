@@ -2,31 +2,36 @@
 
 namespace KY\AdminPanel\FormFields;
 
-use AdminPanel,Closure,View,Str;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use KY\AdminPanel\Contracts\DataTypeContract;
 use KY\AdminPanel\Contracts\FilterContract;
+use KY\AdminPanel\Contracts\FormFieldContract;
 use KY\AdminPanel\DataTables\Column;
 use KY\AdminPanel\DataTables\Filters\InputFilter;
 use KY\AdminPanel\DataTypes\BaseDataType;
-use KY\AdminPanel\Contracts\DataTypeContract;
-use KY\AdminPanel\Contracts\FormFieldContract;
 use KY\AdminPanel\Traits\Attributable;
 use KY\AdminPanel\Traits\Makeable;
+use Str;
+use View;
 
-
-abstract class BaseFormField implements FormFieldContract, Arrayable
+abstract class BaseFormField implements Arrayable, FormFieldContract
 {
-    use Makeable, Attributable;
+    use Attributable, Makeable;
 
     protected $viewCell;
+
     protected $viewForm;
+
     protected $viewShow;
+
     protected string $slug;
+
     protected ?FilterContract $filter;
+
     /**
      * @var array
      */
@@ -35,7 +40,7 @@ abstract class BaseFormField implements FormFieldContract, Arrayable
         'value' => null,
         'name' => null,
         'label' => null,
-        'afterLabel'=> null,
+        'afterLabel' => null,
         'multilingual' => true,
         'instruction' => null,
         'hiddenOn' => [],
@@ -43,7 +48,7 @@ abstract class BaseFormField implements FormFieldContract, Arrayable
         'columnDefaultOrder' => null, // ['acs','desc']
         'columnOrderable' => true,
         'columnSearchable' => true,
-        'columnWidth' =>  null,
+        'columnWidth' => null,
         'columnEditable' => false,
     ];
 
@@ -63,26 +68,26 @@ abstract class BaseFormField implements FormFieldContract, Arrayable
     }
 
     /**
-     * @param string $label
      * @return $this
      */
     public function label(string $label): self
     {
-        return $this->set('label',$label);
+        return $this->set('label', $label);
     }
 
-    function getAfterLabel() : ?string
+    public function getAfterLabel(): ?string
     {
-        return $this->get('afterLabel',$this->buildAfterLabel());
+        return $this->get('afterLabel', $this->buildAfterLabel());
     }
 
-    function afterLabel(?string $afterLabel): self
+    public function afterLabel(?string $afterLabel): self
     {
-        $this->set('afterLabel',$afterLabel);
+        $this->set('afterLabel', $afterLabel);
+
         return $this;
     }
 
-    function buildAfterLabel(): ?string
+    public function buildAfterLabel(): ?string
     {
         return null;
     }
@@ -105,22 +110,24 @@ abstract class BaseFormField implements FormFieldContract, Arrayable
         return $this->slug;
     }
 
-    public function getFilter() : FilterContract
+    public function getFilter(): FilterContract
     {
-        $this->filter->name($this->filter->get('name')??$this->get('name'));
-        $this->filter->placeholder($this->filter->getPlaceholder()??$this->get('label'));
+        $this->filter->name($this->filter->get('name') ?? $this->get('name'));
+        $this->filter->placeholder($this->filter->getPlaceholder() ?? $this->get('label'));
+
         return $this->filter;
     }
 
-    public function filter(?FilterContract $filter) : self
+    public function filter(?FilterContract $filter): self
     {
         $this->filter = $filter;
+
         return $this;
     }
 
-    public function hasFilter() : bool
+    public function hasFilter(): bool
     {
-        return !empty($this->filter);
+        return ! empty($this->filter);
     }
 
     /**
@@ -128,7 +135,7 @@ abstract class BaseFormField implements FormFieldContract, Arrayable
      */
     public function getId()
     {
-        return name2id(class_basename($this).'_'.$this->get('name'));;
+        return name2id(class_basename($this).'_'.$this->get('name'));
     }
 
     /**
@@ -136,123 +143,119 @@ abstract class BaseFormField implements FormFieldContract, Arrayable
      */
     public function isMultilingual()
     {
-        return $this->get('multilingual',true);
+        return $this->get('multilingual', true);
     }
 
     /**
-     * @param bool $multilingual
      * @return $this
      */
     public function multilingual(bool $multilingual): self
     {
-        return $this->set('multilingual',$multilingual);
+        return $this->set('multilingual', $multilingual);
     }
 
     /**
-     * @param string $instruction
      * @return $this
      */
     public function instruction(string $instruction): self
     {
-        return $this->set('instruction',$instruction);
+        return $this->set('instruction', $instruction);
     }
 
     public function hiddenOn(array $hiddenOn): self
     {
-        return $this->set('hiddenOn',$hiddenOn);
+        return $this->set('hiddenOn', $hiddenOn);
     }
 
-    function getColumnDefaultOrder() : ?string
+    public function getColumnDefaultOrder(): ?string
     {
-        return $this->get('columnDefaultOrder',null);
+        return $this->get('columnDefaultOrder', null);
     }
 
     public function columnDefaultOrder(?string $columnDefaultOrder = 'asc'): self
     {
-        return $this->set('columnDefaultOrder',$columnDefaultOrder);
+        return $this->set('columnDefaultOrder', $columnDefaultOrder);
     }
 
-    function getColumnOrderable() : bool
+    public function getColumnOrderable(): bool
     {
-        return $this->get('columnOrderable',true);
+        return $this->get('columnOrderable', true);
     }
 
-    function columnOrderable(bool $columnOrderable = true) : self
+    public function columnOrderable(bool $columnOrderable = true): self
     {
-        return $this->set('columnOrderable',$columnOrderable);
+        return $this->set('columnOrderable', $columnOrderable);
     }
 
-    function getColumnSearchable() : bool
+    public function getColumnSearchable(): bool
     {
-        return $this->get('columnSearchable',true);
+        return $this->get('columnSearchable', true);
     }
 
-    function columnSearchable(bool $columnSearchable = true) : self
+    public function columnSearchable(bool $columnSearchable = true): self
     {
-        return $this->set('columnSearchable',$columnSearchable);
+        return $this->set('columnSearchable', $columnSearchable);
     }
 
-    function getColumnWidth() : ?string
+    public function getColumnWidth(): ?string
     {
-        return $this->get('columnWidth',true);
+        return $this->get('columnWidth', true);
     }
 
-    function columnWidth(?string $columnWidth) : self
+    public function columnWidth(?string $columnWidth): self
     {
-        return $this->set('columnWidth',$columnWidth);
+        return $this->set('columnWidth', $columnWidth);
     }
 
-    function columnEditable(bool $columnEditable = true) : self
+    public function columnEditable(bool $columnEditable = true): self
     {
-        return $this->set('columnEditable',$columnEditable);
+        return $this->set('columnEditable', $columnEditable);
     }
 
-    function columnIsEditable() : bool
+    public function columnIsEditable(): bool
     {
-        return  $this->get('columnEditable',false);
+        return $this->get('columnEditable', false);
     }
 
     /**
-     * @param string $view
      * @return string
      */
-    public function viewCell(string $view) : self
+    public function viewCell(string $view): self
     {
         $this->viewCell = $view;
+
         return $this;
     }
 
     /**
-     * @param string $view
      * @return string
      */
-    public function viewForm(string $view) : self
+    public function viewForm(string $view): self
     {
         $this->viewForm = $view;
+
         return $this;
     }
 
     /**
-     * @param string $view
      * @return string
      */
-    public function viewShow(string $view) : self
+    public function viewShow(string $view): self
     {
         $this->viewShow = $view;
+
         return $this;
     }
 
     /**
-     * @param $view
      * @return mixed
      */
     protected function checkView($view)
     {
-        return  View::exists($view);
+        return View::exists($view);
     }
 
     /**
-     * @param $type
      * @return string
      */
     public function getViewByType($type)
@@ -260,29 +263,30 @@ abstract class BaseFormField implements FormFieldContract, Arrayable
         $view = '';
         switch ($type) {
             case 'cell':
-                $view = $this->checkView($this->viewCell)?$this->viewCell:'adminpanel::formfields.'.$this->getSlug().'.cell';
+                $view = $this->checkView($this->viewCell) ? $this->viewCell : 'adminpanel::formfields.'.$this->getSlug().'.cell';
                 break;
             case 'form':
-                $view = $this->checkView($this->viewForm)?$this->viewForm:'adminpanel::formfields.'.$this->getSlug().'.form';
+                $view = $this->checkView($this->viewForm) ? $this->viewForm : 'adminpanel::formfields.'.$this->getSlug().'.form';
                 break;
             case 'show':
-                $view = $this->checkView($this->viewShow)?$this->viewShow:'adminpanel::formfields.'.$this->getSlug().'.show';
+                $view = $this->checkView($this->viewShow) ? $this->viewShow : 'adminpanel::formfields.'.$this->getSlug().'.show';
                 break;
         }
+
         return $view;
     }
 
     /**
-     * @param DataTypeContract $dataType
-     * @param Model $model
-     * @param string $viewType
+     * @param  DataTypeContract  $dataType
+     * @param  Model  $model
      * @return Application|Factory|View
      */
-    public function render($dataType = null, $model = null, string $viewType  = 'form')
+    public function render($dataType = null, $model = null, string $viewType = 'form')
     {
         // TODO refactor.
-        if(empty($dataType))
+        if (empty($dataType)) {
             $dataType = app(BaseDataType::class);
+        }
 
         $content = $this->createContent(
             $dataType,
@@ -297,16 +301,11 @@ abstract class BaseFormField implements FormFieldContract, Arrayable
         return $content;
     }
 
-    public function beforeCreateContent($dataType, $model): void
-    {
-
-    }
+    public function beforeCreateContent($dataType, $model): void {}
 
     /**
-     * @param $field
-     * @param $dataType
-     * @param $model
-     * @param $viewType ['cell','form','show']
+     * @param  $field
+     * @param  $viewType  ['cell','form','show']
      * @return Application|Factory|\Illuminate\Contracts\View\View
      */
     public function createContent($dataType, $model, $viewType)
@@ -314,80 +313,74 @@ abstract class BaseFormField implements FormFieldContract, Arrayable
         $this->beforeCreateContent($dataType, $model);
 
         $field = $this;
-        return view($this->getViewByType($viewType), compact(['field','dataType','model']));
+
+        return view($this->getViewByType($viewType), compact(['field', 'dataType', 'model']));
     }
 
-    /**
-     * @return bool
-     */
-    public function needSave() : bool
+    public function needSave(): bool
     {
         return true;
     }
+
     /**
      * Before prepare hook
-     * @param $value
+     *
      * @return mixed
      */
-    public function beforePrepare($value,Request $request,$model){
+    public function beforePrepare($value, Request $request, $model)
+    {
         return $value;
     }
 
     /**
-     * @param $value
-     * @param Request $request
-     * @param $model
      * @return mixed|BaseFormField
      */
-    public function prepareValue($value, Request $request, $model){
-        return empty($value) ? ($this->get('default')??$value) : $value;
+    public function prepareValue($value, Request $request, $model)
+    {
+        return empty($value) ? ($this->get('default') ?? $value) : $value;
     }
+
     /**
      * After prepare hook
-     * @param $value
+     *
      * @return mixed
      */
-    public function afterPrepare($value,Request $request,$model){
+    public function afterPrepare($value, Request $request, $model)
+    {
         return $value;
     }
 
     /**
-     * @param Request $request
-     * @param $model
      * @return void
      */
-    public function beforeSave(Request $request, $model){}
+    public function beforeSave(Request $request, $model) {}
 
     /**
-     * @param Request $request
-     * @param $model
      * @return mixed
      */
-    public function prepareValueToSave(Request $request, $model){
+    public function prepareValueToSave(Request $request, $model)
+    {
         $value = $request->input($this->get('name'));
 
-        $value = $this->beforePrepare($value,$request,$model);
-        $value = $this->prepareValue($value,$request,$model);
-        return $this->afterPrepare($value,$request,$model);
+        $value = $this->beforePrepare($value, $request, $model);
+        $value = $this->prepareValue($value, $request, $model);
+
+        return $this->afterPrepare($value, $request, $model);
     }
 
     /**
      * Hook after save model
-     * @param Request $request
-     * @param $model
+     *
      * @return void
      */
-    public function afterSave(Request $request, $model){}
+    public function afterSave(Request $request, $model) {}
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
-        return  json_decode(json_encode($this->getAttributes()), true);
+        return json_decode(json_encode($this->getAttributes()), true);
     }
 
-    public function toColumn() : Column
+    public function toColumn(): Column
     {
 
         return Column::make($this->get('name'))

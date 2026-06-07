@@ -17,7 +17,7 @@ class SelectFilterTest extends TestCase
      */
     public function test_construct_sets_default_handler_and_template(): void
     {
-        $filter = new SelectFilter();
+        $filter = new SelectFilter;
 
         $this->assertTrue($filter->hasHandler());
         $this->assertSame('adminpanel::datatables.filters.select', $filter->getTemplate());
@@ -29,7 +29,7 @@ class SelectFilterTest extends TestCase
      */
     public function test_default_text_sets_default_text(): void
     {
-        $filter = new SelectFilter();
+        $filter = new SelectFilter;
 
         $this->assertSame($filter, $filter->defaultText('Choose'));
         $this->assertSame('Choose', $filter->getDefaultText());
@@ -40,7 +40,7 @@ class SelectFilterTest extends TestCase
      */
     public function test_has_default_text_returns_true_when_text_exists(): void
     {
-        $this->assertTrue((new SelectFilter())->hasDefaultText());
+        $this->assertTrue((new SelectFilter)->hasDefaultText());
     }
 
     /**
@@ -49,7 +49,7 @@ class SelectFilterTest extends TestCase
      */
     public function test_default_value_sets_default_value(): void
     {
-        $filter = new SelectFilter();
+        $filter = new SelectFilter;
 
         $this->assertSame($filter, $filter->defaultValue(''));
         $this->assertSame('', $filter->getDefaultValue());
@@ -61,7 +61,7 @@ class SelectFilterTest extends TestCase
      */
     public function test_options_returns_options_with_default_text(): void
     {
-        $filter = (new SelectFilter())->defaultValue('')->defaultText('Choose')->options([
+        $filter = (new SelectFilter)->defaultValue('')->defaultText('Choose')->options([
             'published' => 'Published',
         ]);
 
@@ -77,7 +77,7 @@ class SelectFilterTest extends TestCase
      */
     public function test_multiple_sets_multiple_flag(): void
     {
-        $filter = new SelectFilter();
+        $filter = new SelectFilter;
 
         $this->assertFalse($filter->isMultiple());
         $this->assertSame($filter, $filter->multiple(true));
@@ -90,7 +90,7 @@ class SelectFilterTest extends TestCase
      */
     public function test_a_ajax_sets_ajax_flag(): void
     {
-        $filter = new SelectFilter();
+        $filter = new SelectFilter;
 
         $this->assertFalse($filter->isAjax());
         $this->assertSame($filter, $filter->aAjax());
@@ -102,7 +102,7 @@ class SelectFilterTest extends TestCase
      */
     public function test_construct_handler_adds_or_where_for_each_selected_item(): void
     {
-        $filter = new SelectFilter();
+        $filter = new SelectFilter;
         $query = $this->createQueryTestDouble();
 
         $filter->search(

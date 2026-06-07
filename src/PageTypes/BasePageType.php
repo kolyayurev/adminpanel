@@ -2,7 +2,8 @@
 
 namespace KY\AdminPanel\PageTypes;
 
-use Illuminate\Support\{Collection, Str};
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use KY\AdminPanel\Blocks\Accordion;
 use KY\AdminPanel\Blocks\Collapse;
 use KY\AdminPanel\Contracts\PageTypeContract;
@@ -11,18 +12,20 @@ use KY\AdminPanel\Traits\HasLayout;
 
 class BasePageType implements PageTypeContract
 {
-    use HasLayout,HasFormFields;
+    use HasFormFields,HasLayout;
 
     protected $title;
+
     protected $slug;
 
     protected $view = 'adminpanel::settings.index';
 
-    public function getTitle():string
+    public function getTitle(): string
     {
         return $this->title;
     }
-    public function getSlug():string
+
+    public function getSlug(): string
     {
         if (empty($this->slug)) {
             $name = class_basename($this);
@@ -37,14 +40,11 @@ class BasePageType implements PageTypeContract
         return $this->slug;
     }
 
-    public function getView():string
+    public function getView(): string
     {
         return $this->view;
     }
 
-    /**
-     * @return Collection
-     */
     public function layout(): Collection
     {
         return collect([
@@ -52,13 +52,12 @@ class BasePageType implements PageTypeContract
                 Collapse::blocks(
                     '*'
                 )
-            )
+            ),
         ]);
     }
-    /**
-     * @return Collection
-     */
-    public function fields():Collection{
+
+    public function fields(): Collection
+    {
         return collect([]);
     }
 }

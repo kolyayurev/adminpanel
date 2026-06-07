@@ -2,10 +2,12 @@
 
 namespace KY\AdminPanel;
 
-
+use Illuminate\Foundation\AliasLoader;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use KY\AdminPanel\Commands\InstallCommand;
 use KY\AdminPanel\Commands\MakeDataControllerCommand;
 use KY\AdminPanel\Commands\MakeDataTypeCommand;
@@ -15,24 +17,18 @@ use KY\AdminPanel\DataTypes\RedirectDataType;
 use KY\AdminPanel\DataTypes\RoleDataType;
 use KY\AdminPanel\DataTypes\SefDataType;
 use KY\AdminPanel\DataTypes\SeoDataType;
-use KY\AdminPanel\DataTypes\SettingDataType;
-use KY\AdminPanel\DataTypes\TestDataType;
 use KY\AdminPanel\DataTypes\UserDataType;
 use KY\AdminPanel\Facades\AdminPanel as AdminPanelFacade;
 use KY\AdminPanel\Facades\APMedia as APMediaFacade;
-use KY\AdminPanel\Menus\AdminMenu;
 use KY\AdminPanel\Http\Middleware\AdminMiddleware;
-use Illuminate\Routing\Router;
-use Illuminate\Foundation\AliasLoader;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use KY\AdminPanel\Menus\AdminMenu;
 use KY\AdminPanel\Policies\BasePolicy;
-
 
 class AdminPanelServiceProvider extends ServiceProvider
 {
-    protected $vendor  = 'kolyayurev';
-    protected $name  = 'adminpanel';
+    protected $vendor = 'kolyayurev';
+
+    protected $name = 'adminpanel';
 
     protected $policies = [
     ];
@@ -50,7 +46,7 @@ class AdminPanelServiceProvider extends ServiceProvider
         $loader->alias('AdminPanel', AdminPanelFacade::class);
 
         $this->app->singleton('adminpanel', function () {
-            return new AdminPanel();
+            return new AdminPanel;
         });
 
         $this->app->singleton('AdminPanelGuard', function () {
@@ -59,7 +55,7 @@ class AdminPanelServiceProvider extends ServiceProvider
 
         $loader->alias('APMedia', APMediaFacade::class);
         $this->app->bind('APMedia', function () {
-            return new APMedia();
+            return new APMedia;
         });
 
         if ($this->app->runningInConsole()) {
@@ -70,7 +66,7 @@ class AdminPanelServiceProvider extends ServiceProvider
             __DIR__.'/../config/config.php', $this->name
         );
 
-        //TODO:check is admin route
+        // TODO:check is admin route
         $this->registerDataTypes();
         AdminPanelFacade::addMenu(AdminMenu::class);
 
@@ -114,7 +110,7 @@ class AdminPanelServiceProvider extends ServiceProvider
 
             foreach ($dataTypes as $dataType) {
                 $policyClass = BasePolicy::class;
-                if (!empty($dataType->getPolicy()) && class_exists($dataType->getPolicy())) {
+                if (! empty($dataType->getPolicy()) && class_exists($dataType->getPolicy())) {
                     $policyClass = $dataType->getPolicy();
                 }
 
@@ -122,14 +118,13 @@ class AdminPanelServiceProvider extends ServiceProvider
             }
             $this->policies[AdminPanelFacade::modelClass('Setting')] = BasePolicy::class;
             $this->registerPolicies();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error($e->getMessage());
         }
 
         // Gates
-        foreach (config('adminpanel.gates', []) as $name => $value){
-            Gate::define($name, function ($user) use ($value){
+        foreach (config('adminpanel.gates', []) as $name => $value) {
+            Gate::define($name, function ($user) use ($value) {
                 return $value;
             });
         }
@@ -145,16 +140,16 @@ class AdminPanelServiceProvider extends ServiceProvider
     {
         $publishable = [
             'assets' => [
-                __DIR__."/../public" => public_path('vendor'.DIRECTORY_SEPARATOR.$this->name),
+                __DIR__.'/../public' => public_path('vendor'.DIRECTORY_SEPARATOR.$this->name),
             ],
             'config' => [
-                __DIR__.'/../config/config.php' => config_path($this->name.'.php')
+                __DIR__.'/../config/config.php' => config_path($this->name.'.php'),
             ],
             'lang' => [
                 __DIR__.'/../lang' => $this->app->langPath('vendor'.DIRECTORY_SEPARATOR.$this->name),
             ],
             'migrations' => [
-                __DIR__.'/../database/migrations/' => database_path('migrations')
+                __DIR__.'/../database/migrations/' => database_path('migrations'),
             ],
             'seeds' => [
                 __DIR__.'/../database/seeders/' => database_path('seeders'),
@@ -163,7 +158,7 @@ class AdminPanelServiceProvider extends ServiceProvider
 
         foreach ($publishable as $group => $paths) {
 
-            $this->publishes($paths,"{$this->name}-{$group}");
+            $this->publishes($paths, "{$this->name}-{$group}");
         }
 
     }

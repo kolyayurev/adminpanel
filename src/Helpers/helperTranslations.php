@@ -1,15 +1,16 @@
 <?php
 
-if (!function_exists('is_field_translatable')) {
+use Illuminate\Database\Eloquent\Model;
+
+if (! function_exists('is_field_translatable')) {
     /**
      * Check if a Field is translatable.
      *
-     * @param Illuminate\Database\Eloquent\Model      $model
-     * @param $field
+     * @param  Model  $model
      */
     function is_field_translatable($model, $field)
     {
-        if (!is_translatable($model)) {
+        if (! is_translatable($model)) {
             return;
         }
 
@@ -19,14 +20,14 @@ if (!function_exists('is_field_translatable')) {
     }
 }
 
-if (!function_exists('get_field_translations')) {
+if (! function_exists('get_field_translations')) {
     /**
      * Return all field translations.
      *
-     * @param Illuminate\Database\Eloquent\Model $model
-     * @param string                             $field
-     * @param string                             $rowType
-     * @param bool                               $stripHtmlTags
+     * @param  Model  $model
+     * @param  string  $field
+     * @param  string  $rowType
+     * @param  bool  $stripHtmlTags
      */
     function get_field_translations($model, $field, $stripHtmlTags = false)
     {
@@ -42,11 +43,11 @@ if (!function_exists('get_field_translations')) {
     }
 }
 
-if (!function_exists('is_translatable')) {
+if (! function_exists('is_translatable')) {
     /**
      * Check if model is translatable.
      *
-     * @param Illuminate\Database\Eloquent\Model $model
+     * @param  Model  $model
      */
     function is_translatable($model)
     {
@@ -56,4 +57,3 @@ if (!function_exists('is_translatable')) {
             && $model->translatable();
     }
 }
-

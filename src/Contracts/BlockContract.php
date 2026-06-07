@@ -2,31 +2,17 @@
 
 namespace KY\AdminPanel\Contracts;
 
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 
 interface BlockContract
 {
-    /**
-     * @return string
-     */
-    public function getType():string;
+    public function getType(): string;
 
-    /**
-     * @return string
-     */
-    public function getClass():string;
+    public function getClass(): string;
 
+    public function getTemplate(): string;
 
-    /**
-     * @return string
-     */
-    public function getTemplate() : string;
+    public function getBlocks(): Collection;
 
-    /**
-     * @return Collection
-     */
-    public function getBlocks():Collection;
-
-    public function isVisibleOnlyWhenHasFields() : bool;
+    public function isVisibleOnlyWhenHasFields(): bool;
 }

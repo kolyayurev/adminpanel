@@ -18,7 +18,7 @@ class RelationTest extends TestCase
      */
     public function test_construct_sets_select_filter_without_handler(): void
     {
-        $filter = $this->getNonPublicProperty(new Relation(), 'filter');
+        $filter = $this->getNonPublicProperty(new Relation, 'filter');
 
         $this->assertInstanceOf(SelectFilter::class, $filter);
         $this->assertFalse($filter->hasHandler());
@@ -45,7 +45,7 @@ class RelationTest extends TestCase
      */
     public function test_belongs_to_configures_belongs_to_relation(): void
     {
-        $field = Relation::make('role_id')->belongsTo(new User(), new Role());
+        $field = Relation::make('role_id')->belongsTo(new User, new Role);
 
         $this->assertTrue($field->isBelongsTo());
         $this->assertSame(User::class, $field->get('model'));
@@ -61,7 +61,7 @@ class RelationTest extends TestCase
      */
     public function test_has_one_configures_has_one_relation(): void
     {
-        $field = Relation::make('role_id')->hasOne(new User(), new Role());
+        $field = Relation::make('role_id')->hasOne(new User, new Role);
 
         $this->assertTrue($field->isHasOne());
     }
@@ -72,7 +72,7 @@ class RelationTest extends TestCase
      */
     public function test_has_many_configures_has_many_relation(): void
     {
-        $field = Relation::make('role_id')->hasMany(new User(), new Role());
+        $field = Relation::make('role_id')->hasMany(new User, new Role);
 
         $this->assertTrue($field->isHasMany());
     }
@@ -86,7 +86,7 @@ class RelationTest extends TestCase
      */
     public function test_belongs_to_many_configures_pivot_relation(): void
     {
-        $field = Relation::make('roles')->belongsToMany(new User(), new Role());
+        $field = Relation::make('roles')->belongsToMany(new User, new Role);
 
         $this->assertTrue($field->isBelongsToMany());
         $this->assertSame('role_user', $field->get('pivotTable'));
@@ -100,7 +100,7 @@ class RelationTest extends TestCase
      */
     public function test_displayed_field_sets_displayed_field_attribute(): void
     {
-        $field = new Relation();
+        $field = new Relation;
 
         $this->assertSame($field, $field->displayedField('title'));
         $this->assertSame('title', $field->get('displayedField'));
@@ -111,7 +111,7 @@ class RelationTest extends TestCase
      */
     public function test_required_sets_required_attribute(): void
     {
-        $field = new Relation();
+        $field = new Relation;
 
         $this->assertSame($field, $field->required());
         $this->assertTrue($field->get('required'));
@@ -122,7 +122,7 @@ class RelationTest extends TestCase
      */
     public function test_get_column_orderable_defaults_to_belongs_to_state(): void
     {
-        $this->assertFalse((new Relation())->getColumnOrderable());
-        $this->assertTrue(Relation::make('role_id')->belongsTo(new User(), new Role())->getColumnOrderable());
+        $this->assertFalse((new Relation)->getColumnOrderable());
+        $this->assertTrue(Relation::make('role_id')->belongsTo(new User, new Role)->getColumnOrderable());
     }
 }

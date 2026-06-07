@@ -1,7 +1,7 @@
 <?php
 
-use KY\AdminPanel\Traits\Seedable;
 use Illuminate\Database\Seeder;
+use KY\AdminPanel\Traits\Seedable;
 
 class AdminPanelDatabaseSeeder extends Seeder
 {
@@ -20,5 +20,4 @@ class AdminPanelDatabaseSeeder extends Seeder
         $this->seed('SettingsTableSeeder');
         $this->seed('UsersTableSeeder');
     }
-
 }

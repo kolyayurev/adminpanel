@@ -2,15 +2,13 @@
 
 namespace KY\AdminPanel\Http\Controllers;
 
-use AdminPanel, APMedia, Exception;
+use APMedia;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
-use KY\AdminPanel\FormFields\MediaPicker;
 use KY\AdminPanel\Support\Watermark;
-
 
 class MediaController extends Controller
 {
@@ -44,14 +42,14 @@ class MediaController extends Controller
         $thumbnail_names = [];
         $thumbnails = [];
 
-        $thumbnails = json_decode($request->thumbnails,true);
+        $thumbnails = json_decode($request->thumbnails, true);
         $hideThumbnails = $request->get('hide_thumbnails') === 'true';
 
-        if (!empty($thumbnails) && $hideThumbnails) {
-            foreach ($thumbnails as $thumbnail)
-            {
-                if(!empty($thumbnail['name']))
-                $thumbnail_names[] = $thumbnail['name'];
+        if (! empty($thumbnails) && $hideThumbnails) {
+            foreach ($thumbnails as $thumbnail) {
+                if (! empty($thumbnail['name'])) {
+                    $thumbnail_names[] = $thumbnail['name'];
+                }
             }
 
         }
@@ -62,7 +60,7 @@ class MediaController extends Controller
             $folder = '';
         }
 
-        $dir = $this->directory . $folder;
+        $dir = $this->directory.$folder;
 
         $files = [];
 
@@ -81,7 +79,7 @@ class MediaController extends Controller
                     'last_modified' => '',
                 ];
             } else {
-                if (empty($basename) && !config('adminpanel.hidden_files')) {
+                if (empty($basename) && ! config('adminpanel.hidden_files')) {
                     continue;
                 }
                 $filename = Str::afterLast($item->path(), '/');
@@ -100,6 +98,7 @@ class MediaController extends Controller
                 // Its a thumbnail and thumbnails should be hidden
                 if (Str::endsWith($basename, $thumbnail_names)) {
                     $thumbnails[] = $itemArray;
+
                     continue;
                 }
                 $files[] = $itemArray;
@@ -109,13 +108,15 @@ class MediaController extends Controller
         foreach ($files as $key => $file) {
             foreach ($thumbnails as $thumbnail) {
                 if ($file['type'] != 'folder' && Str::startsWith($thumbnail['name'], $file['name'])) {
-                    $thumbnail['thumb_name'] = str_replace($file['name'] . '-', '', $thumbnail['name']);
-                    if(in_array($thumbnail['thumb_name'],$thumbnail_names))
+                    $thumbnail['thumb_name'] = str_replace($file['name'].'-', '', $thumbnail['name']);
+                    if (in_array($thumbnail['thumb_name'], $thumbnail_names)) {
                         $files[$key]['thumbnails'][] = $thumbnail;
+                    }
                 }
             }
         }
         $files = collect($files)->keyBy('name')->sortKeysUsing('strnatcasecmp')->values();
+
         return response()->json($files->toArray());
     }
 
@@ -145,25 +146,24 @@ class MediaController extends Controller
         $this->authorize('view_media');
 
         $path = str_replace('//', '/', Str::finish($request->path, '/'));
-        $thumbnails = json_decode($request->thumbnails,true);
+        $thumbnails = json_decode($request->thumbnails, true);
         $status = true;
         $error = '';
 
         foreach ($request->get('files') as $file) {
             if ($file['type'] == 'folder') {
-                if (!$this->storage->deleteDirectory($file['relative_path'])) {
+                if (! $this->storage->deleteDirectory($file['relative_path'])) {
                     $error = ap_trans('media.error_deleting_folder');
                     $status = false;
                 }
             } else {
 
-                if (!$this->storage->delete($file['relative_path'])){
+                if (! $this->storage->delete($file['relative_path'])) {
                     $error = ap_trans('media.error_deleting_file');
                     $status = false;
                 }
 
-
-                if(!empty($thumbnails)) {
+                if (! empty($thumbnails)) {
                     foreach ($thumbnails as $thumbnail) {
                         $this->storage->delete(APMedia::getImageThumb($file['relative_path'], $thumbnail['name']));
                     }
@@ -191,11 +191,11 @@ class MediaController extends Controller
         $error = '';
 
         foreach ($request->get('files') as $file) {
-            $old_path = $path . $file['filename'];
-            $new_path = $dest . $file['filename'];
+            $old_path = $path.$file['filename'];
+            $new_path = $dest.$file['filename'];
             try {
                 $this->storage->move($old_path, $new_path);
-            } catch (\Exception $ex) {
+            } catch (Exception $ex) {
                 $status = false;
                 $error = $ex->getMessage();
 
@@ -223,7 +223,7 @@ class MediaController extends Controller
 
         $location = "{$this->directory}/{$folderLocation}";
 
-        if (!$this->storage->exists("{$location}/{$newName}")) {
+        if (! $this->storage->exists("{$location}/{$newName}")) {
             $ext = APMedia::getExtFromPath("{$location}/{$filename}");
             if ($this->storage->move("{$location}/{$filename}", "{$location}/{$newName}.{$ext}")) {
                 $status = true;
@@ -239,22 +239,22 @@ class MediaController extends Controller
 
     public function upload(Request $request)
     {
-        //TODO:remake
+        // TODO:remake
         // Check permission
         $this->authorize('view_media');
 
-        $thumbnails = json_decode($request->thumbnails,true);
-        $filename = !empty($request->get('filename')) ? $request->get('filename') : null;
+        $thumbnails = json_decode($request->thumbnails, true);
+        $filename = ! empty($request->get('filename')) ? $request->get('filename') : null;
 
         try {
-            $realPath = '';//$this->storage->getDriver()->getAdapter()->getPathPrefix();
+            $realPath = ''; // $this->storage->getDriver()->getAdapter()->getPathPrefix();
 
             $allowedMimeTypes = config('adminpanel.media.allowed_mimetypes', '*');
-            if ($allowedMimeTypes != '*' && (is_array($allowedMimeTypes) && !in_array($request->file->getMimeType(), $allowedMimeTypes))) {
+            if ($allowedMimeTypes != '*' && (is_array($allowedMimeTypes) && ! in_array($request->file->getMimeType(), $allowedMimeTypes))) {
                 throw new Exception(ap_trans('generic.mimetype_not_allowed'));
             }
 
-            $path = APMedia::storeAs($request->file,$request->upload_path,['filename' => $filename]);
+            $path = APMedia::storeAs($request->file, $request->upload_path, ['filename' => $filename]);
             $path = preg_replace('#/+#', '/', $path);
 
             $imageMimeTypes = [
@@ -262,26 +262,26 @@ class MediaController extends Controller
                 'image/png',
                 'image/gif',
                 'image/bmp',
-//                'image/svg+xml',
+                //                'image/svg+xml',
             ];
             if (in_array($request->file->getMimeType(), $imageMimeTypes)) {
                 $image = Image::make($this->storage->get($path));
 
                 if ($request->file->getClientOriginalExtension() == 'gif') {
-                    copy($request->file->getRealPath(), $realPath . $path);
+                    copy($request->file->getRealPath(), $realPath.$path);
                 } else {
                     $image = $image->orientate();
                     // Add watermark to image
-//                    if ($field && $field->hasWatermark()) {
-//                        $image = $this->addWatermarkToImage($image, $field->getWatermark());
-//                        APMedia::saveImage($image,$path,['quality'=>$field->get('quality'),'filename'=>$field->get('filename')]);
-//                    }
-//                    else
-//                    {
-                        APMedia::saveImage($image,$path);
-//                    }
+                    //                    if ($field && $field->hasWatermark()) {
+                    //                        $image = $this->addWatermarkToImage($image, $field->getWatermark());
+                    //                        APMedia::saveImage($image,$path,['quality'=>$field->get('quality'),'filename'=>$field->get('filename')]);
+                    //                    }
+                    //                    else
+                    //                    {
+                    APMedia::saveImage($image, $path);
+                    //                    }
 
-                    if(!empty($thumbnails)) {
+                    if (! empty($thumbnails)) {
                         foreach ($thumbnails as $thumbnail) {
                             APMedia::thumbnailByArray($path, $thumbnail);
                         }
@@ -314,27 +314,27 @@ class MediaController extends Controller
         $minHeight = $request->get('minHeight');
         $height = $request->get('height');
         $width = $request->get('width');
-        $cropName = $request->get('name',null);
+        $cropName = $request->get('name', null);
 
-        $realPath = '';//$this->storage->getDriver()->getAdapter()->getPathPrefix();
-        $originImagePath = $request->upload_path . '/' . $request->originImageName;
+        $realPath = ''; // $this->storage->getDriver()->getAdapter()->getPathPrefix();
+        $originImagePath = $request->upload_path.'/'.$request->originImageName;
         $originImagePath = preg_replace('#/+#', '/', $originImagePath);
 
         try {
             if ($createMode) {
                 // create a new image with the cpopped data
-                $path = APMedia::crop($originImagePath,['resultWidth'=>$minWidth,'resultHeight'=>$minHeight,'width'=>$width,'height'=>$height,'x'=>$x,'y'=>$y],!empty($cropName) ?$cropName: '_cropped_' . time());
+                $path = APMedia::crop($originImagePath, ['resultWidth' => $minWidth, 'resultHeight' => $minHeight, 'width' => $width, 'height' => $height, 'x' => $x, 'y' => $y], ! empty($cropName) ? $cropName : '_cropped_'.time());
 
-                $thumbnails = json_decode($request->thumbnails,true);
-                //если $cropName не пустое, занчит это пересоздание миниатюры
-                if(empty($cropName) && !empty($thumbnails)) {
+                $thumbnails = json_decode($request->thumbnails, true);
+                // если $cropName не пустое, занчит это пересоздание миниатюры
+                if (empty($cropName) && ! empty($thumbnails)) {
                     foreach ($thumbnails as $thumbnail) {
                         APMedia::thumbnailByArray($path, $thumbnail);
                     }
                 }
             } else {
                 // override the original image
-                APMedia::crop($originImagePath,['resultWidth'=>$minWidth,'resultHeight'=>$minHeight,'width'=>$width,'height'=>$height,'x'=>$x,'y'=>$y],!empty($cropName)?$cropName:null);
+                APMedia::crop($originImagePath, ['resultWidth' => $minWidth, 'resultHeight' => $minHeight, 'width' => $width, 'height' => $height, 'x' => $x, 'y' => $y], ! empty($cropName) ? $cropName : null);
             }
 
             $status = true;
@@ -363,5 +363,4 @@ class MediaController extends Controller
             $watermark->get('y'),
         );
     }
-
 }

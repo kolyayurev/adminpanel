@@ -11,7 +11,6 @@ class BaseModel extends Model
      */
     public function scopeVisible($query)
     {
-        return $query->where('visible',true);
+        return $query->where('visible', true);
     }
-
 }

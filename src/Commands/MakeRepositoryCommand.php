@@ -5,7 +5,6 @@ namespace KY\AdminPanel\Commands;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputOption;
 
 #[AsCommand(name: 'adminpanel:make:repository')]
 class MakeRepositoryCommand extends GeneratorCommand
@@ -27,6 +26,7 @@ class MakeRepositoryCommand extends GeneratorCommand
     protected $signature = 'adminpanel:make:repository {name} {model : app model name}';
 
     protected $type = 'Repository';
+
     /**
      * Get the stub file for the generator.
      *
@@ -53,20 +53,17 @@ class MakeRepositoryCommand extends GeneratorCommand
     /**
      * Build the class with the given name.
      *
-     * @param string $name
-     *
+     * @param  string  $name
      * @return string
      */
     protected function buildClass($name)
     {
         $stub = $this->files->get($this->getStub());
 
-
         return $this->replaceModel($stub)
             ->replaceNamespace($stub, $name)
             ->replaceClass($stub, $name.'Repository');
     }
-
 
     /**
      * Get the default namespace for the class.
@@ -76,20 +73,18 @@ class MakeRepositoryCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\AdminPanel\Repositories';
+        return $rootNamespace.'\AdminPanel\Repositories';
     }
 
     /**
-     *
-     * @param string $stub
-     *
+     * @param  string  $stub
      * @return $this
      */
     protected function replaceModel(&$stub)
     {
 
-        $stub = str_replace('DummyModelNamespace', 'App\Models\\'.($this->argument('model')??$this->argument('name')), $stub);
-        $stub = str_replace('DummyModel',($this->argument('model')??$this->argument('name')), $stub);
+        $stub = str_replace('DummyModelNamespace', 'App\Models\\'.($this->argument('model') ?? $this->argument('name')), $stub);
+        $stub = str_replace('DummyModel', ($this->argument('model') ?? $this->argument('name')), $stub);
 
         return $this;
     }

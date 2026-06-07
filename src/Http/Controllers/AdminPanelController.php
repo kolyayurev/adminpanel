@@ -3,36 +3,31 @@
 namespace KY\AdminPanel\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
-use Intervention\Image\Constraint;
-use Intervention\Image\Facades\Image;
-use KY\AdminPanel\Facades\APMedia;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class AdminPanelController extends Controller
 {
-
     public function dashboard()
     {
-        return !empty(config('adminpanel.redirects.dashboard'))?
+        return ! empty(config('adminpanel.redirects.dashboard')) ?
             redirect(config('adminpanel.redirects.dashboard'))
-            :view('adminpanel::pages.dashboard');
+            : view('adminpanel::pages.dashboard');
     }
 
     /**
      * Get Modal.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function getModal(Request $request)
     {
         $data = $request->extraData['existData'] ?? $request->existData ?? [];
+
         return response()->json([
             'status' => true,
-            'template' => view($request->modalName, ['data' => $data])->render()
+            'template' => view($request->modalName, ['data' => $data])->render(),
         ]);
     }
 
@@ -67,11 +62,10 @@ class AdminPanelController extends Controller
     /**
      * Normalize relative directories in a path.
      *
-     * @param string $path
+     * @param  string  $path
+     * @return string
      *
      * @throws LogicException
-     *
-     * @return string
      */
     protected static function normalizeRelativePath($path)
     {
@@ -84,20 +78,20 @@ class AdminPanelController extends Controller
             switch ($part) {
                 case '':
                 case '.':
-                break;
+                    break;
 
-            case '..':
-                if (empty($parts)) {
-                    throw new LogicException(
-                        'Path is outside of the defined root, path: [' . $path . ']'
-                    );
-                }
-                array_pop($parts);
-                break;
+                case '..':
+                    if (empty($parts)) {
+                        throw new LogicException(
+                            'Path is outside of the defined root, path: ['.$path.']'
+                        );
+                    }
+                    array_pop($parts);
+                    break;
 
-            default:
-                $parts[] = $part;
-                break;
+                default:
+                    $parts[] = $part;
+                    break;
             }
         }
 
@@ -107,11 +101,11 @@ class AdminPanelController extends Controller
     /**
      * Removes unprintable characters and invalid unicode characters.
      *
-     * @param string $path
-     *
+     * @param  string  $path
      * @return string $path
      */
-    protected static function removeFunkyWhiteSpace($path) {
+    protected static function removeFunkyWhiteSpace($path)
+    {
         // We do this check in a loop, since removing invalid unicode characters
         // can lead to new characters being created.
         while (preg_match('#\p{C}+|^\./#u', $path)) {
@@ -120,5 +114,4 @@ class AdminPanelController extends Controller
 
         return $path;
     }
-
 }

@@ -2,21 +2,14 @@
 
 namespace KY\AdminPanel\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
-use Intervention\Image\Constraint;
-use Intervention\Image\Facades\Image;
-use KY\AdminPanel\Facades\APMedia;
+use Illuminate\Support\Facades\Artisan;
 use Rap2hpoutre\LaravelLogViewer\LaravelLogViewer;
+
 class ToolsController extends Controller
 {
-
     /**
-     * @var \Illuminate\Http\Request
+     * @var Request
      */
     protected $request;
 
@@ -27,8 +20,8 @@ class ToolsController extends Controller
 
     public function __construct()
     {
-//        $this->authorize('view_tools');
-        $this->logViewer = new LaravelLogViewer();
+        //        $this->authorize('view_tools');
+        $this->logViewer = new LaravelLogViewer;
         $this->request = app('request');
     }
 
@@ -62,7 +55,7 @@ class ToolsController extends Controller
         // get the full list of artisan commands and store the output
         $commands = $this->getArtisanCommands();
 
-        return view('adminpanel::tools.commands',compact('commands','artisanOutput'));
+        return view('adminpanel::tools.commands', compact('commands', 'artisanOutput'));
     }
 
     public function logs(Request $request)
@@ -79,25 +72,25 @@ class ToolsController extends Controller
             app('files')->delete($this->logViewer->pathToLogFile(base64_decode($this->request->input('del'))));
 
             return redirect($this->request->url().'?logs=true')->with([
-                'message'    => __('voyager::compass.logs.delete_success').' '.base64_decode($this->request->input('del')),
+                'message' => __('voyager::compass.logs.delete_success').' '.base64_decode($this->request->input('del')),
                 'alert-type' => 'success',
             ]);
         } elseif ($this->request->has('delall')) {
             foreach ($this->logViewer->getFiles(true) as $file) {
                 app('files')->delete($this->logViewer->pathToLogFile($file));
             }
+
             return redirect($this->request->url().'?logs=true')->with([
-                'message'    => __('voyager::compass.logs.delete_all_success'),
+                'message' => __('voyager::compass.logs.delete_all_success'),
                 'alert-type' => 'success',
             ]);
         }
-
 
         $logs = $this->logViewer->all();
         $files = $this->logViewer->getFiles(true);
         $currentFile = $this->logViewer->getFileName();
 
-        return view('adminpanel::tools.logs',compact('logs', 'files', 'currentFile'));
+        return view('adminpanel::tools.logs', compact('logs', 'files', 'currentFile'));
     }
 
     private function download($data)

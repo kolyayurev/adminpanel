@@ -5,7 +5,6 @@ namespace KY\AdminPanel\Commands;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputOption;
 
 #[AsCommand(name: 'adminpanel:make:datatype')]
 class MakeDataTypeCommand extends GeneratorCommand
@@ -27,6 +26,7 @@ class MakeDataTypeCommand extends GeneratorCommand
     protected $signature = 'adminpanel:make:datatype {name} {repository : repository class name}';
 
     protected $type = 'DataType';
+
     /**
      * Get the stub file for the generator.
      *
@@ -53,20 +53,18 @@ class MakeDataTypeCommand extends GeneratorCommand
     /**
      * Build the class with the given name.
      *
-     * @param string $name
-     *
+     * @param  string  $name
      * @return string
      */
     protected function buildClass($name)
     {
         $stub = $this->files->get($this->getStub());
 
-        return $this->replaceAttributes($stub,$name)
+        return $this->replaceAttributes($stub, $name)
             ->replaceRepository($stub)
             ->replaceNamespace($stub, $name)
             ->replaceClass($stub, $name.'DataType');
     }
-
 
     /**
      * Get the default namespace for the class.
@@ -76,30 +74,28 @@ class MakeDataTypeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\AdminPanel\DataTypes';
+        return $rootNamespace.'\AdminPanel\DataTypes';
     }
 
-    protected function replaceAttributes(&$stub,$name)
+    protected function replaceAttributes(&$stub, $name)
     {
         $stub = str_replace('DummyTitle', Str::title($this->argument('name')), $stub);
-        $stub = str_replace('DummySlug',Str::slug(Str::plural($this->argument('name'))), $stub);
+        $stub = str_replace('DummySlug', Str::slug(Str::plural($this->argument('name'))), $stub);
 
         return $this;
     }
 
     /**
-     *
-     * @param string $stub
-     *
+     * @param  string  $stub
      * @return $this
      */
     protected function replaceRepository(&$stub)
     {
         $rootNamespace = $this->rootNamespace();
 
-        $repositoryClass = ($this->argument('repository')??$this->argument('name')).'Repository';
+        $repositoryClass = ($this->argument('repository') ?? $this->argument('name')).'Repository';
         $stub = str_replace('DummyRepositoryNamespace', $rootNamespace.'AdminPanel\Repositories\\'.$repositoryClass, $stub);
-        $stub = str_replace('DummyRepository',$repositoryClass, $stub);
+        $stub = str_replace('DummyRepository', $repositoryClass, $stub);
 
         return $this;
     }

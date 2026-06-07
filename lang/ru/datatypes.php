@@ -1,10 +1,11 @@
 <?php
+
 return [
     'common_titles' => [
-        'index'=>':title',
-        'create'=>'Создание',
+        'index' => ':title',
+        'create' => 'Создание',
         'show' => 'Просмотр',
-        'edit'=> 'Редактирование' ,
-        'order'=> 'Сортировка' ,
+        'edit' => 'Редактирование',
+        'order' => 'Сортировка',
     ],
 ];

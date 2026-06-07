@@ -2,7 +2,4 @@
 
 namespace KY\AdminPanel\Menus;
 
-class AdminMenu extends BaseMenu
-{
-
-}
+class AdminMenu extends BaseMenu {}

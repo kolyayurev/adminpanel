@@ -26,7 +26,7 @@ class ConcreteRepositoriesTest extends TestCase
      */
     public function test_redirect_repository_model_class_returns_redirect_model(): void
     {
-        $this->assertSame(Redirect::class, (new RedirectRepository())->modelClass());
+        $this->assertSame(Redirect::class, (new RedirectRepository)->modelClass());
     }
 
     /**
@@ -34,7 +34,7 @@ class ConcreteRepositoriesTest extends TestCase
      */
     public function test_role_repository_model_class_returns_role_model(): void
     {
-        $this->assertSame(Role::class, (new RoleRepository())->modelClass());
+        $this->assertSame(Role::class, (new RoleRepository)->modelClass());
     }
 
     /**
@@ -42,7 +42,7 @@ class ConcreteRepositoriesTest extends TestCase
      */
     public function test_sef_repository_model_class_returns_sef_model(): void
     {
-        $this->assertSame(Sef::class, (new SefRepository())->modelClass());
+        $this->assertSame(Sef::class, (new SefRepository)->modelClass());
     }
 
     /**
@@ -50,7 +50,7 @@ class ConcreteRepositoriesTest extends TestCase
      */
     public function test_seo_repository_model_class_returns_seo_model(): void
     {
-        $this->assertSame(Seo::class, (new SeoRepository())->modelClass());
+        $this->assertSame(Seo::class, (new SeoRepository)->modelClass());
     }
 
     /**
@@ -58,7 +58,7 @@ class ConcreteRepositoriesTest extends TestCase
      */
     public function test_setting_repository_model_class_returns_setting_model(): void
     {
-        $this->assertSame(Setting::class, (new SettingRepository())->modelClass());
+        $this->assertSame(Setting::class, (new SettingRepository)->modelClass());
     }
 
     /**
@@ -66,6 +66,6 @@ class ConcreteRepositoriesTest extends TestCase
      */
     public function test_user_repository_model_class_returns_user_model(): void
     {
-        $this->assertSame(User::class, (new UserRepository())->modelClass());
+        $this->assertSame(User::class, (new UserRepository)->modelClass());
     }
 }

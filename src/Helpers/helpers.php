@@ -1,130 +1,144 @@
 <?php
 
+use Illuminate\Support\Collection;
+use KY\AdminPanel\Contracts\BlockContract;
+use KY\AdminPanel\Facades\AdminPanel;
 
-if (!function_exists('docs_path')) {
+if (! function_exists('docs_path')) {
     function docs_path()
     {
         return dirname(__DIR__, 2).'/docs/';
     }
 }
 
-if (!function_exists('setting')) {
+if (! function_exists('setting')) {
     function setting($key, $default = null, $locale = null)
     {
-        return KY\AdminPanel\Facades\AdminPanel::setting($key, $default,$locale);
+        return AdminPanel::setting($key, $default, $locale);
     }
 }
 
-if (!function_exists('adminpanel_asset')) {
+if (! function_exists('adminpanel_asset')) {
     function adminpanel_asset($path, $secure = null)
     {
         return route('adminpanel.assets').'?path='.urlencode($path);
     }
 }
 
-//if (!function_exists('menu')) {
+// if (!function_exists('menu')) {
 //    function menu($menuName,$type = null)
 //    {
 //        return KY\AdminPanel\Facades\AdminPanel::getMenu($menuName)->display($type);
 //    }
-//}
+// }
 
-if (!function_exists('name2id')) {
+if (! function_exists('name2id')) {
     function name2id($name)
     {
-        return Str::snake(str_replace(['[',']'], ['_',''], $name));
+        return Str::snake(str_replace(['[', ']'], ['_', ''], $name));
     }
 }
 
-if (!function_exists('array2object')) {
+if (! function_exists('array2object')) {
 
     function array2object($array)
     {
         $object = $array;
 
-        if(is_array($array))
-            $object = json_decode(json_encode($array), FALSE);
+        if (is_array($array)) {
+            $object = json_decode(json_encode($array), false);
+        }
 
         return $object;
     }
 }
 
-if (!function_exists('string2array_of_objects')) {
+if (! function_exists('string2array_of_objects')) {
     function string2array_of_objects($string)
     {
         $object = $string;
 
-        if(is_string($string))
-            $object = json_decode($string, FALSE);
+        if (is_string($string)) {
+            $object = json_decode($string, false);
+        }
 
         return $object;
     }
 }
 
-if (!function_exists('string2array')) {
+if (! function_exists('string2array')) {
     function string2array($string)
     {
         $object = $string;
 
-        if(is_string($string))
-            $object = json_decode($string, TRUE);
+        if (is_string($string)) {
+            $object = json_decode($string, true);
+        }
 
         return $object;
     }
 }
 
+if (! function_exists('printString')) {
 
-if (!function_exists('printString')) {
-
-    function printString($string,$default="")
+    function printString($string, $default = '')
     {
-        if($string==null || !$string)
-            $string=$default;
+        if ($string == null || ! $string) {
+            $string = $default;
+        }
+
         return json_encode($string);
     }
 }
 
-if (!function_exists('printArray')) {
+if (! function_exists('printArray')) {
 
-    function printArray($array,$default=[])
+    function printArray($array, $default = [])
     {
-        if($array==null || !$array)
-            $array=$default;
-        return is_array($array)?json_encode($array):$array;
+        if ($array == null || ! $array) {
+            $array = $default;
+        }
+
+        return is_array($array) ? json_encode($array) : $array;
     }
 }
 
-if (!function_exists('printObject')) {
+if (! function_exists('printObject')) {
 
     function printObject($obj)
     {
-        if($obj==null || !$obj)
-            $obj=new stdClass();
+        if ($obj == null || ! $obj) {
+            $obj = new stdClass;
+        }
 
-        return is_string($obj)? $obj :json_encode($obj);
+        return is_string($obj) ? $obj : json_encode($obj);
     }
 }
-if (!function_exists('printInt')) {
+if (! function_exists('printInt')) {
 
-    function printInt($number,$default=null)
+    function printInt($number, $default = null)
     {
-        $number = (int)$number;
-        if($number==null || !$number)
-            $number=$default;
+        $number = (int) $number;
+        if ($number == null || ! $number) {
+            $number = $default;
+        }
+
         return json_encode($number);
     }
 }
-if (!function_exists('printFloat')) {
+if (! function_exists('printFloat')) {
 
-    function printFloat($number,$default=null)
+    function printFloat($number, $default = null)
     {
-        $number = (float)$number;
-        if($number==null || !$number)
-            $number=$default;
+        $number = (float) $number;
+        if ($number == null || ! $number) {
+            $number = $default;
+        }
+
         return json_encode($number);
     }
 }
-if (!function_exists('printBool')) {
+if (! function_exists('printBool')) {
 
     function printBool($bool)
     {
@@ -132,7 +146,7 @@ if (!function_exists('printBool')) {
     }
 }
 
-if (!function_exists('get_file_name')) {
+if (! function_exists('get_file_name')) {
     function get_file_name($name)
     {
         preg_match('/(_)([0-9])+$/', $name, $matches);
@@ -144,33 +158,31 @@ if (!function_exists('get_file_name')) {
     }
 }
 
-
-if (!function_exists('fields_in_block')) {
-    function fields_in_block(\Illuminate\Support\Collection $fields,\KY\AdminPanel\Contracts\BlockContract $block) : bool
+if (! function_exists('fields_in_block')) {
+    function fields_in_block(Collection $fields, BlockContract $block): bool
     {
-        if(!$block->isVisibleOnlyWhenHasFields())
+        if (! $block->isVisibleOnlyWhenHasFields()) {
             return true;
+        }
 
-        $fieldsName = $fields->map(function ($f){
+        $fieldsName = $fields->map(function ($f) {
             return $f->get('name');
         })->toArray();
         $blockFieldsName = $block->getFieldsName();
 
-        foreach ($fieldsName as $fieldName){
-            if($blockFieldsName->has($fieldsName))
-            {
+        foreach ($fieldsName as $fieldName) {
+            if ($blockFieldsName->has($fieldsName)) {
                 return true;
             }
         }
+
         return false;
     }
 }
 
-if (!function_exists('vue_instance_name')) {
-    function vue_instance_name($field, $model) : string
+if (! function_exists('vue_instance_name')) {
+    function vue_instance_name($field, $model): string
     {
-        return 'vue_'.$field->get('name').(is_field_translatable($model, $field)?'_i18n ':'');
+        return 'vue_'.$field->get('name').(is_field_translatable($model, $field) ? '_i18n ' : '');
     }
 }
-
-

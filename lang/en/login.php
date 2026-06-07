@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'loggingin'    => 'Logging in',
+    'loggingin' => 'Logging in',
     'signin_below' => 'Sign In Below:',
-    'button'    => 'Enter',
+    'button' => 'Enter',
 ];

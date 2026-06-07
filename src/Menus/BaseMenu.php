@@ -4,7 +4,6 @@ namespace KY\AdminPanel\Menus;
 
 use Illuminate\Support\Str;
 use KY\AdminPanel\Contracts\MenuContract;
-use KY\AdminPanel\Contracts\MenuInterface;
 
 class BaseMenu implements MenuContract
 {
@@ -12,20 +11,21 @@ class BaseMenu implements MenuContract
 
     public function items()
     {
-        return  collect([
+        return collect([
 
         ]);
     }
 
-    public function getSlug():string
+    public function getSlug(): string
     {
         if (empty($this->slug)) {
             $this->slug = Str::snake($this->getName());
         }
+
         return $this->slug;
     }
 
-    public function getName():string
+    public function getName(): string
     {
         $name = class_basename($this);
 

@@ -2,15 +2,15 @@
 
 namespace KY\AdminPanel;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Illuminate\Filesystem\Filesystem;
 use KY\AdminPanel\Contracts\DataTypeContract;
 use KY\AdminPanel\Contracts\MenuContract;
 use KY\AdminPanel\Contracts\PageTypeContract;
 use KY\AdminPanel\Models\Permission;
-use KY\AdminPanel\Models\Role;
 use KY\AdminPanel\Models\Redirect;
+use KY\AdminPanel\Models\Role;
 use KY\AdminPanel\Models\Sef;
 use KY\AdminPanel\Models\Seo;
 use KY\AdminPanel\Models\Setting;
@@ -20,7 +20,9 @@ use KY\AdminPanel\Models\User;
 class AdminPanel
 {
     protected $version;
+
     protected $branch;
+
     protected $filesystem;
 
     protected array $menus = [];
@@ -32,16 +34,15 @@ class AdminPanel
     public $setting_cache = null;
 
     protected $models = [
-        'Redirect'    => Redirect::class,
-        'Permission'  => Permission::class,
-        'Role'        => Role::class,
-        'Setting'     => Setting::class,
-        'Sef'         => Sef::class,
-        'Seo'         => Seo::class,
-        'User'        => User::class,
+        'Redirect' => Redirect::class,
+        'Permission' => Permission::class,
+        'Role' => Role::class,
+        'Setting' => Setting::class,
+        'Sef' => Sef::class,
+        'Seo' => Seo::class,
+        'User' => User::class,
         'Translation' => Translation::class,
     ];
-
 
     public function __construct()
     {
@@ -67,7 +68,7 @@ class AdminPanel
 
         $class = get_class($object);
 
-        if (isset($this->models[Str::studly($name)]) && !$object instanceof $this->models[Str::studly($name)]) {
+        if (isset($this->models[Str::studly($name)]) && ! $object instanceof $this->models[Str::studly($name)]) {
             throw new \Exception("[{$class}] must be instance of [{$this->models[Str::studly($name)]}].");
         }
 
@@ -80,7 +81,7 @@ class AdminPanel
     {
         $isModelTranslatable = is_translatable(AdminPanel::model('Setting'));
 
-        if($isModelTranslatable && is_null($locale)){
+        if ($isModelTranslatable && is_null($locale)) {
             $locale = app()->currentLocale();
             $key = $key.'_'.$locale;
         }
@@ -91,7 +92,6 @@ class AdminPanel
             return Cache::tags('settings')->get($key);
         }
 
-
         if ($this->setting_cache === null) {
             if ($globalCache) {
                 // A key is requested that is not in the cache
@@ -100,7 +100,7 @@ class AdminPanel
                 Cache::tags('settings')->flush();
             }
             $settings = self::model('Setting')->get();
-            if($isModelTranslatable){
+            if ($isModelTranslatable) {
 
                 $defaultLocale = config('adminpanel.multilingual.default', 'ru');
                 $locales = config('adminpanel.multilingual.locales', [$defaultLocale]);
@@ -108,9 +108,9 @@ class AdminPanel
                 $settings->load('translations');
 
                 foreach ($settings as $setting) {
-                    foreach ($locales as $l){
+                    foreach ($locales as $l) {
                         $settingKey = $setting->key.'_'.$l;
-                        $value = $setting->getTranslatedAttribute('value',$l);
+                        $value = $setting->getTranslatedAttribute('value', $l);
                         @$this->setting_cache[$settingKey] = $value;
 
                         if ($globalCache) {
@@ -118,8 +118,7 @@ class AdminPanel
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 foreach ($settings as $setting) {
                     @$this->setting_cache[$setting->key] = $setting->value;
 
@@ -129,8 +128,8 @@ class AdminPanel
                 }
             }
 
-
         }
+
         return @$this->setting_cache[$key] ?: $default;
     }
 
@@ -146,7 +145,7 @@ class AdminPanel
 
     public function addMenu($handler)
     {
-        if (!$handler instanceof MenuContract) {
+        if (! $handler instanceof MenuContract) {
             $handler = app($handler);
         }
 
@@ -164,7 +163,7 @@ class AdminPanel
 
     public function addPageType($handler)
     {
-        if (!$handler instanceof PageTypeContract) {
+        if (! $handler instanceof PageTypeContract) {
             $handler = app($handler);
         }
 
@@ -175,17 +174,17 @@ class AdminPanel
 
     public function getPageType($slug)
     {
-        return  array_key_exists($slug,$this->pageTypes)?$this->pageTypes[$slug]:null;
+        return array_key_exists($slug, $this->pageTypes) ? $this->pageTypes[$slug] : null;
     }
 
     public function getPageTypes()
     {
-        return  collect($this->pageTypes);
+        return collect($this->pageTypes);
     }
 
     public function addDataType($handler)
     {
-        if (!$handler instanceof DataTypeContract) {
+        if (! $handler instanceof DataTypeContract) {
             $handler = app($handler);
         }
 
@@ -196,19 +195,19 @@ class AdminPanel
 
     public function getDataType($slug)
     {
-        return  array_key_exists($slug,$this->dataTypes)?$this->dataTypes[$slug]:null;
+        return array_key_exists($slug, $this->dataTypes) ? $this->dataTypes[$slug] : null;
     }
 
     public function getDataTypes()
     {
-        return  collect($this->dataTypes);
+        return collect($this->dataTypes);
     }
-
 
     public function getVersion()
     {
         return $this->version;
     }
+
     public function getBranch()
     {
         return $this->branch;

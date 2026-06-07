@@ -15,7 +15,7 @@ class TextEditorTest extends TestCase
      */
     public function test_height_sets_height_attribute(): void
     {
-        $field = new TextEditor();
+        $field = new TextEditor;
 
         $this->assertSame($field, $field->height(420));
         $this->assertSame(420, $field->get('height'));
@@ -26,7 +26,7 @@ class TextEditorTest extends TestCase
      */
     public function test_content_css_camel_case_sets_content_css_attribute(): void
     {
-        $field = new TextEditor();
+        $field = new TextEditor;
 
         $this->assertSame($field, $field->contentCss('/editor.css'));
         $this->assertSame('/editor.css', $field->get('content_css'));
@@ -37,7 +37,7 @@ class TextEditorTest extends TestCase
      */
     public function test_content_css_snake_case_sets_content_css_attribute(): void
     {
-        $field = new TextEditor();
+        $field = new TextEditor;
 
         $this->assertSame($field, $field->content_css('/editor.css'));
         $this->assertSame('/editor.css', $field->get('content_css'));
@@ -48,7 +48,7 @@ class TextEditorTest extends TestCase
      */
     public function test_toolbar2_sets_toolbar2_attribute(): void
     {
-        $field = new TextEditor();
+        $field = new TextEditor;
 
         $this->assertSame($field, $field->toolbar2('bold italic'));
         $this->assertSame('bold italic', $field->get('toolbar2'));

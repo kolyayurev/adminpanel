@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use KY\AdminPanel\Database\Factories\SettingFactory;
 use KY\AdminPanel\Traits\Translatable;
-use Str;
 
 /**
  * @property int $id
@@ -24,14 +23,13 @@ class Setting extends Model
 
     protected $translatable = ['value'];
 
-//    protected $translatableMode = ['settings'];
+    //    protected $translatableMode = ['settings'];
 
     protected $table = 'settings';
 
     protected $guarded = [];
 
     public $timestamps = false;
-
 
     public function getTranslatableAttributes(): array
     {
@@ -41,22 +39,21 @@ class Setting extends Model
     /**
      * Prepare translations and set default locale field value.
      *
-     * @param object $request
-     * @param string $setting
+     * @param  object  $request
      * @return false|array translations
      */
     public function prepareSettingTranslation($request, string $setting): false|array
     {
-        if (!$request->input($setting . '_i18n')) {
+        if (! $request->input($setting.'_i18n')) {
             return false;
         }
 
-        $trans = json_decode($request->input($setting . '_i18n'), true);
+        $trans = json_decode($request->input($setting.'_i18n'), true);
 
         // Set the default local value
         $request->merge([$setting => $trans[config('adminpanel.multilingual.default', 'ru')]]);
 
-        unset($request[$setting . '_i18n']);
+        unset($request[$setting.'_i18n']);
 
         return $this->setAttributeTranslations(
             $setting,
@@ -68,7 +65,7 @@ class Setting extends Model
     {
         $response = [];
 
-        if (!$this->relationLoaded('translations')) {
+        if (! $this->relationLoaded('translations')) {
             $this->load('translations');
         }
 
@@ -82,6 +79,7 @@ class Setting extends Model
 
             if ($locale == $default) {
                 $this->value = $translations[$locale];
+
                 continue;
             }
 

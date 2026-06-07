@@ -2,8 +2,8 @@
 
 namespace KY\AdminPanel\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
 use KY\AdminPanel\Contracts\UserContract;
 use KY\AdminPanel\Database\Factories\UserFactory;
@@ -24,8 +24,8 @@ use KY\AdminPanel\Traits\AdminPanelUser;
  */
 class User extends Authenticatable implements UserContract
 {
-    use HasFactory;
     use AdminPanelUser;
+    use HasFactory;
 
     protected $guarded = [];
 
@@ -44,6 +44,4 @@ class User extends Authenticatable implements UserContract
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-
 }

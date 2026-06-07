@@ -26,10 +26,10 @@ class Redirect extends Model
     protected $fillable = [
         'from',
         'to',
-        'status'
+        'status',
     ];
 
     protected $casts = [
-        'get_params' => 'array'
+        'get_params' => 'array',
     ];
 }

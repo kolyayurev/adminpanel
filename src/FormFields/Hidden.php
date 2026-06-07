@@ -2,7 +2,4 @@
 
 namespace KY\AdminPanel\FormFields;
 
-class Hidden extends BaseFormField
-{
-
-}
+class Hidden extends BaseFormField {}

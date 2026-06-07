@@ -13,32 +13,27 @@ use KY\AdminPanel\Traits\Makeable;
 
 abstract class BaseFilter implements FilterContract
 {
-    use Makeable,HasDynamicCall;
+    use HasDynamicCall,Makeable;
 
     protected ?string $name = null;
-    protected ?string $placeholder = null;
-    protected string $template;
-    protected $handler;
 
+    protected ?string $placeholder = null;
+
+    protected string $template;
+
+    protected $handler;
 
     protected array $attributes = [];
 
-
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string|null $name
-     * @return BaseFilter
-     */
     public function name(?string $name): BaseFilter
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -49,7 +44,7 @@ abstract class BaseFilter implements FilterContract
 
     public function width(string $width): self
     {
-        return $this->set('width',$width);
+        return $this->set('width', $width);
     }
 
     public function getPlaceholder(): ?string
@@ -59,9 +54,8 @@ abstract class BaseFilter implements FilterContract
 
     public function placeholder(?string $placeholder): self
     {
-        return $this->set('placeholder',$placeholder);
+        return $this->set('placeholder', $placeholder);
     }
-
 
     public function getTemplate(): string
     {
@@ -70,28 +64,25 @@ abstract class BaseFilter implements FilterContract
 
     public function template(string $template): self
     {
-        return $this->set('template',$template);
+        return $this->set('template', $template);
     }
 
-    public function getAttributes() : array
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
 
     /**
-     * @param array $attributes
      * @return $this
      */
     public function attributes(array $attributes): BaseAction
     {
         $this->attributes = $attributes;
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function convertAttributesToHtml() :string
+    public function convertAttributesToHtml(): string
     {
         $result = '';
 
@@ -103,27 +94,27 @@ abstract class BaseFilter implements FilterContract
     }
 
     /**
-     * @param mixed $handler
+     * @param  mixed  $handler
      * @return BaseFilter
      */
     public function setHandler($handler)
     {
         $this->handler = $handler;
+
         return $this;
     }
 
-    public function hasHandler() : bool
+    public function hasHandler(): bool
     {
         return $this->handler instanceof Closure;
     }
 
-     public function search(Request $request, DataTypeContract $dataType, FormFieldContract $column, $query) : void
-     {
-         if($this->hasHandler())
-         {
-             $handler = $this->handler;
-             $handler($request, $dataType,$column, $query);
-         }
+    public function search(Request $request, DataTypeContract $dataType, FormFieldContract $column, $query): void
+    {
+        if ($this->hasHandler()) {
+            $handler = $this->handler;
+            $handler($request, $dataType, $column, $query);
+        }
 
-     }
- }
+    }
+}

@@ -5,7 +5,6 @@ namespace KY\AdminPanel\Commands;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputOption;
 
 #[AsCommand(name: 'adminpanel:make:datacontroller')]
 class MakeDataControllerCommand extends GeneratorCommand
@@ -27,6 +26,7 @@ class MakeDataControllerCommand extends GeneratorCommand
     protected $signature = 'adminpanel:make:datacontroller {name} {datatype : registered slug of DataType }';
 
     protected $type = 'DataController';
+
     /**
      * Get the stub file for the generator.
      *
@@ -53,8 +53,7 @@ class MakeDataControllerCommand extends GeneratorCommand
     /**
      * Build the class with the given name.
      *
-     * @param string $name
-     *
+     * @param  string  $name
      * @return string
      */
     protected function buildClass($name)
@@ -66,7 +65,6 @@ class MakeDataControllerCommand extends GeneratorCommand
             ->replaceClass($stub, $name.'DataController');
     }
 
-
     /**
      * Get the default namespace for the class.
      *
@@ -75,12 +73,12 @@ class MakeDataControllerCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\AdminPanel\Controllers';
+        return $rootNamespace.'\AdminPanel\Controllers';
     }
 
     protected function replaceDataTypeSlug(&$stub)
     {
-        $stub = str_replace('DummyDataTypeSlug',  Str::slug(Str::plural($this->argument('datatype') ?? $this->argument('name'))), $stub);
+        $stub = str_replace('DummyDataTypeSlug', Str::slug(Str::plural($this->argument('datatype') ?? $this->argument('name'))), $stub);
 
         return $this;
     }

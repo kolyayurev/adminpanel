@@ -15,7 +15,7 @@ class TabsTest extends TestCase
      */
     public function test_get_id_returns_default_id(): void
     {
-        $this->assertSame('tabs', (new Tabs())->getId());
+        $this->assertSame('tabs', (new Tabs)->getId());
     }
 
     /**
@@ -24,7 +24,7 @@ class TabsTest extends TestCase
      */
     public function test_id_sets_custom_id(): void
     {
-        $tabs = new Tabs();
+        $tabs = new Tabs;
 
         $this->assertSame($tabs, $tabs->id('settings'));
         $this->assertSame('settings', $tabs->getId());

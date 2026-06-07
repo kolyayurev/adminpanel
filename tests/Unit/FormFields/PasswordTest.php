@@ -17,9 +17,9 @@ class PasswordTest extends TestCase
      */
     public function test_prepare_value_hashes_non_empty_password(): void
     {
-        $field = new Password();
+        $field = new Password;
 
-        $hash = $field->prepareValue('secret', new Request(), (object) []);
+        $hash = $field->prepareValue('secret', new Request, (object) []);
 
         $this->assertTrue(Hash::check('secret', $hash));
     }
@@ -32,7 +32,7 @@ class PasswordTest extends TestCase
         $field = Password::make('password');
         $model = (object) ['password' => 'existing-hash'];
 
-        $this->assertSame('existing-hash', $field->prepareValue('', new Request(), $model));
+        $this->assertSame('existing-hash', $field->prepareValue('', new Request, $model));
     }
 
     /**
@@ -43,7 +43,7 @@ class PasswordTest extends TestCase
         $field = Password::make('password')->default('default-secret');
         $model = (object) ['password' => 'existing-hash'];
 
-        $hash = $field->prepareValue('', new Request(), $model);
+        $hash = $field->prepareValue('', new Request, $model);
 
         $this->assertTrue(Hash::check('default-secret', $hash));
     }

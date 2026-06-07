@@ -15,7 +15,7 @@ class AttributableTest extends TestCase
      */
     public function test_call_sets_attribute_from_first_argument(): void
     {
-        $element = new AttributableTestElement();
+        $element = new AttributableTestElement;
 
         $result = $element->placeholder('Enter title');
 
@@ -28,7 +28,7 @@ class AttributableTest extends TestCase
      */
     public function test_call_sets_true_when_argument_missing(): void
     {
-        $element = new AttributableTestElement();
+        $element = new AttributableTestElement;
 
         $element->required();
 
@@ -40,7 +40,7 @@ class AttributableTest extends TestCase
      */
     public function test_call_keeps_closure_argument(): void
     {
-        $element = new AttributableTestElement();
+        $element = new AttributableTestElement;
         $closure = static fn (): string => 'resolved';
 
         $element->value($closure);
@@ -53,7 +53,7 @@ class AttributableTest extends TestCase
      */
     public function test_set_stores_attribute(): void
     {
-        $element = new AttributableTestElement();
+        $element = new AttributableTestElement;
 
         $result = $element->set('name', 'title');
 
@@ -66,7 +66,7 @@ class AttributableTest extends TestCase
      */
     public function test_get_returns_attribute_or_default(): void
     {
-        $element = new AttributableTestElement();
+        $element = new AttributableTestElement;
         $element->set('name', 'title');
 
         $this->assertSame('title', $element->get('name'));
@@ -78,7 +78,7 @@ class AttributableTest extends TestCase
      */
     public function test_get_attributes_returns_all_attributes(): void
     {
-        $element = new AttributableTestElement();
+        $element = new AttributableTestElement;
         $element->set('name', 'title');
         $element->set('required');
 

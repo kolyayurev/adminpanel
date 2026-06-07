@@ -15,7 +15,7 @@ class CollapseTest extends TestCase
      */
     public function test_get_id_builds_id_from_header(): void
     {
-        $collapse = (new Collapse())->header('Main Settings');
+        $collapse = (new Collapse)->header('Main Settings');
 
         $this->assertSame('main-settings', $collapse->getId());
     }
@@ -25,7 +25,7 @@ class CollapseTest extends TestCase
      */
     public function test_get_id_generates_stable_id_without_header(): void
     {
-        $collapse = new Collapse();
+        $collapse = new Collapse;
 
         $id = $collapse->getId();
 

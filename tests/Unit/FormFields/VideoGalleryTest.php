@@ -16,7 +16,7 @@ class VideoGalleryTest extends TestCase
      */
     public function test_construct_sets_default_media_pickers_and_title_field(): void
     {
-        $field = new VideoGallery();
+        $field = new VideoGallery;
 
         $this->assertInstanceOf(MediaPicker::class, $field->get('videoMediaPicker'));
         $this->assertInstanceOf(MediaPicker::class, $field->get('previewMediaPicker'));
@@ -37,7 +37,7 @@ class VideoGalleryTest extends TestCase
      */
     public function test_video_media_picker_sets_video_media_picker(): void
     {
-        $field = new VideoGallery();
+        $field = new VideoGallery;
         $mediaPicker = MediaPicker::make('video');
 
         $this->assertSame($field, $field->videoMediaPicker($mediaPicker));
@@ -49,7 +49,7 @@ class VideoGalleryTest extends TestCase
      */
     public function test_preview_media_picker_sets_preview_media_picker(): void
     {
-        $field = new VideoGallery();
+        $field = new VideoGallery;
         $mediaPicker = MediaPicker::make('preview');
 
         $this->assertSame($field, $field->previewMediaPicker($mediaPicker));
@@ -61,7 +61,7 @@ class VideoGalleryTest extends TestCase
      */
     public function test_min_sets_min_attribute(): void
     {
-        $field = new VideoGallery();
+        $field = new VideoGallery;
 
         $this->assertSame($field, $field->min(1));
         $this->assertSame(1, $field->get('min'));
@@ -72,7 +72,7 @@ class VideoGalleryTest extends TestCase
      */
     public function test_max_sets_max_attribute(): void
     {
-        $field = new VideoGallery();
+        $field = new VideoGallery;
 
         $this->assertSame($field, $field->max(3));
         $this->assertSame(3, $field->get('max'));

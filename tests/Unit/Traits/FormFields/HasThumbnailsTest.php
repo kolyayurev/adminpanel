@@ -19,7 +19,7 @@ class HasThumbnailsTest extends TestCase
      */
     public function test_has_thumbnails_returns_false_for_empty_collection(): void
     {
-        $element = new HasThumbnailsTestElement();
+        $element = new HasThumbnailsTestElement;
 
         $this->assertFalse($element->hasThumbnails());
         $this->assertInstanceOf(Collection::class, $element->getThumbnails());
@@ -32,7 +32,7 @@ class HasThumbnailsTest extends TestCase
      */
     public function test_add_thumbnail_appends_thumbnail(): void
     {
-        $element = new HasThumbnailsTestElement();
+        $element = new HasThumbnailsTestElement;
         $thumbnail = Trumbnail::make('preview');
 
         $this->assertSame($element, $element->addThumbnail($thumbnail));
@@ -45,7 +45,7 @@ class HasThumbnailsTest extends TestCase
      */
     public function test_thumbnails_adds_only_thumbnail_instances(): void
     {
-        $element = new HasThumbnailsTestElement();
+        $element = new HasThumbnailsTestElement;
 
         $element->thumbnails(Trumbnail::make('preview'), 'ignored', Trumbnail::make('small'));
 

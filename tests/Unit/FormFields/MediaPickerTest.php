@@ -32,7 +32,7 @@ class MediaPickerTest extends TestCase
      */
     public function test_base_path_sets_and_reads_base_path(): void
     {
-        $field = new MediaPicker();
+        $field = new MediaPicker;
 
         $this->assertTrue($field->hasBasePath());
         $this->assertSame($field, $field->basePath('uploads/{key}'));
@@ -45,7 +45,7 @@ class MediaPickerTest extends TestCase
      */
     public function test_single_limits_picker_to_one_file(): void
     {
-        $field = (new MediaPicker())->max(3);
+        $field = (new MediaPicker)->max(3);
 
         $this->assertTrue($field->isMultiSelect());
         $this->assertSame($field, $field->single());
@@ -57,7 +57,7 @@ class MediaPickerTest extends TestCase
      */
     public function test_hide_thumbnails_sets_hide_thumbnails_attribute(): void
     {
-        $field = new MediaPicker();
+        $field = new MediaPicker;
 
         $this->assertSame($field, $field->hideThumbnails());
         $this->assertTrue($field->get('hideThumbnails'));
@@ -68,7 +68,7 @@ class MediaPickerTest extends TestCase
      */
     public function test_allowed_types_sets_allowed_types_attribute(): void
     {
-        $field = new MediaPicker();
+        $field = new MediaPicker;
 
         $this->assertSame($field, $field->allowedTypes(['video']));
         $this->assertSame(['video'], $field->get('allowedTypes'));
@@ -100,7 +100,7 @@ class MediaPickerTest extends TestCase
     {
         $field = MediaPicker::make('image');
 
-        $this->assertSame('User_media_picker_image_uuid', $field->uuidSessionName(new User()));
+        $this->assertSame('User_media_picker_image_uuid', $field->uuidSessionName(new User));
     }
 
     /**
@@ -111,7 +111,7 @@ class MediaPickerTest extends TestCase
         $this->actingAs($this->createUser());
 
         $field = MediaPicker::make('image')->basePath('uploads/{key}');
-        $model = new User();
+        $model = new User;
         $model->id = 15;
         $model->exists = true;
 
@@ -162,7 +162,7 @@ class MediaPickerTest extends TestCase
      */
     public function test_watermark_trait_is_available_on_media_picker(): void
     {
-        $field = new MediaPicker();
+        $field = new MediaPicker;
         $watermark = Watermark::make()->source('watermark.png');
 
         $field->watermark($watermark);

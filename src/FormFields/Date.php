@@ -6,7 +6,6 @@ use Carbon\Carbon;
 
 class Date extends BaseFormField
 {
-
     protected $attributes = [
         'class' => null,
         'value' => null,
@@ -14,22 +13,19 @@ class Date extends BaseFormField
         'label' => null,
         'multilingual' => false,
         'instruction' => null,
-        'format' => 'Y-m-d'
+        'format' => 'Y-m-d',
     ];
 
-    /**
-     * @return bool
-     */
     public function hasFormat(): bool
     {
-        return !empty($this->get('format'));
+        return ! empty($this->get('format'));
     }
 
     public function getFormattedValue($model): mixed
     {
         $value = $this->getValue($model);
 
-        if (!$this->hasFormat() || is_null($value)) {
+        if (! $this->hasFormat() || is_null($value)) {
             return $value;
         }
 
@@ -37,13 +33,12 @@ class Date extends BaseFormField
     }
 
     /**
-     * @param string $format
      * @return Timestamp
      */
     public function format(string $format): self
     {
-        $this->set('format',$format);
+        $this->set('format', $format);
+
         return $this;
     }
-
 }

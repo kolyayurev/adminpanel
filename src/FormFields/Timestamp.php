@@ -2,7 +2,4 @@
 
 namespace KY\AdminPanel\FormFields;
 
-class Timestamp extends Date
-{
-
-}
+class Timestamp extends Date {}

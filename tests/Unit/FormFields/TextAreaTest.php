@@ -15,7 +15,7 @@ class TextAreaTest extends TestCase
      */
     public function test_rows_sets_rows_attribute(): void
     {
-        $field = new TextArea();
+        $field = new TextArea;
 
         $this->assertSame($field, $field->rows(8));
         $this->assertSame(8, $field->get('rows'));

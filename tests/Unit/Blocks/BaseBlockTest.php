@@ -17,7 +17,7 @@ class BaseBlockTest extends TestCase
      */
     public function test_get_type_returns_snake_case_class_basename(): void
     {
-        $this->assertSame('base_block_test_element', (new BaseBlockTestElement())->getType());
+        $this->assertSame('base_block_test_element', (new BaseBlockTestElement)->getType());
     }
 
     /**
@@ -26,7 +26,7 @@ class BaseBlockTest extends TestCase
      */
     public function test_class_sets_css_class(): void
     {
-        $block = new BaseBlockTestElement();
+        $block = new BaseBlockTestElement;
 
         $result = $block->class('panel panel-default');
 
@@ -40,7 +40,7 @@ class BaseBlockTest extends TestCase
      */
     public function test_before_template_returns_default_or_custom_template(): void
     {
-        $block = new BaseBlockTestElement();
+        $block = new BaseBlockTestElement;
 
         $this->assertSame('adminpanel::blocks.layout.before', $block->getBeforeTemplate());
         $this->assertSame($block, $block->beforeTemplate('custom.before'));
@@ -53,7 +53,7 @@ class BaseBlockTest extends TestCase
      */
     public function test_template_returns_default_or_custom_template(): void
     {
-        $block = new BaseBlockTestElement();
+        $block = new BaseBlockTestElement;
 
         $this->assertSame('adminpanel::blocks.base_block_test_element.index', $block->getTemplate());
         $this->assertSame($block, $block->template('custom.index'));
@@ -66,7 +66,7 @@ class BaseBlockTest extends TestCase
      */
     public function test_after_template_returns_default_or_custom_template(): void
     {
-        $block = new BaseBlockTestElement();
+        $block = new BaseBlockTestElement;
 
         $this->assertSame('adminpanel::blocks.layout.after', $block->getAfterTemplate());
         $this->assertSame($block, $block->afterTemplate('custom.after'));
@@ -79,7 +79,7 @@ class BaseBlockTest extends TestCase
      */
     public function test_instruction_sets_instruction_payload(): void
     {
-        $block = new BaseBlockTestElement();
+        $block = new BaseBlockTestElement;
 
         $result = $block->instruction(['text' => 'Read this']);
 
@@ -93,7 +93,7 @@ class BaseBlockTest extends TestCase
      */
     public function test_visible_only_when_has_fields_sets_flag(): void
     {
-        $block = new BaseBlockTestElement();
+        $block = new BaseBlockTestElement;
 
         $this->assertFalse($block->isVisibleOnlyWhenHasFields());
         $this->assertSame($block, $block->visibleOnlyWhenHasFields());
@@ -116,6 +116,4 @@ class BaseBlockTest extends TestCase
     }
 }
 
-class BaseBlockTestElement extends BaseBlock
-{
-}
+class BaseBlockTestElement extends BaseBlock {}
