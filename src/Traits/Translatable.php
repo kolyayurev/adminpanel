@@ -141,7 +141,7 @@ trait Translatable
         return $value;
     }
 
-    public function getTranslationsOf($attribute, array $languages = null, $fallback = true)
+    public function getTranslationsOf($attribute, ?array $languages = null, $fallback = true)
     {
         if (is_null($languages)) {
             $languages = config('adminpanel.multilingual.locales', [config('adminpanel.multilingual.default')]);
