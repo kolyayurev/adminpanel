@@ -16,26 +16,25 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.4",
         "ext-gd": "*",
-        "diglactic/laravel-breadcrumbs": "^8.1",
-        "doctrine/dbal": "^3.6",
+        "diglactic/laravel-breadcrumbs": "^10.1",
         "gregwar/image": "^2.1",
-        "illuminate/contracts": ">=9.0",
-        "illuminate/support": ">=7.0",
+        "illuminate/contracts": "^13.0",
+        "illuminate/support": "^13.0",
         "intervention/image": "^2.7",
-        "laravel/ui": "^4.2",
-        "rap2hpoutre/laravel-log-viewer": "^2.3",
+        "laravel/ui": "^4.6",
+        "rap2hpoutre/laravel-log-viewer": "^3.1",
         "twbs/bootstrap-icons": "^1.10",
-        "yajra/laravel-datatables-oracle": "^10.0"
+        "yajra/laravel-datatables-oracle": "^13.1"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
-        "nunomaduro/collision": "^6.0",
-        "orchestra/testbench": "^7.0",
-        "pestphp/pest": "^1.21",
-        "pestphp/pest-plugin-laravel": "^1.1",
-        "phpunit/phpunit": "^9.5"
+        "nunomaduro/collision": "^8.9",
+        "orchestra/testbench": "^11.1",
+        "pestphp/pest": "^4.4",
+        "pestphp/pest-plugin-laravel": "^4.1",
+        "phpunit/phpunit": "^12.5"
     },
     "autoload": {
         "psr-4": {

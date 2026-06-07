@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('user_role', function (Blueprint $table) {
-            $type = DB::connection()->getDoctrineColumn(DB::getTablePrefix().'users', 'id')->getType()->getName();
-            if ($type == 'bigint') {
+            $type = Schema::getColumnType('users', 'id');
+            if (in_array($type, ['bigint', 'bigInteger'], true)) {
                 $table->bigInteger('user_id')->unsigned()->index();
             } else {
                 $table->integer('user_id')->unsigned()->index();
