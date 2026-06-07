@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace KY\AdminPanel\Traits;
 
+use Closure;
+
 trait HasDynamicCall
 {
 
