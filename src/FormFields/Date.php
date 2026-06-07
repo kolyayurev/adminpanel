@@ -2,6 +2,8 @@
 
 namespace KY\AdminPanel\FormFields;
 
+use Carbon\Carbon;
+
 class Date extends BaseFormField
 {
 
@@ -12,7 +14,7 @@ class Date extends BaseFormField
         'label' => null,
         'multilingual' => false,
         'instruction' => null,
-        'format' => '%Y-%m-%d'
+        'format' => 'Y-m-d'
     ];
 
     /**
@@ -21,6 +23,17 @@ class Date extends BaseFormField
     public function hasFormat(): bool
     {
         return !empty($this->get('format'));
+    }
+
+    public function getFormattedValue($model): mixed
+    {
+        $value = $this->getValue($model);
+
+        if (!$this->hasFormat() || is_null($value)) {
+            return $value;
+        }
+
+        return Carbon::parse($value)->translatedFormat($this->get('format'));
     }
 
     /**
@@ -32,6 +45,5 @@ class Date extends BaseFormField
         $this->set('format',$format);
         return $this;
     }
-
 
 }

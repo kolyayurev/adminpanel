@@ -30,4 +30,26 @@ class DateTest extends TestCase
         $this->assertSame('Y-m-d H:i:s', $field->get('format'));
         $this->assertTrue($field->hasFormat());
     }
+
+    /**
+     * @covers ::getFormattedValue
+     */
+    public function test_get_formatted_value_supports_default_strftime_format(): void
+    {
+        $field = (new Date())->name('published_at');
+        $model = (object) ['published_at' => '2026-06-07 15:30:00'];
+
+        $this->assertSame('2026-06-07', $field->getFormattedValue($model));
+    }
+
+    /**
+     * @covers ::getFormattedValue
+     */
+    public function test_get_formatted_value_supports_php_date_format(): void
+    {
+        $field = (new Date())->name('published_at')->format('Y-m-d H:i:s');
+        $model = (object) ['published_at' => '2026-06-07 15:30:00'];
+
+        $this->assertSame('2026-06-07 15:30:00', $field->getFormattedValue($model));
+    }
 }
