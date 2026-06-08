@@ -2,13 +2,16 @@
 
 namespace KY\AdminPanel\FormFields;
 
-use APMedia;
 use Illuminate\Http\Request;
-use KY\AdminPanel\Traits\FormFields\HasTrumbnails;
+use KY\AdminPanel\Facades\APMedia;
+use KY\AdminPanel\Traits\FormFields\HasThumbnails;
 
+/**
+ * @deprecated use MediaPicker
+ */
 class Image extends BaseFormField
 {
-    use HasTrumbnails;
+    use HasThumbnails;
 
     protected $attributes = [
         'value' => null,
@@ -36,15 +39,13 @@ class Image extends BaseFormField
         return $this;
     }
 
-    public function getFolder($key): string
+    public function getFolder($key = null): string
     {
         return $this->get('folder');
     }
 
     public function prepareValue($value, Request $request, $model)
     {
-
-        dd($request);
         if ($request->hasFile($this->get('name'))) {
             $filePath = APMedia::save(
                 $request->file($this->get('name')),
