@@ -24,7 +24,8 @@ php artisan adminpanel:make:datatype Post Post
 
 ## Авторизация
 
-Для настройки прав доступа к маршрутам, используются [политики](https://laravel.com/docs/10.x/authorization#writing-policies).
+Для настройки прав доступа к маршрутам, используются [политики](https://laravel.com/docs/authorization#writing-policies)
+(подробнее — [Permissions & Roles](permissions-roles.md)).
 Вы можете написать собственную политику унаследовавшись от  `BasePolicy`
 ```php
 use KY\AdminPanel\Policies\BasePolicy;
@@ -35,6 +36,11 @@ class BaseDataType implements DataTypeContract
 }
 ```
 
+## Repository
+
+За моделью DataType стоит [репозиторий](repositories.md): он задаёт класс модели, создание
+записей и запрос для [списка](datatables.md).
+
 ## FormFields
 
 Для указания типов и параметров полей ипользуются [FormFields](../formfields/list.md)
@@ -42,3 +48,9 @@ class BaseDataType implements DataTypeContract
 ## Layout
 
 Для указания местоположения полей в форме редатирвания ипользуется [layout](layout.md)
+(блоки — см. [Blocks](blocks.md)).
+
+## Список (DataTables)
+
+Страница `index` — серверная таблица: колонки, действия, фильтры. См.
+[DataTables](datatables.md).
