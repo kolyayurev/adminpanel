@@ -60,7 +60,7 @@
         </script>
 
         @stack('before-app-scripts')
-        <script type="text/javascript" src="{{ adminpanel_asset(config('app.debug')?'js/app-dev.js':'js/app.js') }}"></script>
+        <script type="text/javascript" src="{{ adminpanel_asset('js/app.js') }}"></script>
         @if(!empty(config('adminpanel.additional_js')))<!-- Additional Javascript -->
             @foreach(config('adminpanel.additional_js') as $js)<script type="text/javascript" src="{{ asset($js) }}"></script>@endforeach
         @endif
