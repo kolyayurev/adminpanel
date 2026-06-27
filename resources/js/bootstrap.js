@@ -3,15 +3,12 @@ import _ from 'lodash';
 window._ = _;
 
 window.$ = window.jQuery = require('jquery');
-// require("jquery-ui/ui/widgets/sortable");
 
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
-
-window.Popper = require('popper.js').default;
 
 window.Cropper = require('cropperjs');
 
@@ -30,12 +27,6 @@ window.toastr = require('toastr');
 toastr.options.preventDuplicates = true;
 
 window.moment = require('moment');
-
-// require('daterangepicker/moment.min');
-require('daterangepicker/daterangepicker');
-
-// import ClassicEditor from '@ckeditor/ckeditor5-build-classic/build/ckeditor';
-// window.ClassicEditor = ClassicEditor;
 
 const { Dropzone } = require("dropzone");
 window.Dropzone = Dropzone;
