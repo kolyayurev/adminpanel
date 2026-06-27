@@ -9,6 +9,10 @@
 @import "~bootstrap-fileinput/scss/fileinput";
 
 @import '~select2/src/scss/core';
+// В Bootstrap 5.3 $input-border-color/$form-select-border-color стали CSS-переменной
+// var(--bs-border-color), а тема select2 1.3.0 зовёт на ней Sass-функцию shade-color().
+// Задаём конкретный цвет (исторический $gray-400), чтобы SCSS собирался.
+$s2bs5-border-color: $gray-400;
 @import '~select2-bootstrap-5-theme/src/include-all';
 
 @import "~toastr";
