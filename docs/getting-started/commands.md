@@ -1,5 +1,17 @@
 # Консольные команды
 
+Пакет регистрирует следующие artisan-команды:
+
+| Команда | Назначение |
+|---------|-----------|
+| `adminpanel:install` | Установка панели (миграции, роуты, сид, публикация конфига) — см. [установку](installation.md) |
+| `adminpanel:make:datatype {name} {repository}` | Создать DataType (обёртку над моделью) |
+| `adminpanel:make:pagetype {name}` | Создать PageType (одиночную страницу) |
+| `adminpanel:make:repository {name} {model}` | Создать Repository для модели из `App\Models` |
+| `adminpanel:make:datacontroller {name} {datatype}` | Создать DataController для зарегистрированного DataType |
+
+Сгенерированные классы попадают в приложение под namespace `App\AdminPanel\...`.
+
 ### Генерация DataType
 
 ```bash
@@ -182,7 +194,8 @@ class PostRepository extends BaseRepository
 php artisan adminpanel:make:datacontroller Post  Post
 ```
 
-Первый параметр это имя DataController, второе это имя DataType.
+Первый параметр это имя DataController, второе — зарегистрированный `slug` DataType
+(то, что указано в свойстве `$slug` соответствующего DataType).
 
 В папке App\AdminPanel\Controllers появистя файл PostDataController.php
 
