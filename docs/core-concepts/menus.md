@@ -1,21 +1,51 @@
-# Menus 
+# Menus
 
-* [Menus](core-concepts/menus.md)
-Anywhere you wanted to display your menu you can now call:
+> **Актуальное поведение.** Верхнее меню админки **генерируется автоматически** из
+> зарегистрированных [DataType](datatype.md) и [PageType](pagetype.md) — отдельно описывать
+> пункты меню не нужно. Класс-абстракция меню (`BaseMenu`/`items()`) и хелпер `menu()` в
+> текущей версии **не подключены** к рендерингу (см. ниже).
+
+## Как строится меню сейчас
+
+Меню рендерит вьюха `resources/views/menus/admin.blade.php` (подключена в
+`layouts/partials/nav.blade.php`) и собирает пункты из:
+
+- **Контент** — все зарегистрированные `PageType` (`AdminPanel::getPageTypes()`);
+- **SEO** — встроенные разделы: Мета-информация, Редиректы, ЧПУ
+  (см. [встроенные DataType](built-in-datatypes.md));
+- по пункту на каждый прикладной `DataType` (`AdminPanel::getDataTypes()`), кроме служебных
+  `seo`/`sef`/`redirects` — заголовок берётся из `getPluralTitle()`;
+- **Tools** — если включён гейт `view_tools`.
+
+Видимость пунктов уважает [политики](permissions-roles.md): пункт показывается только если
+у пользователя есть право `list` на соответствующую модель (`@can('list', ...)`).
+
+Таким образом, чтобы пункт появился в меню, достаточно **зарегистрировать** DataType/PageType:
 
 ```php
-menu('main', 'my_menu');
+AdminPanel::addDataType(PostDataType::class);   // появится пункт «Посты»
+AdminPanel::addPageType(AboutPageType::class);  // появится в разделе «Контент»
 ```
 
-And your custom menu will now be output.
+## API меню (зарезервировано)
 
-## Menu as JSON
-
-If you dont want to render your menu but get an array instead, you can pass `_json` as the second parameter. For example:
+В пакете есть программный интерфейс меню, который сейчас **не используется** при отрисовке,
+но доступен:
 
 ```php
-menu('main', '_json')
+use KY\AdminPanel\Menus\BaseMenu;
+
+class MainMenu extends BaseMenu
+{
+    public function items()
+    {
+        return collect([ /* пункты */ ]);
+    }
+}
+
+AdminPanel::addMenu(MainMenu::class);   // регистрация
+AdminPanel::getMenu('main');            // получение по slug
 ```
 
-This will give you a collection of menu-items.
-
+Хелпер `menu($name, $type)` присутствует в `helpers.php`, но **закомментирован**. Перевод
+меню на эту абстракцию (и боковое меню) — предмет отдельной задачи рефакторинга.

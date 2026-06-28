@@ -1,6 +1,8 @@
 # Layout
 
-Основные элементы:
+`layout()` в [DataType](datatype.md) и [PageType](pagetype.md) задаёт раскладку формы
+редактирования из [блоков](blocks.md). Ниже — основные элементы; полный справочник блоков
+(включая `Tabs`/`Tab`, `Divider`, `Instruction` и общие методы) — в разделе [Blocks](blocks.md).
 
 Элементы сетки построены на основе [Bootstrap 5 Grid](https://getbootstrap.com/docs/5.3/layout/grid/)
 ## Row
