@@ -56,7 +56,6 @@
             var locale = '{{ app()->getLocale()}}';
             var fallbackLocale = '{{ config('app.fallback_locale')}}';
             const storage = '{{ Str::finish(Storage::disk(config('adminpanel.storage.disk'))->url('/'), '/') }}';
-            var dataTablesOptions = {};
         </script>
 
         @stack('before-app-scripts')

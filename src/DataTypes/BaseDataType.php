@@ -325,30 +325,4 @@ class BaseDataType implements DataTypeContract
 
         return $dataTable->make(true);
     }
-
-    public function getDataTablesOptions(): array
-    {
-        return [
-            'processing' => true,
-            'serverSide' => true,
-            'stateSave' => true,
-            'ajax' => [
-                'url' => route('adminpanel.'.$this->getSlug().'.table'),
-                //                'data' => []
-            ],
-            'columns' => $this->getColumns()->toArray(),
-            'order' => $this->getColumnsOrder(),
-            'columnDefs' => [
-                ['orderable' => false, 'targets' => 'no-sort', 'searchable' => false],
-                // [ 'searchable' => false, 'targets' => [0]]
-            ],
-            'orderCellsTop' => true,
-            'search' => [
-                'regex' => true,
-            ],
-            'language' => [
-                'url' => adminpanel_asset('js/datatables/languages/ru_RU.json'),
-            ],
-        ];
-    }
 }

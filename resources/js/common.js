@@ -49,10 +49,7 @@ $(document).ready(function () {
         switch (multilingual.data('mode')) {
             case 'list':
                 multilingual.multilingual();
-                $table.DataTable().on('draw.dt', function () {
-                    // MB trouble
-                    $('#contentBody').data('multilingual').init();
-                })
+                // Переинициализация после перерисовки таблицы — в v-data-table (после fetch).
                 break;
             case 'form':
                 multilingual.multilingual({"editing": true, "vueInstances": vueFieldInstances});

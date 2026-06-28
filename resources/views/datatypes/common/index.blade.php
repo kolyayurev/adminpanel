@@ -34,9 +34,3 @@
     <x-adminpanel::datatable :dataType="$dataType"/>
     @yield('after-datatable')
 @endsection
-
-@push('before-app-scripts')
-    <script>
-        dataTablesOptions = {!! printObject($dataType->getDataTablesOptions()) !!};
-    </script>
-@endpush

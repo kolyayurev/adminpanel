@@ -1,10 +1,9 @@
-<input
-    type="search"
-    class="form-control"
-    id="{{ $filter->getName() }}"
-    data-orderable="{{ $filter->get('orderable') }}"
-    placeholder="{{ $filter->getPlaceholder() }}"
-    data-action="dataTableFilterInput"
-    {!! $filter->convertAttributesToHtml() !!}
-    value="{{  session('datatable.'.$dataType->getSlug().'.'.$field->get('name')) }}"
->
+{{-- Текстовый фильтр колонки. Привязан к данным таблицы (datatable.blade.php). --}}
+<el-input
+    v-model="filters['{{ $filter->getName() }}']"
+    size="small"
+    clearable
+    placeholder="{{ $field->get('label') }}"
+    @input="onFilter"
+    @clear="onFilter"
+/>

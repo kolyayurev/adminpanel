@@ -4,7 +4,6 @@ namespace KY\AdminPanel\Tests\Unit\DataTypes;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Route;
 use KY\AdminPanel\Blocks\Row;
 use KY\AdminPanel\DataTables\Actions\DeleteAction;
 use KY\AdminPanel\DataTables\Actions\EditAction;
@@ -203,21 +202,6 @@ class BaseDataTypeTest extends TestCase
     public function test_get_columns_order_returns_columns_with_default_order(): void
     {
         $this->assertSame([[1, 'desc']], (new BaseDataTypeTestElement)->getColumnsOrder());
-    }
-
-    /**
-     * @covers ::getDataTablesOptions
-     */
-    public function test_get_data_tables_options_returns_route_columns_and_order(): void
-    {
-        Route::get('/assets', fn () => '')->name('adminpanel.assets');
-        Route::get('/table', fn () => '')->name('adminpanel.custom_users.table');
-
-        $options = (new BaseDataTypeTestElement)->getDataTablesOptions();
-
-        $this->assertSame('http://localhost/table', $options['ajax']['url']);
-        $this->assertSame(['id', 'name', 'raw', 'actions'], array_column($options['columns'], 'name'));
-        $this->assertSame([[1, 'desc']], $options['order']);
     }
 }
 
