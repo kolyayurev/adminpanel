@@ -5,6 +5,7 @@ namespace KY\AdminPanel\DataTypes;
 use AdminPanel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use KY\AdminPanel\Blocks\Card;
 use KY\AdminPanel\Blocks\Col;
 use KY\AdminPanel\Blocks\Row;
@@ -64,7 +65,7 @@ class RoleDataType extends BaseDataType
     public function rules(Request $request): array
     {
         return [
-            'name' => ['required', 'min:3', 'max:255', "unique:roles,name,{$request->route('role')},id"],
+            'name' => ['required', 'min:3', 'max:255', Rule::unique('roles', 'name')->ignore($request->route('role'))],
             'display_name' => ['required', 'min:3', 'max:255'],
         ];
     }
