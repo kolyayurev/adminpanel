@@ -173,7 +173,7 @@ class BaseDataController extends Controller
 
         // TODO: remove media and other related
 
-        return response()->json(['status' => true], 200);
+        return response()->json(['status' => true, 'message' => ap_trans('messages.success.deleted')], 200);
     }
 
     /**
