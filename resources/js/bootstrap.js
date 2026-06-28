@@ -12,8 +12,6 @@ $.ajaxSetup({
 
 window.Cropper = require('cropperjs');
 
-window.Swal = require('sweetalert2');
-
 window.bootstrap = require('bootstrap');
 require('bootstrap-fileinput/js/fileinput.min');
 require('bootstrap-fileinput/js/locales/ru');
@@ -25,8 +23,10 @@ import axios from 'axios';
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-window.toastr = require('toastr');
-toastr.options.preventDuplicates = true;
+// Нотификации/диалоги — на Element Plus (см. ui/notify), с сохранением API toastr/Swal.
+import { toastr, Swal } from '@/ui/notify';
+window.toastr = toastr;
+window.Swal = Swal;
 
 window.moment = require('moment');
 

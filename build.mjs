@@ -5,6 +5,11 @@
 // КЛАССИЧЕСКИЕ <script> (инлайновые скрипты в blade зависят от глобалей $/tinymce/… и
 // сломались бы при type=module из-за defer). Поэтому каждый JS-entry собираем отдельной
 // single-input сборкой в формате IIFE — самодостаточный файл без import/export.
+//
+// JS- и CSS-входы РАЗДЕЛЕНЫ: в формате IIFE Vite инлайнит CSS, импортированный из JS, прямо
+// в бандл и не создаёт отдельный .css. А blade грузит стили через <link> (css/app.css,
+// css/docs.css, css/element-ui.css). Поэтому стили — отдельные CSS-only входы (см. cssTargets),
+// а JS-входы стилей не импортируют.
 // url()-ассеты (шрифты/иконки vendor-CSS) инлайним в data-URI: относительные пути в CSS,
 // отдаваемом через роут, иначе не разрешаются (раньше mix жил с processCssUrls: false).
 
@@ -37,10 +42,12 @@ const assetFileNames = (info) => {
     return name.endsWith('.css') ? 'css/[name][extname]' : 'assets/[name][extname]';
 };
 
-// Точки входа: app/docs → JS (+ свой CSS), element-ui → только CSS.
+// JS-входы (IIFE, без импорта стилей) и CSS-входы (только стили → css/[name].css).
 const targets = [
     { name: 'app', input: 'resources/js/app.js' },
     { name: 'docs', input: 'resources/js/docs.js' },
+    { name: 'app', input: 'resources/sass/app.scss', cssOnly: true },
+    { name: 'docs', input: 'resources/sass/docs.scss', cssOnly: true },
     { name: 'element-ui', input: 'resources/sass/element-ui/index.scss', cssOnly: true },
 ];
 
@@ -75,12 +82,20 @@ for (const target of targets) {
             watch: watch ? {} : null,
             rollupOptions: {
                 input: { [target.name]: path.resolve(__dirname, target.input) },
-                output: {
-                    format: 'iife',
-                    inlineDynamicImports: true,
-                    entryFileNames: 'js/[name].js',
-                    assetFileNames,
-                },
+                // JS-входы — IIFE (классический <script>). CSS-входы — формат es: иначе IIFE
+                // инлайнит CSS в JS-чанк, который мы удаляем, и отдельный .css не появляется.
+                output: target.cssOnly
+                    ? {
+                        format: 'es',
+                        entryFileNames: 'js/[name].js',
+                        assetFileNames,
+                    }
+                    : {
+                        format: 'iife',
+                        inlineDynamicImports: true,
+                        entryFileNames: 'js/[name].js',
+                        assetFileNames,
+                    },
             },
         },
     });

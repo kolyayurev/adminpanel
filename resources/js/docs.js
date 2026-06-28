@@ -21,7 +21,7 @@ hljs.registerLanguage('bash', bash);
 hljs.registerLanguage('css', css);
 hljs.registerLanguage('javascript', javascript);
 hljs.registerLanguage('php', php);
-import 'highlight.js/styles/monokai.css';
+// Стили подсветки вынесены в resources/sass/docs.scss → public/css/docs.css (отдельный CSS-entry).
 
 $(document).ready(function () {
     $('#docs').on('click', 'a', function (e) {

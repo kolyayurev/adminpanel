@@ -1,5 +1,3 @@
-import '../sass/app.scss';
-
 import '@/lib';
 
 import '@/bootstrap';
