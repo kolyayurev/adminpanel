@@ -17,7 +17,9 @@ window.Swal = require('sweetalert2');
 window.bootstrap = require('bootstrap');
 require('bootstrap-fileinput/js/fileinput.min');
 require('bootstrap-fileinput/js/locales/ru');
-require('select2');
+// select2 в CommonJS-сборке экспортирует фабрику (module.exports = function(root, jQuery){…}),
+// её нужно вызвать, иначе плагин $.fn.select2 не регистрируется (под webpack это было иначе).
+require('select2')();
 
 import axios from 'axios';
 window.axios = axios;

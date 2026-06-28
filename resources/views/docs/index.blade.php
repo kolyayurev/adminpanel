@@ -24,6 +24,6 @@
 @endsection
 
 @push('end-body-scripts')
-    <script type="text/javascript" src="{{ adminpanel_asset(config('app.debug')?'js/docs-dev.js':'js/docs.js') }}"></script>
+    <script type="text/javascript" src="{{ adminpanel_asset('js/docs.js') }}"></script>
 @endpush
 
