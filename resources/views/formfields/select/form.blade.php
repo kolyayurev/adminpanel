@@ -16,7 +16,7 @@
             <input v-for="v in value" :key="v" type="hidden" name="{{ $field->get('name') }}[]" :value="v"
                    data-vue-instance="{{ $vue_instance_name }}"/>
         @else
-            <input type="hidden" name="{{ $field->get('name') }}" :value="value"
+            <input type="hidden" class="is-vue" name="{{ $field->get('name') }}" :value="value"
                    data-vue-instance="{{ $vue_instance_name }}"/>
         @endif
 
@@ -51,6 +51,12 @@
             },
             mounted() {
                 vueFieldInstances['{{ $vue_instance_name }}'] = this
+            },
+            methods: {
+                // Вызывается мостом мультиязычности при переключении локали (для одиночного select).
+                updateLocaleData(val) {
+                    this.value = val ?? ''
+                },
             },
         }).mount('#{{ $field->getId() }}');
     </script>

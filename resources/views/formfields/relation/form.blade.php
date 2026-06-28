@@ -44,7 +44,7 @@
                     @endphp
                     <div class="form-group" id="{{ $field->getId() }}" v-cloak>
                         <label>{{ $field->get('label') }}</label>
-                        <input type="hidden" name="{{ $field->get('column') }}" :value="value"
+                        <input type="hidden" class="is-vue" name="{{ $field->get('column') }}" :value="value"
                                data-vue-instance="{{ $vue_instance_name }}"/>
                         <el-select v-model="value"
                                    filterable remote :remote-method="remoteMethod" :loading="loading"
@@ -100,6 +100,11 @@
                                     },
                                     remoteMethod(search) {
                                         this.load(search)
+                                    },
+                                    // Вызывается мостом мультиязычности при переключении локали.
+                                    updateLocaleData(val) {
+                                        this.value = val ?? ''
+                                        this.load('')
                                     },
                                 },
                             }).mount('#{{ $field->getId() }}');

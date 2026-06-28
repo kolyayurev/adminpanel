@@ -9,7 +9,7 @@
         @endif
         @include('adminpanel::multilingual.input-hidden-form')
         {{-- Скрытый input отдаёт значение в прежнем формате Y-m-d (сервер не меняем). --}}
-        <input type="hidden" name="{{ $field->get('name') }}" :value="value"
+        <input type="hidden" class="is-vue" name="{{ $field->get('name') }}" :value="value"
                data-vue-instance="{{ $vue_instance_name }}"/>
         <el-date-picker v-model="value"
                         type="date"
@@ -36,20 +36,14 @@
                     value: @json($value),
                 }
             },
-            created() {
-                @if (is_field_translatable($model, $field))
-                    this.updateLocaleData(this.value)
-                @endif
-            },
             mounted() {
                 vueFieldInstances['{{ $vue_instance_name }}'] = this
             },
             methods: {
-                @if (is_field_translatable($model, $field))
+                // Вызывается мостом мультиязычности при переключении локали.
                 updateLocaleData(value) {
                     this.value = value ? value : ''
-                }
-                @endif
+                },
             },
         }).mount('#{{ $field->getId() }}');
     </script>
