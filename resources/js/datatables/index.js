@@ -21,10 +21,15 @@ $(document).ready( function () {
     });
 
 
+    // Значения фильтров: el-select-фильтры (Vue) регистрируют геттер в window.dataTableFilterValues;
+    // для остальных (текстовый input) — fallback на нативный $('#id').val().
+    window.dataTableFilterValues = window.dataTableFilterValues || {};
     let data = {};
     $.each(filters, function (key, value) {
         data[value] = function () {
-            return $('#' + value).val()
+            return typeof window.dataTableFilterValues[value] === 'function'
+                ? window.dataTableFilterValues[value]()
+                : $('#' + value).val()
         }
     });
 

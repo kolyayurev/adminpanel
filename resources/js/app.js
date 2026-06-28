@@ -6,7 +6,14 @@ import '@/registration';
 
 import { createApp } from 'vue';
 import ElementPlus from 'element-plus'
+import elEn from 'element-plus/es/locale/lang/en'
+import elRu from 'element-plus/es/locale/lang/ru'
 import draggable from 'vuedraggable'
+
+// Локаль Element Plus = текущая локаль админки (глобальная `locale` из master.blade.php).
+// Админка мультиязычна — не хардкодим; fallback на en.
+const elementLocales = { en: elEn, ru: elRu }
+const elementLocale = elementLocales[(typeof locale !== 'undefined' ? locale : 'en')] || elEn
 import MediaManager from './vue/MediaManager.vue'
 import DialogMediaPicker from './vue/DialogMediaPicker.vue'
 import MediaIcon from './vue/MediaIcon.vue'
@@ -24,7 +31,7 @@ window.createVueApp = options => {
     app.component(FilesItem.name,FilesItem);
     app.component(GeoPicker.name,GeoPicker);
     app.config.globalProperties.lang = lang;
-    app.use(ElementPlus,{ size: 'default'})
+    app.use(ElementPlus, { size: 'default', locale: elementLocale })
 
     return app
 }

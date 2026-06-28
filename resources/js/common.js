@@ -2,18 +2,6 @@ $(document).ready(function () {
     // Скрытие loader
     $('.ap-loader').animate({opacity: 0}, 500).hide('slow');
 
-    // Select2
-    $('select.select2').select2({
-        theme: "bootstrap-5",
-        tags: false,
-    });
-    // .on('select2:select', function(e){
-    //     var id = e.params.data.id;
-    //     var option = $(e.target).children('[value="'+id+'"]');
-    //     option.detach();
-    //     $(e.target).append(option).change();
-    // });
-
     // accordion
     if(Cookies.get('activeCollapse'))
         $("#"+Cookies.get('activeCollapse')).addClass('show');
