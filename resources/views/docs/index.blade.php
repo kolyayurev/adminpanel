@@ -3,6 +3,11 @@
 
 @section('title',ap_trans('breadcrumbs.docs'))
 
+@push('end-head-styles')
+    {{-- стили подсветки кода highlight.js (тема monokai) --}}
+    <link href="{{ adminpanel_asset('css/docs.css') }}" rel="stylesheet">
+@endpush
+
 @section('breadcrumbs')
     {{ Breadcrumbs::render('adminpanel.docs') }}
 @endsection
