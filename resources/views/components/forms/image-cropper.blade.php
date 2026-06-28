@@ -1,5 +1,21 @@
+@props([
+    'name',
+    'label' => null,
+    'image' => null,
+    'crop' => null,
+    'type' => null,
+    'allowed' => null,
+    'id' => null,
+    'canUpload' => true,
+    'canRemove' => 0,
+    'col' => 12,
+    'instruction' => null,
+])
 <div class="form-group">
     @php
+        // crop может прийти массивом [ширина, высота] (дефолт form-blade) — приводим к строке "ш,в",
+        // т.к. ниже используется как строка (explode и data-crop). PHP 8: explode() на массиве — TypeError.
+        $crop = is_array($crop) ? implode(',', $crop) : (string) ($crop ?? '');
         $cropLabel = !empty($crop) ? explode(',', $crop)[0] .'x'. explode(',', $crop)[1] . 'px' : '';
     @endphp
     @if(!empty($label))
