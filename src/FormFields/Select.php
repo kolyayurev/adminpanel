@@ -79,6 +79,12 @@ class Select extends BaseFormField
 
     public function prepareValue($value, Request $request, $model)
     {
-        return empty($value) ? ($this->get('default') ?? json_encode($value)) : json_encode($value);
+        if (empty($value)) {
+            return $this->get('default');
+        }
+
+        // Симметрично getValue(): множественный select храним как JSON-массив,
+        // одиночный — как есть (иначе значение оборачивается в кавычки при каждом сохранении).
+        return $this->isMultiple() ? json_encode($value) : $value;
     }
 }
