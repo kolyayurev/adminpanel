@@ -25,8 +25,6 @@ import { toastr, Swal } from '@/ui/notify';
 window.toastr = toastr;
 window.Swal = Swal;
 
-window.moment = require('moment');
-
 const { Dropzone } = require("dropzone");
 window.Dropzone = Dropzone;
 
