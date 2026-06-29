@@ -57,6 +57,9 @@
         "allow-plugins": {}
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        },
         "laravel": {
             "providers": [
                 "KY\\AdminPanel\\AdminPanelServiceProvider"
