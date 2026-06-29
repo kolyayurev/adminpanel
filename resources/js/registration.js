@@ -9,3 +9,4 @@ import '@/components/password';
 import '@/plugins/multilingual';
 import '@/plugins/slugify';
 import '@/common';
+import '@/sidebar';
