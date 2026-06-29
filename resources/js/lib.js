@@ -27,19 +27,6 @@ export function getModalWindow(modalName, callback, existId, extraData)
         modalElement
             .on('hidden.bs.modal', (e) => $(e.currentTarget).remove())
             .on('shown.bs.modal', (e) => {
-                $(e.target).find('[data-component="fileinput"]').each(function (i, el) {
-                    $(el).fileinput({
-                        showUpload: false,
-                        dropZoneEnabled: false,
-                        allowedFileExtensions: $(el).data('allowed'),
-                        maxFileCount: 10,
-                        inputGroupClass: "input-group",
-                        fileActionSettings: {
-                            showZoom: false
-                        },
-                        language: "ru"
-                    });
-                });
                 if (typeof callback === 'function') callback($(e.target));
             });
     });

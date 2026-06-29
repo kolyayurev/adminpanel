@@ -10,11 +10,7 @@ $.ajaxSetup({
     }
 });
 
-window.Cropper = require('cropperjs');
-
 window.bootstrap = require('bootstrap');
-require('bootstrap-fileinput/js/fileinput.min');
-require('bootstrap-fileinput/js/locales/ru');
 
 import axios from 'axios';
 window.axios = axios;
@@ -24,9 +20,6 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 import { toastr, Swal } from '@/ui/notify';
 window.toastr = toastr;
 window.Swal = Swal;
-
-const { Dropzone } = require("dropzone");
-window.Dropzone = Dropzone;
 
 import Cookies from 'js-cookie'
 window.Cookies = Cookies;

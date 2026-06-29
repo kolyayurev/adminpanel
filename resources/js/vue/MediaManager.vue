@@ -20,7 +20,7 @@
              :style="isExpanded ? 'display:block' : 'display:none'">
             <el-button-group class="me-1">
                 <el-button type="primary" v-if="allowUpload"
-                           @click="dropzone.element.click()">
+                           @click="triggerUpload()">
                     <i class="bi bi-upload"></i>&nbsp;
                     {{ lang.get('common.upload') }}
 
@@ -80,8 +80,20 @@
                 </template>
             </el-popconfirm>
         </div>
-        <div ref="dropzone" class="d-none" v-if="allowUpload"></div>
-        <div id="uploadPreview" class="d-none" v-if="allowUpload"></div>
+        <el-upload
+            ref="upload"
+            class="d-none"
+            v-if="allowUpload"
+            :action="uploadAction"
+            :data="uploadData"
+            :headers="uploadHeaders"
+            :accept="accept"
+            :multiple="true"
+            :show-file-list="false"
+            :on-progress="onUploadProgress"
+            :on-success="onUploadSuccess"
+            :on-error="onUploadError"
+        />
         <el-progress class="media-manager__progress" :percentage="progress" :show-text="false" v-if="allowUpload"
                      v-show="progressBar"/>
         <el-breadcrumb class="media-manager__breadcrumbs" separator=">" v-show="isExpanded">
@@ -359,6 +371,8 @@
 </template>
 
 <script>
+import Cropper from 'cropperjs';
+
 export default {
     name: 'v-media-manager',
     props: {
@@ -472,7 +486,6 @@ export default {
             moveDialog: false,
             cropDialog: false,
             newName: null,
-            dropzone: null,
             cropper: null,
             cropImage: null,
             crop: {
@@ -517,7 +530,23 @@ export default {
         },
         activeDetails(){
             return this.detailsExpanded?'details':'';
-        }
+        },
+        // Параметры загрузки для el-upload
+        uploadAction() {
+            return route('adminpanel.media.upload');
+        },
+        uploadHeaders() {
+            return { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') };
+        },
+        uploadData() {
+            // Читается el-upload в момент отправки — отдаём актуальную папку/настройки.
+            return {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                upload_path: this.currentFolder,
+                filename: this.filename ?? '',
+                thumbnails: JSON.stringify(this.thumbnails),
+            };
+        },
     },
     watch: {
         localValue: {
@@ -563,6 +592,30 @@ export default {
         },
         closeMoveDialog() {
             this.moveDialog = false;
+        },
+        // Загрузка через el-upload (заменил Dropzone). Кнопка тулбара кликает скрытый input.
+        triggerUpload() {
+            const input = this.$refs.upload?.$el?.querySelector('input[type=file]');
+            if (input) input.click();
+        },
+        onUploadProgress(evt) {
+            this.progressBar = true;
+            this.progress = Math.round(evt.percent);
+        },
+        onUploadSuccess(res) {
+            this.progressBar = false;
+            this.progress = 0;
+            if (res && res.status) {
+                toastr.success(res.message, lang.get('common.sweet_success'));
+            } else {
+                toastr.error(res ? res.message : '', lang.get('common.whoopsie'));
+            }
+            this.getFiles();
+        },
+        onUploadError(err) {
+            this.progressBar = false;
+            this.progress = 0;
+            toastr.error(err && err.message ? err.message : '', lang.get('common.whoopsie'));
         },
         openCropDialog(image, thumbnailName = '') {
             let settings = this.getThumbnailSettings(thumbnailName);
@@ -959,44 +1012,7 @@ export default {
                 }
             }
 
-            //Dropzone
-            if (this.allowUpload) {
-                this.dropzone = new Dropzone(this.$refs.dropzone, {
-                    timeout: 180000,
-                    acceptedFiles: _this.accept,
-                    url: route('adminpanel.media.upload'),
-                    previewsContainer: "#uploadPreview",
-                    totaluploadprogress: function (uploadProgress, totalBytes, totalBytesSent) {
-                        _this.progress = uploadProgress;
-                        if (uploadProgress === 100) {
-                            _this.progressBar = false;
-                            _this.progress = 0;
-                        }
-                    },
-                    processing: function () {
-                        _this.progressBar = true;
-                    },
-                    sending: function (file, xhr, formData) {
-                        formData.append("_token", $('meta[name="csrf-token"]').attr('content'));
-                        formData.append("upload_path", _this.currentFolder);
-                        formData.append("filename", _this.filename ?? '');
-                        formData.append("thumbnails", JSON.stringify(_this.thumbnails));
-                    },
-                    success: function (e, res) {
-                        if (res.status) {
-                            toastr.success(res.message, lang.get('common.sweet_success'));
-                        } else {
-                            toastr.error(res.message, lang.get('common.whoopsie'));
-                        }
-                    },
-                    error: function (e, res, xhr) {
-                        toastr.error(res, lang.get('common.whoopsie'));
-                    },
-                    queuecomplete: function () {
-                        _this.getFiles();
-                    }
-                });
-            }
+            // Загрузка теперь на el-upload (см. template + методы onUpload*).
 
             $(document).ready(function () {
                 $(".form-create-edit").submit(function (e) {
