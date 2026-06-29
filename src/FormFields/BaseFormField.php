@@ -319,7 +319,16 @@ abstract class BaseFormField implements Arrayable, FormFieldContract
 
     public function needSave(): bool
     {
-        return true;
+        return $this->get('needSave', true);
+    }
+
+    /**
+     * Пометить поле как несохраняемое в модель (виртуальное): значение участвует в форме и
+     * валидации, но не пишется как атрибут/колонка. Напр. подтверждение/текущий пароль.
+     */
+    public function dontSave(): self
+    {
+        return $this->set('needSave', false);
     }
 
     /**

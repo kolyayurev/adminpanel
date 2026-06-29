@@ -22,32 +22,94 @@
                     <x-adminpanel::forms.input disabled value="{{ $label }}"/>
                 @else
                     @php
-                        $query = $relationModel::where($field->get('key'), old($field->get('column'), $model->{$field->get('column')}))->get();
+                        $vue_instance_name = vue_instance_name($field, $model);
+                        $relationUrl = $field->get('pageTypeSlug')
+                            ? route('adminpanel.settings.relation', ['name' => $field->get('pageTypeSlug')])
+                            : route('adminpanel.'.$dataType->getSlug().'.relation');
+                        $relationMethod = ! is_null($model->getKey()) ? 'update' : 'create';
+                        $currentVal = old($field->get('column'), $model->{$field->get('column')});
+                        $currentRow = (! is_null($currentVal) && $currentVal !== '')
+                            ? $relationModel::where($field->get('key'), $currentVal)->first()
+                            : null;
+                        $selectedOption = $currentRow
+                            ? ['value' => (string) $currentRow->{$field->get('key')}, 'label' => $currentRow->{$field->get('displayedField')}]
+                            : null;
+                        $initOptions = [];
+                        if (! $field->get('required')) {
+                            $initOptions[] = ['value' => '', 'label' => __('adminpanel::common.none')];
+                        }
+                        if ($selectedOption) {
+                            $initOptions[] = $selectedOption;
+                        }
                     @endphp
-                    <x-adminpanel::forms.select
-                        mode="ajax"
-                        label="{{ $field->get('label') }}"
-                        name="{{ $field->get('column') }}"
-                        :instruction="$field->get('instruction')"
-                        :required="$field->get('required')"
-                        :disabled="$field->get('disabled')"
-                        data-component="relation"
-                        data-datatype="{{ $dataType->getSlug() }}"
-{{--                        TODO: refactor--}}
-                        data-pagetype="{{ $field->get('pageTypeSlug') }}"
-                        data-field="{{ $field->get('name') }}"
-                        :data-id="!is_null($model->getKey())?$model->getKey():''"
-                        data-method="{{ !is_null($model->getKey()) ? 'update' : 'create' }}"
-                    >
-                        @if(!$field->get('required'))
-                            <option value="">{{__('adminpanel::common.none')}}</option>
+                    <div class="form-group" id="{{ $field->getId() }}" v-cloak>
+                        <label>{{ $field->get('label') }}</label>
+                        <input type="hidden" class="is-vue" name="{{ $field->get('column') }}" :value="value"
+                               data-vue-instance="{{ $vue_instance_name }}"/>
+                        <el-select v-model="value"
+                                   filterable remote :remote-method="remoteMethod" :loading="loading"
+                                   reserve-keyword
+                                   @if (!$field->get('required')) clearable @endif
+                                   @if ($field->get('disabled')) disabled @endif
+                                   class="w-100" style="width: 100%"
+                                   placeholder="{{ $field->get('placeholder') }}">
+                            <el-option v-for="opt in options" :key="opt.value" :label="opt.label" :value="opt.value"/>
+                        </el-select>
+                        @error($field->get('column'))
+                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                        @enderror
+                        @if (!empty($field->get('instruction')))
+                            <x-adminpanel::instruction :text="$field->get('instruction')"></x-adminpanel::instruction>
                         @endif
-
-                        @foreach($query as $relationshipData)
-                            <option value="{{ $relationshipData->{$field->get('key')} }}"
-                                    @selected(old($field->get('column'), $model->{$field->get('column')}) == $relationshipData->{$field->get('key')})>{{ $relationshipData->{$field->get('displayedField')} }}</option>
-                        @endforeach
-                    </x-adminpanel::forms.select>
+                    </div>
+                    @push('vue')
+                        <script>
+                            createVueApp({
+                                data() {
+                                    return {
+                                        value: @json($selectedOption ? $selectedOption['value'] : ''),
+                                        options: @json($initOptions),
+                                        selectedOption: @json($selectedOption),
+                                        loading: false,
+                                    }
+                                },
+                                mounted() {
+                                    vueFieldInstances['{{ $vue_instance_name }}'] = this
+                                    this.load('')
+                                },
+                                methods: {
+                                    // Подгрузка вариантов с сервера (тот же роут/контракт, что был у select2-ajax).
+                                    load(search) {
+                                        this.loading = true
+                                        axios.get(@json($relationUrl), {
+                                            params: {
+                                                search: search,
+                                                field: @json($field->get('name')),
+                                                method: @json($relationMethod),
+                                                id: @json(! is_null($model->getKey()) ? $model->getKey() : ''),
+                                                page: 1,
+                                            },
+                                        }).then(r => {
+                                            let opts = (r.data.results || []).map(o => ({ value: String(o.id), label: o.text }))
+                                            // не терять выбранный вариант, если его нет в текущей странице
+                                            if (this.selectedOption && !opts.some(o => o.value === this.selectedOption.value)) {
+                                                opts.unshift(this.selectedOption)
+                                            }
+                                            this.options = opts
+                                        }).finally(() => { this.loading = false })
+                                    },
+                                    remoteMethod(search) {
+                                        this.load(search)
+                                    },
+                                    // Вызывается мостом мультиязычности при переключении локали.
+                                    updateLocaleData(val) {
+                                        this.value = val ?? ''
+                                        this.load('')
+                                    },
+                                },
+                            }).mount('#{{ $field->getId() }}');
+                        </script>
+                    @endpush
                 @endif
 
             @elseif($field->isHasOne())
@@ -120,33 +182,102 @@
                         @endif
                     </div>
                 @else
-                    <x-adminpanel::forms.select
-                        mode="{{ $field->get('taggable') ? 'taggable' : 'ajax' }}"
-                        label="{{ $field->get('label') }}"
-                        name="{{ $field->get('name') }}[]"
-                        multiple
-                        :instruction="$field->get('instruction')"
-                        :required="$field->get('required')"
-                        :disabled="$field->get('disabled')"
-                        data-component="relation"
-                        data-datatype="{{ $dataType->getSlug() }}"
-                        data-field="{{$field->get('name')}}"
-                        :data-id="!is_null($model->getKey())?$model->getKey():''"
-                        data-method="{{ !is_null($model->getKey()) ? 'update' : 'create' }}"
-{{--                    TODO: remake table to datatype --}}
-                        :data-route="$field->get('taggable')?route('adminpanel.'.$field->get('table').'.store'):''"
-                        :data-label="$field->get('taggable')?$field->get('displayedField'):''"
-                        :data-error-message="$field->get('taggable')?ap_trans('content-type.error_tagging'):''"
-                    >
-                        @if(!$field->get('required'))
-                            <option value="">{{__('adminpanel::common.none')}}</option>
+                    @php
+                        $vue_instance_name = vue_instance_name($field, $model);
+                        $relationUrl = route('adminpanel.'.$dataType->getSlug().'.relation');
+                        $relationMethod = ! is_null($model->getKey()) ? 'update' : 'create';
+                        $initSelected = $relationshipOptions->map(fn ($o) => ['value' => (string) $o->{$field->get('key')}, 'label' => $o->{$field->get('displayedField')}])->values();
+                        $taggable = (bool) $field->get('taggable');
+                        $tagRoute = $taggable ? route('adminpanel.'.$field->get('table').'.store') : '';
+                        $tagLabel = $taggable ? $field->get('displayedField') : '';
+                        $tagError = $taggable ? ap_trans('content-type.error_tagging') : '';
+                    @endphp
+                    <div class="form-group" id="{{ $field->getId() }}" v-cloak>
+                        <label>{{ $field->get('label') }}</label>
+                        <input v-for="v in value" :key="v" type="hidden" name="{{ $field->get('name') }}[]" :value="v"
+                               data-vue-instance="{{ $vue_instance_name }}"/>
+                        <el-select v-model="value"
+                                   multiple filterable remote :remote-method="remoteMethod" :loading="loading"
+                                   reserve-keyword
+                                   @if ($taggable) allow-create default-first-option @endif
+                                   @if (!$field->get('required')) clearable @endif
+                                   @if ($field->get('disabled')) disabled @endif
+                                   class="w-100" style="width: 100%"
+                                   placeholder="{{ $field->get('placeholder') }}">
+                            <el-option v-for="opt in options" :key="opt.value" :label="opt.label" :value="opt.value"/>
+                        </el-select>
+                        @error($field->get('name'))
+                        <span class="invalid-feedback d-block" role="alert"><strong>{{ $message }}</strong></span>
+                        @enderror
+                        @if (!empty($field->get('instruction')))
+                            <x-adminpanel::instruction :text="$field->get('instruction')"></x-adminpanel::instruction>
                         @endif
-
-                        @foreach($relationshipOptions as $relationshipOption)
-                            <option value="{{ $relationshipOption->{$field->get('key')} }}"
-                                    @selected(in_array($relationshipOption->{$field->get('key')}, $selected_values))>{{ $relationshipOption->{$field->get('displayedField')} }}</option>
-                        @endforeach
-                    </x-adminpanel::forms.select>
+                    </div>
+                    @push('vue')
+                        <script>
+                            createVueApp({
+                                data() {
+                                    return {
+                                        value: @json($initSelected->pluck('value')->all()),
+                                        options: @json($initSelected),
+                                        loading: false,
+                                        taggable: @json($taggable),
+                                        tagRoute: @json($tagRoute),
+                                        tagLabel: @json($tagLabel),
+                                        tagError: @json($tagError),
+                                    }
+                                },
+                                watch: {
+                                    // taggable: новый ввод (allow-create) приходит как значение === тексту;
+                                    // создаём запись на сервере и подменяем на реальный id.
+                                    value(newVal, oldVal) {
+                                        if (!this.taggable) return
+                                        newVal.filter(v => !oldVal.includes(v) && !this.options.some(o => o.value === v))
+                                            .forEach(text => this.createTag(text))
+                                    },
+                                },
+                                mounted() {
+                                    vueFieldInstances['{{ $vue_instance_name }}'] = this
+                                    this.load('')
+                                },
+                                methods: {
+                                    load(search) {
+                                        this.loading = true
+                                        axios.get(@json($relationUrl), {
+                                            params: {
+                                                search: search,
+                                                field: @json($field->get('name')),
+                                                method: @json($relationMethod),
+                                                id: @json(! is_null($model->getKey()) ? $model->getKey() : ''),
+                                                page: 1,
+                                            },
+                                        }).then(r => {
+                                            let loaded = (r.data.results || []).map(o => ({ value: String(o.id), label: o.text }))
+                                            // сохранить уже выбранные варианты, чтобы чипы не теряли подписи
+                                            let merged = this.options.filter(o => this.value.includes(o.value))
+                                            loaded.forEach(o => { if (!merged.some(m => m.value === o.value)) merged.push(o) })
+                                            this.options = merged
+                                        }).finally(() => { this.loading = false })
+                                    },
+                                    remoteMethod(search) {
+                                        this.load(search)
+                                    },
+                                    createTag(text) {
+                                        axios.post(this.tagRoute, { [this.tagLabel]: text, _tagging: true })
+                                            .then(r => {
+                                                let id = String(r.data.data.id)
+                                                this.options.push({ value: id, label: text })
+                                                this.value = this.value.map(x => x === text ? id : x)
+                                            })
+                                            .catch(() => {
+                                                toastr.error(this.tagError)
+                                                this.value = this.value.filter(x => x !== text)
+                                            })
+                                    },
+                                },
+                            }).mount('#{{ $field->getId() }}');
+                        </script>
+                    @endpush
                 @endif
             @endif
         @else

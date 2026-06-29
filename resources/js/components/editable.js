@@ -35,7 +35,7 @@ $(document).on('submit','[data-action="updateCell"]', function (event) {
         processData: false,
         success: function (result) {
             if (result.status) {
-                $table.DataTable().ajax.reload();
+                window.adminTableReload && window.adminTableReload();
             } else {
                 toastr.error(data.message);
             }
@@ -57,7 +57,7 @@ $(document).on('click', '[data-action="editStatus"]', function (event) {
         data: data,
         success: function (result) {
             if (result.status) {
-                $table.DataTable().ajax.reload();
+                window.adminTableReload && window.adminTableReload();
             } else {
                 toastr.error(data.message);
             }
@@ -69,5 +69,5 @@ $(document).on('click', '[data-action="editStatus"]', function (event) {
 
 $(document).on('reset','[data-action="updateCell"]', function (event) {
     event.preventDefault();
-    $table.DataTable().ajax.reload();
+    window.adminTableReload && window.adminTableReload();
 });

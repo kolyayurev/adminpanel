@@ -237,10 +237,15 @@ class BaseFormFieldTest extends TestCase
 
     /**
      * @covers ::needSave
+     * @covers ::dontSave
      */
-    public function test_need_save_returns_true(): void
+    public function test_need_save_defaults_true_and_dont_save_disables_it(): void
     {
-        $this->assertTrue((new Text)->needSave());
+        $field = new Text;
+
+        $this->assertTrue($field->needSave());
+        $this->assertSame($field, $field->dontSave());
+        $this->assertFalse($field->needSave());
     }
 
     /**

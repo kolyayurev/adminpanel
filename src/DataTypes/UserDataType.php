@@ -64,14 +64,16 @@ class UserDataType extends BaseDataType
                 ->required(),
             Password::make('current_password')
                 ->label('Текущий пароль')
-                ->hiddenOn(['list', 'create', 'show']),
+                ->hiddenOn(['list', 'create', 'show'])
+                ->dontSave(),
             Password::make('password')
                 ->label('Пароль')
                 ->hiddenOn(['list', 'show'])
                 ->default('1234'),
             Password::make('password_confirmation')
                 ->label('Подтверждение пароля')
-                ->hiddenOn(['list', 'show']),
+                ->hiddenOn(['list', 'show'])
+                ->dontSave(),
             Relation::make('role_id')
                 ->label('Роль')
                 ->belongsTo($this->getModel(), AdminPanel::model('Role'))
@@ -83,7 +85,7 @@ class UserDataType extends BaseDataType
     public function rules(Request $request): array
     {
         return [
-            'email' => ['required', 'email', "unique:users,email,{$request->route('user')},id"],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($request->route('user'))],
             'name' => ['required', 'min:3', 'max:255'],
             'role_id' => ['nullable', 'exists:roles,id'],
             'password' => 'nullable|required_with:password_confirmation|string|confirmed',

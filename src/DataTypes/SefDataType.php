@@ -4,6 +4,7 @@ namespace KY\AdminPanel\DataTypes;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use KY\AdminPanel\Blocks\Card;
 use KY\AdminPanel\FormFields\ArrayBuilder;
 use KY\AdminPanel\FormFields\Hidden;
@@ -69,8 +70,8 @@ class SefDataType extends BaseDataType
     public function rules(Request $request): array
     {
         return [
-            'name' => ['required', 'min:3', 'max:255', "unique:roles,name,{$request->route('role')},id"],
-            'display_name' => ['required', 'min:3', 'max:255'],
+            'url' => ['required', 'max:255', Rule::unique('sef', 'url')->ignore($request->route('sef'))],
+            'alias' => ['required', 'max:255'],
         ];
     }
 }

@@ -1,0 +1,3 @@
+// Стили страницы документации: подсветка кода highlight.js.
+// Отдельный CSS-entry → public/css/docs.css (подключается в docs/index.blade.php).
+@import 'highlight.js/styles/monokai';

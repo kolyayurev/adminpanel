@@ -3,7 +3,7 @@ const Routes = {
     defaults: {},
     routes: {
         "adminpanel.docs.content":{
-            "uri": adminPrefix+"/docs",
+            "uri": adminPrefix+"/tools/docs",
             "methods":["POST"],
         },
         "adminpanel.settings.relation":{

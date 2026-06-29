@@ -22,31 +22,46 @@
 
         @stack('end-head-styles')
         @stack('end-head-scripts')
+
+        {{-- До отрисовки восстанавливаем свёрнутость sidebar, чтобы не было мигания. --}}
+        <script>
+            (function () {
+                try {
+                    if (localStorage.getItem('ap-sidebar-collapsed') === '1') {
+                        document.documentElement.classList.add('ap-sidebar-collapsed');
+                    }
+                } catch (e) {}
+            })();
+        </script>
     </head>
 
     <body class="adminpanel">
         @stack('start-body-scripts')
 
-        @include('adminpanel::layouts.partials.nav')
-        <div class="wrapper" id="contentBody" @if(isset($isModelTranslatable) && $isModelTranslatable) data-multilingual @endif data-mode="@yield('mode')">
-            @include('adminpanel::layouts.partials.loader')
+        <div class="ap-layout">
+            @include('adminpanel::layouts.partials.nav')
+            <div class="ap-main">
+                <div class="wrapper" id="contentBody" @if(isset($isModelTranslatable) && $isModelTranslatable) data-multilingual @endif data-mode="@yield('mode')">
+                    @include('adminpanel::layouts.partials.loader')
 
-            <section class="container-fluid my-3">
-                @include('adminpanel::layouts.partials.messages')
-            </section>
+                    <section class="container-fluid my-3">
+                        @include('adminpanel::layouts.partials.messages')
+                    </section>
 
-            <section class="container-fluid my-3">
-                @yield('breadcrumbs')
-            </section>
+                    <section class="container-fluid my-3">
+                        @yield('breadcrumbs')
+                    </section>
 
-            <section class="container-fluid my-3">
-                @yield('page-header')
-            </section>
+                    <section class="container-fluid my-3">
+                        @yield('page-header')
+                    </section>
 
-            <section class="container-fluid mt-3"  >
-                @yield('content')
-            </section>
-            @include('adminpanel::layouts.partials.footer')
+                    <section class="container-fluid mt-3"  >
+                        @yield('content')
+                    </section>
+                    @include('adminpanel::layouts.partials.footer')
+                </div>
+            </div>
         </div>
         <div id="modalContainer"></div>
 
@@ -56,7 +71,6 @@
             var locale = '{{ app()->getLocale()}}';
             var fallbackLocale = '{{ config('app.fallback_locale')}}';
             const storage = '{{ Str::finish(Storage::disk(config('adminpanel.storage.disk'))->url('/'), '/') }}';
-            var dataTablesOptions = {};
         </script>
 
         @stack('before-app-scripts')

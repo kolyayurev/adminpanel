@@ -1,32 +1,26 @@
-@php($options = [])
+{{-- Relation-фильтр колонки (remote). Привязан к данным таблицы (datatable.blade.php). --}}
+@php($relationUrl = route('adminpanel.'.$dataType->getSlug().'.relation'))
+@php($isMultiple = $field->isHasMany() || $field->isBelongsToMany())
+@php($filterName = $filter->getName())
 
-@php($sessionData = session('datatable.'.$dataType->getSlug().'.'.$field->get('name')))
-
-@if(!empty($sessionData))
-    @if($field->isBelongsTo())
-        @php($options = app($field->get('relatedModel'))->where($field->get('key'), $sessionData)->get())
-    @elseif($field->isHasOne())
-        @php($options = app($field->get('relatedModel'))->where($field->get('column'), $sessionData)->get())
-    @elseif($field->isHasMany())
-        @php($options = app($field->get('relatedModel'))->whereIn($field->get('column'), (array) $sessionData)->get())
-    @endif
-@endif
-
-<select class="form-control select2-ajax"
-        id="{{ $filter->getName() }}"
-        data-action="dataTableFilterSelect"
-        @if($field->isHasMany() || $field->isBelongsToMany()) multiple @endif
-        data-component="relation"
-        data-datatype="{{ $dataType->getSlug() }}"
-        data-field="{{ $field->get('name') }}"
-        data-method="list"
-        data-allow-clear="true"
-        data-minimum-results-for-search="10"
-        data-placeholder="{{ $field->get('label') }}"
-        {!! $filter->convertAttributesToHtml() !!}
-    >
-        @foreach($options as $option)
-            <option value="{{ $option->{$field->get('key')} }}"
-                    selected>{{ $option->{$field->get('displayedField')} }}</option>
-        @endforeach
-</select>
+<el-select
+    v-model="filters['{{ $filterName }}']"
+    size="small"
+    clearable
+    filterable
+    remote
+    @if($isMultiple) multiple @endif
+    :remote-method="(q) => loadRelation('{{ $filterName }}', '{{ $field->get('name') }}', '{{ $relationUrl }}', q)"
+    :loading="!!relationLoading['{{ $filterName }}']"
+    placeholder="{{ $field->get('label') }}"
+    style="width: 100%"
+    @visible-change="(v) => v && loadRelation('{{ $filterName }}', '{{ $field->get('name') }}', '{{ $relationUrl }}', '')"
+    @change="onFilter"
+>
+    <el-option
+        v-for="opt in (relationOptions['{{ $filterName }}'] || [])"
+        :key="opt.value"
+        :label="opt.label"
+        :value="opt.value"
+    ></el-option>
+</el-select>

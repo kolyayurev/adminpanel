@@ -1,0 +1,307 @@
+// Боковое меню админки. Раскрытое ~240px / свёрнутое до иконок ~64px,
+
+$ap-sidebar-width: 240px;
+$ap-sidebar-collapsed-width: 64px;
+$ap-sidebar-bg: #212529;
+$ap-sidebar-color: rgba(255, 255, 255, 0.75);
+$ap-sidebar-color-active: #fff;
+$ap-sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+$ap-sidebar-active-bg: rgba(255, 255, 255, 0.14);
+
+.ap-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.ap-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.ap-sidebar {
+    flex: 0 0 $ap-sidebar-width;
+    width: $ap-sidebar-width;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: $ap-sidebar-bg;
+    color: $ap-sidebar-color;
+    z-index: z(sidebar);
+    // Без transition ширины: подписи прячутся мгновенно, поэтому анимация ширины
+    // выглядела бы как дёрганье (контент рефлоит сразу, контейнер ещё едет). Снап.
+
+    &__brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    &__logo {
+        color: $ap-sidebar-color-active;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__toggle {
+        flex: 0 0 auto;
+        background: transparent;
+        border: 0;
+        color: $ap-sidebar-color;
+        cursor: pointer;
+        padding: 0.25rem;
+        line-height: 1;
+
+        &:hover {
+            color: $ap-sidebar-color-active;
+        }
+    }
+
+    &__nav {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0.5rem 0;
+
+        // Тонкий ненавязчивый скроллбар вместо «толстого» нативного.
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+        &::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+    }
+
+    &__footer {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 0.5rem 0;
+    }
+
+    &__user {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}
+
+.ap-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &__sub {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    // Базовый пункт (ссылка/summary/кнопка).
+    &__link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.5rem 1rem;
+        color: $ap-sidebar-color;
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+        border: 0;
+        background: transparent;
+        text-align: left;
+        list-style: none;
+
+        &:hover {
+            color: $ap-sidebar-color-active;
+            background: $ap-sidebar-hover-bg;
+        }
+
+        &.active {
+            color: $ap-sidebar-color-active;
+            background: $ap-sidebar-active-bg;
+            box-shadow: inset 3px 0 0 var(--bs-primary, #0d6efd);
+        }
+    }
+
+    // Подпункты — небольшой отступ слева от иконки группы.
+    &__sub &__link {
+        padding-left: 2.75rem;
+    }
+
+    &__icon {
+        flex: 0 0 1.25rem;
+        width: 1.25rem;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    &__label {
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__chevron {
+        flex: 0 0 auto;
+        font-size: 0.75rem;
+        transition: transform 0.15s ease;
+    }
+
+    // Нативный <details> как аккордеон: убираем дефолтный маркер, крутим шеврон.
+    &__group {
+        summary {
+            list-style: none;
+            &::-webkit-details-marker { display: none; }
+        }
+
+        details[open] > summary .ap-menu__chevron {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+// --- Свёрнутый режим (только иконки) ---
+html.ap-sidebar-collapsed {
+    .ap-sidebar {
+        flex-basis: $ap-sidebar-collapsed-width;
+        width: $ap-sidebar-collapsed-width;
+    }
+
+    // Прячем подписи, шевроны и текст лого; иконки центрируем.
+    .ap-menu__label,
+    .ap-menu__chevron,
+    .ap-sidebar__logo,
+    .ap-sidebar__user .ap-menu__label {
+        display: none;
+    }
+
+    .ap-menu__link,
+    .ap-sidebar__user {
+        justify-content: center;
+        gap: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .ap-sidebar__brand {
+        justify-content: center;
+    }
+
+    // Стрелка тоггла указывает «развернуть».
+    .ap-sidebar__toggle i {
+        transform: rotate(180deg);
+    }
+
+    // Группы: в свёрнутом виде показываем подменю flyout'ом по наведению.
+    .ap-menu__group {
+        position: relative;
+
+        .ap-menu__sub {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            min-width: 200px;
+            background: $ap-sidebar-bg;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+            border-radius: 0 0.25rem 0.25rem 0;
+            z-index: z(sidebar);
+        }
+
+        &:hover .ap-menu__sub {
+            display: block;
+        }
+
+        .ap-menu__sub .ap-menu__link {
+            justify-content: flex-start;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .ap-menu__sub .ap-menu__label {
+            display: inline;
+        }
+    }
+}
+
+// --- Мобильный off-canvas ---
+.ap-sidebar-mobile-toggle {
+    display: none;
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: calc(#{z(sidebar)} + 2);
+    background: $ap-sidebar-bg;
+    color: $ap-sidebar-color-active;
+    border: 0;
+    border-radius: 0.25rem;
+    padding: 0.4rem 0.6rem;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.ap-sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: calc(#{z(sidebar)} - 1);
+}
+
+@media (max-width: 768px) {
+    .ap-sidebar-mobile-toggle {
+        display: block;
+    }
+
+    .ap-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        // На мобильных всегда полная ширина при открытии, режим collapsed игнорируем.
+        flex-basis: $ap-sidebar-width;
+        width: $ap-sidebar-width;
+        transform: translateX(-100%);
+        transition: transform 0.2s ease;
+        z-index: calc(#{z(sidebar)} + 1);
+    }
+
+    html.ap-sidebar-open {
+        .ap-sidebar {
+            transform: none;
+        }
+        .ap-sidebar-backdrop {
+            display: block;
+        }
+        // В мобильном открытии показываем подписи, даже если стоит collapsed.
+        .ap-menu__label,
+        .ap-sidebar__logo {
+            display: inline;
+        }
+    }
+
+    .ap-main {
+        width: 100%;
+    }
+}

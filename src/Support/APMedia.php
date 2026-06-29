@@ -51,18 +51,11 @@ class APMedia
 
         $fullPath = $folder.$filename.'.'.$file->getClientOriginalExtension();
 
-        $resizeWidth = null;
-        $resizeHeight = null;
-        if (array_key_exists('resize', $settings) && (
-            array_key_exists('width', $settings['resize']) || array_key_exists('height', $settings['resize'])
-        )) {
-            if (array_key_exists('width', $settings['resize'])) {
-                $resizeWidth = $settings['resize']['width'];
-            }
-            if (array_key_exists('height', $settings['resize'])) {
-                $resizeHeight = $settings['resize']['height'];
-            }
-        } else {
+        $resizeWidth = $settings['resize']['width'] ?? null;
+        $resizeHeight = $settings['resize']['height'] ?? null;
+
+        // Если ни ширина, ни высота не заданы — сохраняем исходный размер.
+        if (is_null($resizeWidth) && is_null($resizeHeight)) {
             $resizeWidth = $image->width();
             $resizeHeight = $image->height();
         }
@@ -370,7 +363,14 @@ class APMedia
             return '';
         }
 
-        return self::getUrl(self::getImageThumb($path, $sufix ?? config('adminpanel.media.default_thumb_name', 'thumb')));
+        $thumbPath = $this->getImageThumb($path, $sufix ?? config('adminpanel.media.default_thumb_name', 'thumb'));
+
+        // Фолбэк на оригинал, если thumbnail не сгенерирован.
+        if (! $this->storage->exists($thumbPath)) {
+            $thumbPath = $path;
+        }
+
+        return $this->getUrl($thumbPath);
     }
 
     public function getImageThumb(?string $path, ?string $suffix = null): string

@@ -85,11 +85,10 @@ class SelectTest extends TestCase
     /**
      * @covers ::prepareValue
      */
-    public function test_prepare_value_json_encodes_non_empty_value(): void
+    public function test_prepare_value_json_encodes_multiple_and_keeps_single_as_is(): void
     {
-        $field = new Select;
-
-        $this->assertSame('["a","b"]', $field->prepareValue(['a', 'b'], new Request, null));
+        $this->assertSame('["a","b"]', (new Select)->multiple()->prepareValue(['a', 'b'], new Request, null));
+        $this->assertSame('b', (new Select)->prepareValue('b', new Request, null));
     }
 
     /**

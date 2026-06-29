@@ -28,64 +28,50 @@
             </div>
             <div class="col-sm-9 col-md-9 table-container">
                 @if ($logs === null)
-                    <div>
-                        {{ ap_trans('tools.logs.file_too_big') }}
-                    </div>
+                    <div>{{ ap_trans('tools.logs.file_too_big') }}</div>
                 @else
-                    <table id="table-log" class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>{{ ap_trans('tools.logs.level') }}</th>
-                            <th>{{ ap_trans('tools.logs.context') }}</th>
-                            <th>{{ ap_trans('tools.logs.date') }}</th>
-                            <th>{{ ap_trans('tools.logs.content') }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        @foreach($logs as $key => $log)
-                            <tr data-display="stack{{{$key}}}">
-                                <td class="text-{{{$log['level_class']}}} level"><span
-                                        class="glyphicon glyphicon-{{{$log['level_img']}}}-sign"
-                                        aria-hidden="true"></span> &nbsp;{{$log['level']}}</td>
-                                <td class="text">{{$log['context']}}</td>
-                                <td class="date">{{{$log['date']}}}</td>
-                                <td class="text">
-                                    @if ($log['stack'])
-                                        <a class="pull-right expand btn btn-default btn-xs"
-                                           data-display="stack{{{$key}}}"><span
-                                                class="glyphicon glyphicon-search"></span></a>
-                                    @endif
-                                    {{{$log['text']}}}
-                                    @if (isset($log['in_file']))
-                                        <br/>{{{$log['in_file']}}}
-                                    @endif
-                                    @if ($log['stack'])
-                                        <div class="stack" id="stack{{{$key}}}"
-                                             style="display: none; white-space: pre-wrap;">{{{ trim($log['stack']) }}}
-                                        </div>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-
-                        </tbody>
-                    </table>
+                    <div id="logsApp" v-cloak>
+                        <el-input v-model="search" placeholder="{{ ap_trans('common.search') }}" clearable size="small"
+                                  class="mb-2" style="max-width: 280px"/>
+                        <el-table :data="paged" border stripe default-expand-all-rows="false" style="width: 100%">
+                            <el-table-column type="expand">
+                                <template #default="{ row }">
+                                    <pre v-if="row.stack" style="white-space: pre-wrap; margin: 0">@{{ row.stack }}</pre>
+                                    <span v-else>—</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="level" label="{{ ap_trans('tools.logs.level') }}" sortable width="140">
+                                <template #default="{ row }">
+                                    <span :class="'text-' + row.level_class">@{{ row.level }}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="context" label="{{ ap_trans('tools.logs.context') }}" sortable width="140"/>
+                            <el-table-column prop="date" label="{{ ap_trans('tools.logs.date') }}" sortable width="180"/>
+                            <el-table-column prop="text" label="{{ ap_trans('tools.logs.content') }}">
+                                <template #default="{ row }">
+                                    <div>@{{ row.text }}</div>
+                                    <div v-if="row.in_file" class="text-muted small">@{{ row.in_file }}</div>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <div class="d-flex justify-content-end mt-2">
+                            <el-pagination v-model:current-page="page" v-model:page-size="perPage"
+                                           :total="filtered.length" :page-sizes="[25, 50, 100]"
+                                           layout="total, sizes, prev, pager, next"/>
+                        </div>
+                    </div>
                 @endif
-                <div>
+                <div class="mt-2">
                     @if($currentFile)
-                        <a href="?download={{ base64_encode($currentFile) }}"><span
-                                class="glyphicon glyphicon-download-alt"></span>
-                            {{ ap_trans('tools.logs.download_file') }}</a>
+                        <a href="?download={{ base64_encode($currentFile) }}">
+                            <i class="bi bi-download"></i> {{ ap_trans('tools.logs.download_file') }}</a>
                         -
-                        <a id="delete-log" href="?del={{ base64_encode($currentFile) }}"><span
-                                class="glyphicon glyphicon-trash"></span> {{ ap_trans('tools.logs.delete_file') }}
-                        </a>
+                        <a id="delete-log" href="?del={{ base64_encode($currentFile) }}">
+                            <i class="bi bi-trash3"></i> {{ ap_trans('tools.logs.delete_file') }}</a>
                         @if(count($files) > 1)
                             -
-                            <a id="delete-all-log" href="?delall=true"><span
-                                    class="glyphicon glyphicon-trash"></span> {{ ap_trans('tools.logs.delete_all_files') }}
-                            </a>
+                            <a id="delete-all-log" href="?delall=true">
+                                <i class="bi bi-trash3"></i> {{ ap_trans('tools.logs.delete_all_files') }}</a>
                         @endif
                     @endif
                 </div>
@@ -94,26 +80,31 @@
     </div>
 @endsection
 
+@push('vue')
+    @if($logs !== null)
+        <script>
+            createVueApp({
+                data() {
+                    return { logs: @json(array_values($logs)), search: '', page: 1, perPage: 50 }
+                },
+                computed: {
+                    filtered() {
+                        const s = this.search.toLowerCase()
+                        return s ? this.logs.filter((l) => JSON.stringify(l).toLowerCase().includes(s)) : this.logs
+                    },
+                    paged() {
+                        const start = (this.page - 1) * this.perPage
+                        return this.filtered.slice(start, start + this.perPage)
+                    },
+                },
+            }).mount('#logsApp');
+        </script>
+    @endif
+@endpush
+
 @push('end-body-scripts')
     <script>
         $(document).ready(function () {
-            $('.table-container tr').on('click', function () {
-                $('#' + $(this).data('display')).toggle();
-            });
-            $('#table-log').DataTable({
-                "order": [1, 'desc'],
-                "stateSave": true,
-                "language": {'url': '{{ adminpanel_asset('js/datatables/languages/ru_RU.json') }}' },
-                "stateSaveCallback": function (settings, data) {
-                    window.localStorage.setItem("datatable", JSON.stringify(data));
-                },
-                "stateLoadCallback": function (settings) {
-                    var data = JSON.parse(window.localStorage.getItem("datatable"));
-                    if (data) data.start = 0;
-                    return data;
-                }
-            });
-
             $('#delete-log, #delete-all-log').click(function () {
                 return confirm('{{ ap_trans('messages.questions.are_you_sure') }}');
             });

@@ -10,28 +10,16 @@ $.ajaxSetup({
     }
 });
 
-window.Cropper = require('cropperjs');
-
-window.Swal = require('sweetalert2');
-
 window.bootstrap = require('bootstrap');
-require('bootstrap-fileinput/js/fileinput.min');
-require('bootstrap-fileinput/js/locales/ru');
-// select2 в CommonJS-сборке экспортирует фабрику (module.exports = function(root, jQuery){…}),
-// её нужно вызвать, иначе плагин $.fn.select2 не регистрируется (под webpack это было иначе).
-require('select2')();
 
 import axios from 'axios';
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-window.toastr = require('toastr');
-toastr.options.preventDuplicates = true;
-
-window.moment = require('moment');
-
-const { Dropzone } = require("dropzone");
-window.Dropzone = Dropzone;
+// Нотификации/диалоги — на Element Plus (см. ui/notify), с сохранением API toastr/Swal.
+import { toastr, Swal } from '@/ui/notify';
+window.toastr = toastr;
+window.Swal = Swal;
 
 import Cookies from 'js-cookie'
 window.Cookies = Cookies;

@@ -1,39 +1,38 @@
-<nav class="ap-navbar navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand pl-3" style="font-size: 1rem" href="{{ config('adminpanel.navbar.url') }}">{{ config('adminpanel.navbar.logo') }}</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon">
-            </span>
+{{-- Мобильный гамбургер: виден только на узких экранах, открывает off-canvas sidebar. --}}
+<button type="button" class="ap-sidebar-mobile-toggle" data-ap-sidebar-mobile aria-label="Меню">
+    <x-adminpanel::icon name="list"/>
+</button>
+<div class="ap-sidebar-backdrop" data-ap-sidebar-mobile></div>
+
+<aside class="ap-sidebar">
+    <div class="ap-sidebar__brand">
+        <a class="ap-sidebar__logo" href="{{ config('adminpanel.navbar.url') }}" title="{{ config('adminpanel.navbar.logo') }}">
+            {{ config('adminpanel.navbar.logo') }}
+        </a>
+        <button type="button" class="ap-sidebar__toggle" data-ap-sidebar-toggle aria-label="Свернуть меню">
+            <x-adminpanel::icon name="chevron-double-left"/>
         </button>
-
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            @include('adminpanel::menus.admin')
-            <!-- Right Side Of Navbar -->
-            <ul class="navbar-nav ml-auto">
-                <!-- Authentication Links -->
-                <li class="nav-item dropdown">
-                    <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
-                        <ul class="navbar-nav">
-                            <li class="nav-item dropdown dropstart">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ Auth::user()->name }}
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a class="dropdown-item" href="{{ url('/') }}" target="_blank"><x-adminpanel::icon name="box-arrow-right"/>На главную</a></li>
-                                    <li>
-                                        <form action="{{ route('adminpanel.logout') }}" method="post">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item">  {{ __('adminpanel::common.buttons.logout') }}</button>
-                                        </form>
-                                    </li>
-
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
     </div>
-</nav>
 
+    <nav class="ap-sidebar__nav">
+        @include('adminpanel::menus.admin')
+    </nav>
+
+    <div class="ap-sidebar__footer">
+        <div class="ap-sidebar__user" title="{{ Auth::user()->name }}">
+            <x-adminpanel::icon name="person-circle" class="ap-menu__icon"/>
+            <span class="ap-menu__label">{{ Auth::user()->name }}</span>
+        </div>
+        <a class="ap-menu__link" href="{{ url('/') }}" target="_blank" title="На главную">
+            <x-adminpanel::icon name="box-arrow-up-right" class="ap-menu__icon"/>
+            <span class="ap-menu__label">На главную</span>
+        </a>
+        <form action="{{ route('adminpanel.logout') }}" method="post">
+            @csrf
+            <button type="submit" class="ap-menu__link ap-menu__link--button" title="{{ __('adminpanel::common.buttons.logout') }}">
+                <x-adminpanel::icon name="box-arrow-left" class="ap-menu__icon"/>
+                <span class="ap-menu__label">{{ __('adminpanel::common.buttons.logout') }}</span>
+            </button>
+        </form>
+    </div>
+</aside>

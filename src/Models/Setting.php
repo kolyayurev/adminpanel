@@ -50,8 +50,13 @@ class Setting extends Model
 
         $trans = json_decode($request->input($setting.'_i18n'), true);
 
-        // Set the default local value
-        $request->merge([$setting => $trans[config('adminpanel.multilingual.default', 'ru')]]);
+        if (! is_array($trans)) {
+            return false;
+        }
+
+        // Set the default local value (может отсутствовать, если перевод для дефолтной локали пуст)
+        $default = config('adminpanel.multilingual.default', 'ru');
+        $request->merge([$setting => $trans[$default] ?? null]);
 
         unset($request[$setting.'_i18n']);
 

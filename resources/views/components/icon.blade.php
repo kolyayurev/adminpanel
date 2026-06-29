@@ -1,5 +1,5 @@
 @props(['name','lib' => 'bi'])
 @if(!empty($name))
-<i class="{{$lib}} {{$lib}}-{{$name}}" {{ $attributes }}></i>
+<i {{ $attributes->merge(['class' => $lib.' '.$lib.'-'.$name]) }}></i>
 @endif
 
