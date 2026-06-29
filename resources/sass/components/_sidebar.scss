@@ -29,7 +29,8 @@ $ap-sidebar-active-bg: rgba(255, 255, 255, 0.14);
     background: $ap-sidebar-bg;
     color: $ap-sidebar-color;
     z-index: z(sidebar);
-    transition: width 0.15s ease, flex-basis 0.15s ease;
+    // Без transition ширины: подписи прячутся мгновенно, поэтому анимация ширины
+    // выглядела бы как дёрганье (контент рефлоит сразу, контейнер ещё едет). Снап.
 
     &__brand {
         display: flex;
@@ -194,7 +195,8 @@ html.ap-sidebar-collapsed {
         display: none;
     }
 
-    .ap-menu__link {
+    .ap-menu__link,
+    .ap-sidebar__user {
         justify-content: center;
         gap: 0;
         padding-left: 0;
