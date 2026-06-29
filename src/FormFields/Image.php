@@ -46,9 +46,13 @@ class Image extends BaseFormField
 
     public function prepareValue($value, Request $request, $model)
     {
-        if ($request->hasFile($this->get('name'))) {
-            $filePath = APMedia::save(
-                $request->file($this->get('name')),
+        // Инпут рендерится как name="{field}[file]" (см. image-cropper.blade.php),
+        // поэтому файл лежит во вложенном ключе .file.
+        $fileKey = $this->get('name').'.file';
+
+        if ($request->hasFile($fileKey)) {
+            $filePath = APMedia::saveImageFromFile(
+                $request->file($fileKey),
                 APMedia::preparePath($this->getFolder(), $model->getKey() ?? date('FY')),
                 [
                     'upsize' => $this->get('upsize'),
@@ -59,8 +63,11 @@ class Image extends BaseFormField
             foreach ($this->getThumbnails() as $thumbnail) {
                 APMedia::thumbnail($filePath, $thumbnail);
             }
+
+            return $filePath;
         }
 
-        return null;
+        // Новый файл не загружен — сохраняем ранее выбранное изображение ([filename]).
+        return is_array($value) ? ($value['filename'] ?? null) : $value;
     }
 }

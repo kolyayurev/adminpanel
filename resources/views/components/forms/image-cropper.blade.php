@@ -42,11 +42,6 @@
                         <i class="bi bi-trash3"></i>
                     </button>
                 @endif
-                @if ((!empty($image)) && (pathinfo($image, PATHINFO_EXTENSION) !== 'svg') && !empty($crop))
-                    <button type="button" class="btn btn-primary btn-xs" data-action="cropImage" data-crop="{{ $crop }}" data-component-type="{{ $type }}" data-component-image="{{ $image }}">
-                        <i class="bi bi-crop"></i>
-                    </button>
-                @endif
             </div>
         @endif
     </div>
