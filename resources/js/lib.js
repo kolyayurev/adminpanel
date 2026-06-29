@@ -2,6 +2,8 @@
 
 /**
  * Модальные окна
+ *
+ * @deprecated
  */
 export function getModalWindow(modalName, callback, existId, extraData)
 {
