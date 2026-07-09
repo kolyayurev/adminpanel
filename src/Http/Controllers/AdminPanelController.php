@@ -52,6 +52,7 @@ class AdminPanelController extends Controller
             $response->setSharedMaxAge(31536000);
             $response->setMaxAge(31536000);
             $response->setExpires(new \DateTime('+1 year'));
+            $response->headers->addCacheControlDirective('immutable');
 
             return $response;
         }
