@@ -15,6 +15,8 @@ class BaseCustomPage implements CustomPageContract
 
     protected string $slug;
 
+    protected string $icon = 'window';
+
     public function getTitle(): string
     {
         return $this->title;
@@ -33,5 +35,15 @@ class BaseCustomPage implements CustomPageContract
         }
 
         return $this->slug;
+    }
+
+    public function getIcon(): string
+    {
+        return $this->icon;
+    }
+
+    public function showInMenu(): bool
+    {
+        return true;
     }
 }

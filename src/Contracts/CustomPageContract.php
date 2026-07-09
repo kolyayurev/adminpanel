@@ -10,5 +10,9 @@ interface CustomPageContract
 
     public function getSlug(): string;
 
+    public function getIcon(): string;
+
+    public function showInMenu(): bool;
+
     public function widgets(): Collection;
 }
