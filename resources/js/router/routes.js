@@ -10,6 +10,14 @@ const Routes = {
             "uri": adminPrefix+"/settings/{name}/relation",
             "methods":["GET"],
         },
+        "adminpanel.pages.index":{
+            "uri": adminPrefix+"/pages/{page}",
+            "methods":["GET"],
+        },
+        "adminpanel.widgets.data":{
+            "uri": adminPrefix+"/widgets/{widget}/data",
+            "methods":["GET"],
+        },
         "adminpanel.datatype.destroy":{
             "uri": adminPrefix+"/{datatype}/{id}",
             "methods":["DELETE"],
