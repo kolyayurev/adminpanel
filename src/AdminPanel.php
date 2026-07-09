@@ -29,6 +29,8 @@ class AdminPanel
 
     protected array $menus = [];
 
+    protected array $menuItems = [];
+
     protected array $pageTypes = [];
 
     protected array $dataTypes = [];
@@ -164,7 +166,14 @@ class AdminPanel
     {
         $menu = $this->menus[$name];
 
-        return $menu->handle();
+        return $menu->items()->concat($this->menuItems[$name] ?? []);
+    }
+
+    public function addMenuItem($item, string $menu = 'admin')
+    {
+        $this->menuItems[$menu][] = $item;
+
+        return $this;
     }
 
     public function addPageType($handler)
