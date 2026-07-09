@@ -96,15 +96,38 @@ class ChartWidgetTest extends TestCase
             ['scales' => ['y' => ['beginAtZero' => true]]],
         ]);
 
-        $this->assertSame([
-            'type' => 'bar',
-            'labels' => ['Jan', 'Feb'],
-            'datasets' => [['label' => 'Выручка', 'data' => [1, 2]]],
-            'options' => [
-                'responsive' => true,
-                'scales' => ['y' => ['beginAtZero' => true]],
-            ],
-        ], $config);
+        // 'options' — объект (stdClass), а не массив: JSON для Chart.js всегда должен
+        // получать options как "{}", см. test_chart_config_serializes_options_as_json_object.
+        $this->assertJsonStringEqualsJsonString(
+            json_encode([
+                'type' => 'bar',
+                'labels' => ['Jan', 'Feb'],
+                'datasets' => [['label' => 'Выручка', 'data' => [1, 2]]],
+                'options' => [
+                    'responsive' => true,
+                    'scales' => ['y' => ['beginAtZero' => true]],
+                ],
+            ]),
+            json_encode($config),
+        );
+    }
+
+    /**
+     * options всегда сериализуется в JSON как объект ("{}"), а не как массив ("[]") —
+     * даже когда виджет не вызывал options(). PHP не различает пустые map/list: пустой
+     * array_replace_recursive([], []) даёт json_encode "[]", и Chart.js, получив options
+     * массивом вместо объекта, молча не рисует график (без единой ошибки в консоли).
+     * См. docs/tasks/T24.
+     *
+     * @covers ::chartConfig
+     */
+    public function test_chart_config_serializes_options_as_json_object(): void
+    {
+        $widget = new RevenueChartWidget;
+
+        $config = $this->callNonPublicMethod($widget, 'chartConfig', [['Jan'], [['label' => 'Выручка', 'data' => [1]]]]);
+
+        $this->assertStringContainsString('"options":{}', json_encode($config));
     }
 }
 
