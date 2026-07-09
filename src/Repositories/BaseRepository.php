@@ -11,11 +11,6 @@ abstract class BaseRepository implements RepositoryContract
 {
     protected $model;
 
-    public function __construct()
-    {
-        $this->model = $this->model();
-    }
-
     public function model()
     {
         return app($this->modelClass());
@@ -38,7 +33,7 @@ abstract class BaseRepository implements RepositoryContract
     public function getDataTableFilter(Request $request, DataTypeContract $dataType)
     {
 
-        $query = $this->model->query();
+        $query = $this->model()->query();
         // TODO: eager load translations
 
         foreach ($dataType->getColumns() as $column) {
