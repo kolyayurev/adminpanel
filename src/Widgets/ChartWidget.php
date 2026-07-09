@@ -50,7 +50,10 @@ abstract class ChartWidget extends BaseWidget
             'type' => $this->getChartType(),
             'labels' => $labels,
             'datasets' => $datasets,
-            'options' => array_replace_recursive($this->getOptions(), $options),
+            // options — по смыслу JS-объект (map), а не список: даже пустой должен
+            // сериализоваться в JSON как "{}", а не "[]" (иначе Chart.js молча не рисует
+            // график). PHP не различает пустые map/list, поэтому кастуем явно. См. T24.
+            'options' => (object) array_replace_recursive($this->getOptions(), $options),
         ];
     }
 }
