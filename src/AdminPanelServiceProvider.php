@@ -50,7 +50,7 @@ class AdminPanelServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton('AdminPanelGuard', function () {
-            return config('auth.defaults.guard', 'web');
+            return config('adminpanel.guard') ?: config('auth.defaults.guard', 'web');
         });
 
         $loader->alias('APMedia', APMediaFacade::class);
