@@ -54,20 +54,24 @@ class InstallCommand extends Command
         $this->info('Migrating the database tables into your application');
         $this->call('migrate');
 
-        $this->info('Attempting to set User model as parent to App\User');
-        if (file_exists(app_path('Models/User.php'))) {
-            $userPath = app_path('Models/User.php');
+        if ($this->shouldPatchUserModel()) {
+            $this->info('Attempting to set User model as parent to App\User');
+            if (file_exists(app_path('Models/User.php'))) {
+                $userPath = app_path('Models/User.php');
 
-            $str = file_get_contents($userPath);
+                $str = file_get_contents($userPath);
 
-            if ($str !== false) {
-                $str = str_replace('extends Authenticatable', "extends \KY\AdminPanel\Models\User", $str);
+                if ($str !== false) {
+                    $str = str_replace('extends Authenticatable', "extends \KY\AdminPanel\Models\User", $str);
 
-                file_put_contents($userPath, $str);
+                    file_put_contents($userPath, $str);
+                }
+            } else {
+                $this->warn('Unable to locate "User.php" in app/Models.  Did you move this file?');
+                $this->warn('You will need to update this manually.  Change "extends Authenticatable" to "extends \ KY\AdminPanel\Models\User" in your User model');
             }
         } else {
-            $this->warn('Unable to locate "User.php" in app/Models.  Did you move this file?');
-            $this->warn('You will need to update this manually.  Change "extends Authenticatable" to "extends \ KY\AdminPanel\Models\User" in your User model');
+            $this->warn('Кастомный guard/таблица заданы в конфиге adminpanel — модель пользователей настраивается вручную, патч app/Models/User.php пропущен.');
         }
 
         $this->info('Adding routes to routes/web.php');
@@ -107,5 +111,18 @@ class InstallCommand extends Command
         $this->call('cache:clear');
 
         $this->info('Successfully installed Admin Panel! Enjoy');
+    }
+
+    /**
+     * Патчить ли модель пользователей хоста (extends Authenticatable → пакетная User).
+     *
+     * Патч рассчитан на стандартную установку App\Models\User. При кастомном админ-контуре
+     * (задан свой guard или таблица через конфиг) модель настраивается вручную,
+     * и слепой str_replace испортил бы чужой файл — пропускаем.
+     */
+    protected function shouldPatchUserModel(): bool
+    {
+        return config('adminpanel.guard') === null
+            && config('adminpanel.users_table', 'users') === 'users';
     }
 }
