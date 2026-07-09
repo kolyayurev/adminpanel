@@ -5,9 +5,11 @@ namespace KY\AdminPanel;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use KY\AdminPanel\Contracts\CustomPageContract;
 use KY\AdminPanel\Contracts\DataTypeContract;
 use KY\AdminPanel\Contracts\MenuContract;
 use KY\AdminPanel\Contracts\PageTypeContract;
+use KY\AdminPanel\Contracts\WidgetContract;
 use KY\AdminPanel\Models\Permission;
 use KY\AdminPanel\Models\Redirect;
 use KY\AdminPanel\Models\Role;
@@ -30,6 +32,10 @@ class AdminPanel
     protected array $pageTypes = [];
 
     protected array $dataTypes = [];
+
+    protected array $customPages = [];
+
+    protected array $widgets = [];
 
     public $setting_cache = null;
 
@@ -201,6 +207,54 @@ class AdminPanel
     public function getDataTypes()
     {
         return collect($this->dataTypes);
+    }
+
+    public function addCustomPage($handler)
+    {
+        if (! $handler instanceof CustomPageContract) {
+            $handler = app($handler);
+        }
+
+        $this->customPages[$handler->getSlug()] = $handler;
+
+        // Данные виджета отдаются самостоятельным URL, не привязанным к странице (см.
+        // WidgetController), поэтому виджеты страницы сразу попадают в общий реестр.
+        foreach ($handler->getWidgets() as $widget) {
+            $this->addWidget($widget);
+        }
+
+        return $this;
+    }
+
+    public function getCustomPage($slug)
+    {
+        return array_key_exists($slug, $this->customPages) ? $this->customPages[$slug] : null;
+    }
+
+    public function getCustomPages()
+    {
+        return collect($this->customPages);
+    }
+
+    public function addWidget($handler)
+    {
+        if (! $handler instanceof WidgetContract) {
+            $handler = app($handler);
+        }
+
+        $this->widgets[$handler->getSlug()] = $handler;
+
+        return $this;
+    }
+
+    public function getWidget($slug)
+    {
+        return array_key_exists($slug, $this->widgets) ? $this->widgets[$slug] : null;
+    }
+
+    public function getWidgets()
+    {
+        return collect($this->widgets);
     }
 
     public function getVersion()
