@@ -10,7 +10,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table(config('adminpanel.users_table', 'users'), function (Blueprint $table) {
             $table->bigInteger('role_id')->unsigned()->nullable()->after('id');
             $table->foreign('role_id')->references('id')->on('roles');
         });
@@ -22,8 +22,9 @@ return new class extends Migration
     public function down()
     {
 
-        if (Schema::hasColumn('users', 'role_id')) {
-            Schema::table('users', function (Blueprint $table) {
+        $usersTable = config('adminpanel.users_table', 'users');
+        if (Schema::hasColumn($usersTable, 'role_id')) {
+            Schema::table($usersTable, function (Blueprint $table) {
                 $table->dropColumn('role_id');
             });
         }
