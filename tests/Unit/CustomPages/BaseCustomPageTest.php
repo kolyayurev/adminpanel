@@ -49,6 +49,38 @@ class BaseCustomPageTest extends TestCase
 
         $this->assertSame('revenue', $page->getWidgets()->keys()->first());
     }
+
+    /**
+     * @covers ::getIcon
+     */
+    public function test_get_icon_returns_default_when_not_overridden(): void
+    {
+        $this->assertSame('window', (new SalesCustomPage)->getIcon());
+    }
+
+    /**
+     * @covers ::getIcon
+     */
+    public function test_get_icon_returns_overridden_value(): void
+    {
+        $this->assertSame('graph-up', (new CustomIconCustomPage)->getIcon());
+    }
+
+    /**
+     * @covers ::showInMenu
+     */
+    public function test_show_in_menu_defaults_to_true(): void
+    {
+        $this->assertTrue((new SalesCustomPage)->showInMenu());
+    }
+
+    /**
+     * @covers ::showInMenu
+     */
+    public function test_show_in_menu_returns_overridden_value(): void
+    {
+        $this->assertFalse((new HiddenFromMenuCustomPage)->showInMenu());
+    }
 }
 
 class SalesCustomPage extends BaseCustomPage
@@ -64,6 +96,23 @@ class SalesCustomPage extends BaseCustomPage
 class CustomSlugCustomPage extends BaseCustomPage
 {
     protected string $slug = 'custom_slug';
+}
+
+class CustomIconCustomPage extends BaseCustomPage
+{
+    protected string $title = 'С иконкой';
+
+    protected string $icon = 'graph-up';
+}
+
+class HiddenFromMenuCustomPage extends BaseCustomPage
+{
+    protected string $title = 'Скрытая';
+
+    public function showInMenu(): bool
+    {
+        return false;
+    }
 }
 
 class BaseCustomPageTestWidget extends BaseWidget

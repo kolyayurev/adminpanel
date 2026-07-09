@@ -29,7 +29,7 @@
 | [FormFields](formfields/list.md) | 22 типа полей формы и колонок (текст, медиа, связи, списки…) |
 | [Blocks](core-concepts/blocks.md) / [Layout](core-concepts/layout.md) | Раскладка формы редактирования из блоков |
 | [DataTables](core-concepts/datatables.md) | Серверные таблицы: колонки, действия, фильтры |
-| [Menus](core-concepts/menus.md) | Меню (автогенерация из DataType/PageType) |
+| [Menus](core-concepts/menus.md) | Сайдбар: автогенерация из DataType/PageType/CustomPage + точки расширения |
 | [Settings](core-concepts/settings.md) | Глобальные настройки `setting('key')` |
 | [Media](core-concepts/media.md) | Загрузка файлов, превью, медиа-менеджер |
 | [Permissions & Roles](core-concepts/permissions-roles.md) | Роли, права, политики, гейты |
