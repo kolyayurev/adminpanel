@@ -72,6 +72,9 @@ public function register(): void
 - `layout(): Collection` — раскладка блоков (см. [Layout](layout.md)/[Blocks](blocks.md)).
   Дефолт из `HasLayout` — `Row::blocks(Col::blocks(Card::blocks('*')))`, `'*'` выводит все
   виджеты страницы без необходимости расписывать раскладку вручную.
+- `getIcon(): string` / `showInMenu(): bool` — как страница появляется в сайдбаре (иконка,
+  показывать ли вообще); регистрация через `addCustomPage()` уже добавляет пункт меню
+  автоматически, руками ничего делать не нужно — подробности в [Menus](menus.md).
 
 ## Как это рендерится
 
