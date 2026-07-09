@@ -3,10 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use KY\AdminPanel\Http\Controllers\AdminPanelController;
 use KY\AdminPanel\Http\Controllers\AuthController;
+use KY\AdminPanel\Http\Controllers\CustomPageController;
 use KY\AdminPanel\Http\Controllers\DocsController;
 use KY\AdminPanel\Http\Controllers\MediaController;
 use KY\AdminPanel\Http\Controllers\SettingController;
 use KY\AdminPanel\Http\Controllers\ToolsController;
+use KY\AdminPanel\Http\Controllers\WidgetController;
 
 Route::group(['as' => 'adminpanel.'], function () {
 
@@ -45,6 +47,10 @@ Route::group(['as' => 'adminpanel.'], function () {
         Route::get('settings/{name}/relation', [SettingController::class, 'relation'])->name('settings.relation');
         Route::get('settings/{name}', [SettingController::class, 'index'])->name('settings');
         Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
+
+        Route::get('pages/{page}', [CustomPageController::class, 'index'])->name('pages.index');
+
+        Route::get('widgets/{widget}/data', [WidgetController::class, 'data'])->name('widgets.data');
 
         Route::group([
             'as' => 'media.',
