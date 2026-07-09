@@ -23,6 +23,8 @@
 |-----------|-----------|
 | [DataType](core-concepts/datatype.md) | CRUD-обёртка над моделью: список, форма, права, маршруты |
 | [PageType](core-concepts/pagetype.md) | Одиночная страница-форма (значения хранятся как настройки) |
+| [CustomPage](core-concepts/custom-pages.md) | Произвольная страница админки (дашборд и т.п.) из [виджетов](core-concepts/widgets.md) |
+| [Widgets](core-concepts/widgets.md) | Виджет с данными/графиком (Chart.js) и async-обновлением |
 | [Repository](core-concepts/repositories.md) | Модель за DataType + запрос для списка/фильтрации |
 | [FormFields](formfields/list.md) | 22 типа полей формы и колонок (текст, медиа, связи, списки…) |
 | [Blocks](core-concepts/blocks.md) / [Layout](core-concepts/layout.md) | Раскладка формы редактирования из блоков |

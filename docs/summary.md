@@ -13,6 +13,8 @@
 
 * [DataType](core-concepts/datatype.md)
 * [PageType](core-concepts/pagetype.md)
+* [CustomPage](core-concepts/custom-pages.md)
+* [Widgets](core-concepts/widgets.md)
 * [Repositories](core-concepts/repositories.md)
 * [DataTables](core-concepts/datatables.md)
 * [Blocks](core-concepts/blocks.md)

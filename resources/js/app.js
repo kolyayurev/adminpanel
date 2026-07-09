@@ -19,6 +19,7 @@ import DialogMediaPicker from './vue/DialogMediaPicker.vue'
 import MediaIcon from './vue/MediaIcon.vue'
 import FilesItem from './vue/FilesItem.vue'
 import GeoPicker from './vue/GeoPicker.vue'
+import ChartWidget from './vue/ChartWidget.vue'
 import base from './mixins/base';
 
 window.createVueApp = options => {
@@ -30,6 +31,7 @@ window.createVueApp = options => {
     app.component(MediaIcon.name,MediaIcon);
     app.component(FilesItem.name,FilesItem);
     app.component(GeoPicker.name,GeoPicker);
+    app.component(ChartWidget.name,ChartWidget);
     app.config.globalProperties.lang = lang;
     app.use(ElementPlus, { size: 'default', locale: elementLocale })
 
