@@ -21,7 +21,14 @@ if (! function_exists('setting')) {
 if (! function_exists('adminpanel_asset')) {
     function adminpanel_asset($path, $secure = null)
     {
-        return route('adminpanel.assets').'?path='.urlencode($path);
+        $url = route('adminpanel.assets').'?path='.urlencode($path);
+
+        $file = dirname(__DIR__, 2).'/public/'.$path;
+        if (is_file($file)) {
+            $url .= '&v='.filemtime($file);
+        }
+
+        return $url;
     }
 }
 
