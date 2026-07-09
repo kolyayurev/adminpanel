@@ -5,6 +5,13 @@ return [
 
     'name' => env('AP_NAME', 'AP'),
 
+    // Guard админки. null → берём auth.defaults.guard приложения (обратная совместимость).
+    'guard' => env('AP_GUARD', null),
+
+    // Таблица пользователей админки. По умолчанию 'users'; можно увести в отдельную таблицу,
+    // чтобы админ-контур не пересекался с основной сущностью приложения.
+    'users_table' => env('AP_USERS_TABLE', 'users'),
+
     'redirects' => [
         'dashboard' => false, // false or '/url'
     ],

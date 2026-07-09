@@ -85,7 +85,7 @@ class UserDataType extends BaseDataType
     public function rules(Request $request): array
     {
         return [
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($request->route('user'))],
+            'email' => ['required', 'email', Rule::unique(AdminPanel::model('User')->getTable(), 'email')->ignore($request->route('user'))],
             'name' => ['required', 'min:3', 'max:255'],
             'role_id' => ['nullable', 'exists:roles,id'],
             'password' => 'nullable|required_with:password_confirmation|string|confirmed',
