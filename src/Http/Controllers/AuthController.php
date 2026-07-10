@@ -6,7 +6,9 @@ use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -63,6 +65,37 @@ class AuthController extends Controller
         return $request->wantsJson()
             ? new JsonResponse([], 204)
             : redirect('/');
+    }
+
+    /**
+     * Переопределяем дефолтное сообщение из AuthenticatesUsers (laravel/ui): оно берётся
+     * из не-namespaced ключа auth.failed, который не гарантированно существует ни в
+     * хост-приложении, ни во фреймворке (зависит от версии Laravel и опубликованных
+     * lang-файлов хоста). Используем собственный namespace пакета.
+     */
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        throw ValidationException::withMessages([
+            $this->username() => [__('adminpanel::login.failed')],
+        ]);
+    }
+
+    /**
+     * Аналогично sendFailedLoginResponse — используем собственный namespace пакета вместо
+     * не-namespaced auth.throttle.
+     */
+    protected function sendLockoutResponse(Request $request)
+    {
+        $seconds = $this->limiter()->availableIn(
+            $this->throttleKey($request)
+        );
+
+        throw ValidationException::withMessages([
+            $this->username() => [__('adminpanel::login.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ])],
+        ])->status(Response::HTTP_TOO_MANY_REQUESTS);
     }
 
     /*
