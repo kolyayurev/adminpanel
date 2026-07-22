@@ -103,9 +103,11 @@
                 // Кнопки строк (Edit) рисуются сервером отдельно от этого компонента
                 // (см. BaseDataType::getDataTable()) и размечены data-modal-form только
                 // когда таблица встроена как modal — перехватываем клик нативно, Vue-директивы
-                // в v-html не компилируются.
+                // в v-html не компилируются. Берём контейнер по id, а не this.$el: у компонента
+                // несколько корневых узлов (кнопка/таблица/диалог), поэтому this.$el —
+                // произвольный текстовый узел фрагмента, а не сам div.
                 if (this.modalEnabled) {
-                    this.$el.addEventListener('click', (e) => {
+                    document.getElementById('{{ $mount }}').addEventListener('click', (e) => {
                         const link = e.target.closest('[data-modal-form]')
                         if (!link) return
                         e.preventDefault()
