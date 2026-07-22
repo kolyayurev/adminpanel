@@ -13,11 +13,11 @@ use KY\AdminPanel\DataTables\Column;
 
 trait CreatesDataTableTestDoubles
 {
-    protected function createDataTypeTestDouble(string $slug = 'posts'): DataTypeContract
+    protected function createDataTypeTestDouble(string $slug = 'posts', mixed $model = null): DataTypeContract
     {
-        return new class($slug) implements DataTypeContract
+        return new class($slug, $model) implements DataTypeContract
         {
-            public function __construct(private readonly string $slug) {}
+            public function __construct(private readonly string $slug, private readonly mixed $model) {}
 
             public function getName(): string
             {
@@ -36,7 +36,7 @@ trait CreatesDataTableTestDoubles
 
             public function getModel()
             {
-                return null;
+                return $this->model;
             }
 
             public function getPolicy(): string
