@@ -1,4 +1,4 @@
-@props(['dataType', 'filters' => [], 'except' => []])
+@props(['dataType', 'filters' => [], 'except' => [], 'modal' => false])
 
 @php($mount = 'dataTableApp_'.$dataType->getSlug().'_'.substr(md5(uniqid('', true)), 0, 8))
 @php($columns = $dataType->getColumns()->reject(fn ($c) => in_array($c->get('data'), $except, true))->values())
@@ -14,6 +14,13 @@
 @endforeach
 
 <div id="{{ $mount }}" v-cloak>
+    @if($modal)
+        <div class="d-flex justify-content-end mb-2">
+            <el-button type="primary" size="small" @click="openModal(createUrl)">
+                {{ ap_trans('common.buttons.create') }}
+            </el-button>
+        </div>
+    @endif
     <el-table v-loading="loading" :data="rows" border stripe style="width: 100%" @sort-change="onSortChange">
         @foreach($columns as $column)
             <el-table-column
@@ -51,6 +58,12 @@
             @size-change="onSizeChange"
         />
     </div>
+
+    @if($modal)
+        <el-dialog v-model="modalVisible" :close-on-click-modal="false" @closed="onModalClosed">
+            <div v-loading="modalLoading" ref="modalBody" v-html="modalHtml"></div>
+        </el-dialog>
+    @endif
 </div>
 
 @push('vue')
@@ -75,12 +88,30 @@
                     relationOptions: {},
                     relationLoading: {},
                     filterTimer: null,
+                    modalEnabled: @json((bool) $modal),
+                    createUrl: @json($modal ? route('adminpanel.'.$dataType->getSlug().'.modal-form') : null),
+                    modalVisible: false,
+                    modalLoading: false,
+                    modalHtml: '',
                 }
             },
             mounted() {
                 window.adminTableReloads = window.adminTableReloads || {}
                 window.adminTableReloads['{{ $mount }}'] = () => this.fetch()
                 this.fetch()
+
+                // Кнопки строк (Edit) рисуются сервером отдельно от этого компонента
+                // (см. BaseDataType::getDataTable()) и размечены data-modal-form только
+                // когда таблица встроена как modal — перехватываем клик нативно, Vue-директивы
+                // в v-html не компилируются.
+                if (this.modalEnabled) {
+                    this.$el.addEventListener('click', (e) => {
+                        const link = e.target.closest('[data-modal-form]')
+                        if (!link) return
+                        e.preventDefault()
+                        this.openModal(link.href)
+                    })
+                }
             },
             methods: {
                 buildParams() {
@@ -107,6 +138,7 @@
                     Object.entries(this.lockedFilters).forEach(([k, v]) => {
                         if (v !== '' && v != null && !(Array.isArray(v) && v.length === 0)) p[k] = v
                     })
+                    if (this.modalEnabled) p.modal = 1
                     return p
                 },
                 fetch() {
@@ -150,6 +182,75 @@
                             this.relationOptions[name] = (r.data.results || []).map((o) => ({ value: String(o.id), label: o.text }))
                         })
                         .finally(() => { this.relationLoading[name] = false })
+                },
+                openModal(url) {
+                    this.modalVisible = true
+                    this.modalLoading = true
+                    this.modalHtml = ''
+                    axios.get(url)
+                        .then((r) => {
+                            this.modalHtml = r.data.template
+                            this.$nextTick(() => this.mountModalContent())
+                        })
+                        .catch(() => {
+                            toastr.error(lang.get('common.whoopsie') || 'Ошибка')
+                            this.modalVisible = false
+                        })
+                        .finally(() => { this.modalLoading = false })
+                },
+                // <script> из v-html не выполняются браузером — пересоздаём их, чтобы поля
+                // формы (select/relation/date/...) замонтировали свои Vue-инстансы.
+                mountModalContent() {
+                    const container = this.$refs.modalBody
+                    if (!container) return
+                    container.querySelectorAll('script').forEach((old) => {
+                        const s = document.createElement('script')
+                        s.textContent = old.textContent
+                        old.replaceWith(s)
+                    })
+                    const m = $('#contentBody').data('multilingual')
+                    if (m) m.init()
+                    const form = container.querySelector('form')
+                    if (form) form.addEventListener('submit', (e) => {
+                        e.preventDefault()
+                        this.submitModalForm(form)
+                    })
+                },
+                submitModalForm(form) {
+                    const data = new FormData(form)
+                    data.append('modal', '1')
+                    axios.post(form.getAttribute('action'), data)
+                        .then((r) => {
+                            this.modalVisible = false
+                            toastr.success(r.data.message || '')
+                            const reload = window.adminTableReloads && window.adminTableReloads['{{ $mount }}']
+                            if (reload) reload()
+                        })
+                        .catch((err) => {
+                            if (err.response && err.response.status === 422) {
+                                Object.values(err.response.data.errors || {}).forEach((messages) => {
+                                    messages.forEach((m) => toastr.error(m))
+                                })
+                            } else {
+                                toastr.error(lang.get('common.whoopsie') || 'Ошибка')
+                            }
+                        })
+                },
+                // Размонтируем Vue-инстансы полей, оставшиеся внутри модалки (реестр —
+                // window.__vueApps, см. createVueApp в resources/js/app.js), иначе при
+                // повторном открытии накапливаются мёртвые инстансы на старых DOM-узлах.
+                onModalClosed() {
+                    const container = this.$refs.modalBody
+                    if (container && window.__vueApps) {
+                        Object.keys(window.__vueApps).forEach((selector) => {
+                            const el = document.querySelector(selector)
+                            if (el && container.contains(el)) {
+                                window.__vueApps[selector].unmount()
+                                delete window.__vueApps[selector]
+                            }
+                        })
+                    }
+                    this.modalHtml = ''
                 },
             },
         }).mount('#{{ $mount }}');

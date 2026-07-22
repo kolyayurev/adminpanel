@@ -29,11 +29,12 @@ class DataTableComponentTest extends TestCase
     private function renderDataTable(array $props = []): string
     {
         return Blade::render(
-            '<x-adminpanel::datatable :dataType="$dataType" :filters="$filters" :except="$except"/>@stack(\'vue\')',
+            '<x-adminpanel::datatable :dataType="$dataType" :filters="$filters" :except="$except" :modal="$modal"/>@stack(\'vue\')',
             array_merge([
                 'dataType' => new DataTableComponentTestElement,
                 'filters' => [],
                 'except' => [],
+                'modal' => false,
             ], $props)
         );
     }
@@ -82,6 +83,24 @@ class DataTableComponentTest extends TestCase
         $this->assertStringContainsString('window.adminTableReloads = window.adminTableReloads || {}', $html);
         $this->assertStringContainsString("window.adminTableReloads['", $html);
         $this->assertStringNotContainsString('window.adminTableReload =', $html);
+    }
+
+    public function test_modal_prop_renders_dialog_add_button_and_create_url(): void
+    {
+        $html = $this->renderDataTable(['modal' => true]);
+
+        $this->assertStringContainsString('<el-dialog', $html);
+        $this->assertStringContainsString('openModal(createUrl)', $html);
+        $this->assertStringContainsString('modalEnabled: true', $html);
+        $this->assertStringContainsString('component_test_things\/modal-form', $html);
+    }
+
+    public function test_without_modal_prop_no_dialog_or_add_button_rendered(): void
+    {
+        $html = $this->renderDataTable();
+
+        $this->assertStringNotContainsString('<el-dialog', $html);
+        $this->assertStringContainsString('modalEnabled: false', $html);
     }
 }
 
