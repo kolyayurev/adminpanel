@@ -23,16 +23,47 @@ class SelectTest extends TestCase
     /**
      * @covers ::options
      * @covers ::getOptions
-     * @covers ::getOption
      * @covers ::hasOptions
      */
     public function test_options_sets_and_reads_options(): void
     {
-        $field = (new Select)->options(['draft' => ['Draft']]);
+        $field = (new Select)->options(['draft' => 'Draft']);
 
         $this->assertTrue($field->hasOptions());
-        $this->assertSame(['draft' => ['Draft']], $field->getOptions());
-        $this->assertSame(['Draft'], $field->getOption('draft'));
+        $this->assertSame(['draft' => 'Draft'], $field->getOptions());
+    }
+
+    /**
+     * @covers ::getOption
+     */
+    public function test_get_option_returns_label_for_known_key(): void
+    {
+        $field = (new Select)->options(['draft' => 'Черновик']);
+
+        $this->assertSame('Черновик', $field->getOption('draft'));
+    }
+
+    /**
+     * @covers ::getOption
+     */
+    public function test_get_option_returns_raw_value_for_unknown_key(): void
+    {
+        // Значения, отсутствующего в словаре опций, показываем как есть — так нагляднее,
+        // чем молча выводить пустоту.
+        $field = (new Select)->options(['draft' => 'Черновик']);
+
+        $this->assertSame('archived', $field->getOption('archived'));
+    }
+
+    /**
+     * @covers ::getOption
+     */
+    public function test_get_option_resolves_each_value_for_multiple_select(): void
+    {
+        $field = (new Select)->multiple()->options(['news' => 'Новости', 'top' => 'Топ']);
+
+        $this->assertSame('Новости', $field->getOption('news'));
+        $this->assertSame('id', $field->getOption('id'));
     }
 
     /**
@@ -100,4 +131,24 @@ class SelectTest extends TestCase
 
         $this->assertSame('draft', $field->prepareValue([], new Request, null));
     }
+
+    /**
+     * @covers ::getOption
+     */
+    public function test_get_option_throws_type_error_for_backed_enum_value(): void
+    {
+        // Обычный Select не умеет разворачивать BackedEnum — колонка с enum-кастом ломает
+        // экран записи ("Illegal offset type"). Решение — поле EnumSelect.
+        $field = (new Select)->options(['published' => 'Опубликовано']);
+
+        $this->expectException(\TypeError::class);
+
+        $field->getOption(SelectTestStatus::Published);
+    }
+}
+
+enum SelectTestStatus: string
+{
+    case Draft = 'draft';
+    case Published = 'published';
 }

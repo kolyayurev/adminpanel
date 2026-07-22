@@ -7,8 +7,16 @@ class InputFilter extends BaseFilter
     public function __construct()
     {
         $this->setHandler(function ($request, $dataType, $field, $query) {
-            if ($request->filled($field->get('name'))) {
-                $query->where($field->get('name'), 'like', '%'.$request->get($field->get('name')).'%');
+            $column = $field->get('name');
+
+            if ($request->filled($column)) {
+                $value = $request->get($column);
+
+                if ($this->usesExactMatch($dataType, $column)) {
+                    $query->where($column, '=', $value);
+                } else {
+                    $query->where($column, 'like', '%'.$value.'%');
+                }
             }
         });
     }

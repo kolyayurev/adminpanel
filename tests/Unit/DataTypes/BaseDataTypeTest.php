@@ -12,7 +12,9 @@ use KY\AdminPanel\DataTypes\BaseDataType;
 use KY\AdminPanel\FormFields\Hidden;
 use KY\AdminPanel\FormFields\Text;
 use KY\AdminPanel\Http\Controllers\BaseDataController;
+use KY\AdminPanel\Models\Redirect;
 use KY\AdminPanel\Policies\BasePolicy;
+use KY\AdminPanel\Repositories\ModelRepository;
 use KY\AdminPanel\Repositories\UserRepository;
 use KY\AdminPanel\Tests\TestCase;
 
@@ -203,6 +205,38 @@ class BaseDataTypeTest extends TestCase
     {
         $this->assertSame([[1, 'desc']], (new BaseDataTypeTestElement)->getColumnsOrder());
     }
+
+    /**
+     * @covers ::getRepository
+     */
+    public function test_get_repository_returns_explicitly_assigned_repository(): void
+    {
+        $this->assertInstanceOf(UserRepository::class, (new BaseDataTypeTestElement)->getRepository());
+    }
+
+    /**
+     * @covers ::getRepository
+     */
+    public function test_get_repository_lazily_builds_model_repository_from_declared_model_class(): void
+    {
+        // DataType без класса-репозитория — достаточно объявить $modelClass, чтобы не
+        // писать __construct() только ради `$this->repository = new XRepository`.
+        $dataType = new BaseDataTypeTestElementWithoutRepository;
+
+        $repository = $dataType->getRepository();
+
+        $this->assertInstanceOf(ModelRepository::class, $repository);
+        $this->assertSame(Redirect::class, $repository->modelClass());
+        $this->assertSame($repository, $dataType->getRepository());
+    }
+
+    /**
+     * @covers ::getModel
+     */
+    public function test_get_model_works_without_explicit_repository(): void
+    {
+        $this->assertSame('redirects', (new BaseDataTypeTestElementWithoutRepository)->getModel()->getTable());
+    }
 }
 
 class BaseDataTypeTestElement extends BaseDataType
@@ -263,4 +297,17 @@ class BaseDataTypeGenerated extends BaseDataType
     {
         $this->repository = new UserRepository;
     }
+}
+
+class BaseDataTypeTestElementWithoutRepository extends BaseDataType
+{
+    protected string $name = 'redirect';
+
+    protected string $title = 'Redirects';
+
+    protected string $slug = 'redirects_without_repository';
+
+    protected string $orderDisplayColumn = 'from';
+
+    protected ?string $modelClass = Redirect::class;
 }

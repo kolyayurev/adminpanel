@@ -56,6 +56,29 @@ public function __construct()
   списка; переопределяйте его, чтобы добавить условия выборки, сортировки, отношения,
   ограничения по правам и т.д.
 
+## Без класса-репозитория
+
+Если единственное, что должен делать репозиторий, — сообщать класс модели (никакой своей
+логики `getDataTableFilter`), заводить наследника не обязательно. Достаточно объявить
+`$modelClass` на самом `DataType` — `BaseDataType::getRepository()` соберёт
+`KY\AdminPanel\Repositories\ModelRepository` сам, и `__construct()` DataType-у не нужен:
+
+```php
+use App\Models\Post;
+use KY\AdminPanel\DataTypes\BaseDataType;
+
+class PostDataType extends BaseDataType
+{
+    protected ?string $modelClass = Post::class;
+
+    // без __construct()
+}
+```
+
+Если нужна своя логика запроса — по-прежнему заводите класс-репозиторий и назначайте его в
+`__construct()`, как описано выше; существующие репозитории-наследники продолжают работать
+без изменений.
+
 ## Зачем переопределять `getDataTableFilter`
 
 Это единая точка, через которую проходит выборка для списка. Типичные случаи: показывать

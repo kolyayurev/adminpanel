@@ -3,6 +3,7 @@
 namespace KY\AdminPanel\DataTables\Filters;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use KY\AdminPanel\Contracts\DataTypeContract;
 use KY\AdminPanel\Contracts\FilterContract;
@@ -10,6 +11,7 @@ use KY\AdminPanel\Contracts\FormFieldContract;
 use KY\AdminPanel\DataTables\Actions\BaseAction;
 use KY\AdminPanel\Traits\HasDynamicCall;
 use KY\AdminPanel\Traits\Makeable;
+use Throwable;
 
 abstract class BaseFilter implements FilterContract
 {
@@ -116,5 +118,27 @@ abstract class BaseFilter implements FilterContract
             $handler($request, $dataType, $column, $query);
         }
 
+    }
+
+    /**
+     * Точное сравнение вместо LIKE нужно там, где LIKE либо падает (числовые колонки на
+     * PostgreSQL), либо даёт ложные совпадения (значение "1" совпадает с "21"). Тип колонки
+     * берём из реальной схемы БД, а не угадываем по имени.
+     */
+    protected function usesExactMatch(DataTypeContract $dataType, string $column): bool
+    {
+        $model = $dataType->getModel();
+
+        if (! $model instanceof Model) {
+            return false;
+        }
+
+        try {
+            $type = $model->getConnection()->getSchemaBuilder()->getColumnType($model->getTable(), $column);
+        } catch (Throwable) {
+            return false;
+        }
+
+        return (bool) preg_match('/int|numeric|decimal|float|double|real|bool|date|time/i', $type);
     }
 }
