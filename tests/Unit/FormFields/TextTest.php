@@ -2,6 +2,7 @@
 
 namespace KY\AdminPanel\Tests\Unit\FormFields;
 
+use Illuminate\Support\Str;
 use KY\AdminPanel\FormFields\Text;
 use KY\AdminPanel\Tests\TestCase;
 
@@ -41,5 +42,21 @@ class TextTest extends TestCase
 
         $this->assertSame($field, $field->required());
         $this->assertTrue($field->get('required'));
+    }
+
+    /**
+     * @covers ::getValue
+     */
+    public function test_cell_rendering_breaks_on_json_cast_column(): void
+    {
+        // Колонка на json/jsonb-каст (массив в PHP) роняет ячейку списка — шаблон
+        // cell.blade.php делает Str::limit($field->getValue($model), 50), а Str::limit
+        // ожидает строку. Решение — отдельное поле Json, а не правка Text.
+        $field = Text::make('meta');
+        $model = (object) ['meta' => ['nested' => true]];
+
+        $this->expectException(\TypeError::class);
+
+        Str::limit($field->getValue($model), 50);
     }
 }
