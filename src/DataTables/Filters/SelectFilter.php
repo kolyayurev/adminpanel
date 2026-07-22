@@ -17,12 +17,23 @@ class SelectFilter extends BaseFilter
     public function __construct()
     {
         $this->setHandler(function ($request, $dataType, $field, $query) {
+            $column = $field->get('name');
 
-            if ($request->filled($field->get('name'))) {
-                $items = explode(',', $request->get($field->get('name')));
-                foreach ($items as $item) {
-                    $query->orWhere($field->get('name'), 'like', '%'.$item.'%');
-                }
+            if ($request->filled($column)) {
+                $items = explode(',', $request->get($column));
+                $exact = $this->usesExactMatch($dataType, $column);
+
+                // Группируем в один where(...), чтобы фильтр колонки не размывал соседние
+                // условия через ИЛИ на верхнем уровне запроса.
+                $query->where(function ($query) use ($items, $column, $exact) {
+                    foreach ($items as $item) {
+                        if ($exact) {
+                            $query->orWhere($column, '=', $item);
+                        } else {
+                            $query->orWhere($column, 'like', '%'.$item.'%');
+                        }
+                    }
+                });
             }
         });
     }
