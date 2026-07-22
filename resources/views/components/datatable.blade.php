@@ -1,7 +1,7 @@
-@props(['dataType'])
+@props(['dataType', 'filters' => [], 'except' => []])
 
-@php($mount = 'dataTableApp_'.$dataType->getSlug())
-@php($columns = $dataType->getColumns())
+@php($mount = 'dataTableApp_'.$dataType->getSlug().'_'.substr(md5(uniqid('', true)), 0, 8))
+@php($columns = $dataType->getColumns()->reject(fn ($c) => in_array($c->get('data'), $except, true))->values())
 @php($columnsMeta = $columns->map(fn ($c) => $c->toArray())->values())
 @php($order = $dataType->getColumnsOrder())
 
@@ -71,13 +71,15 @@
                     loading: false,
                     draw: 0,
                     filters: @json((object) $filterDefaults),
+                    lockedFilters: @json((object) $filters),
                     relationOptions: {},
                     relationLoading: {},
                     filterTimer: null,
                 }
             },
             mounted() {
-                window.adminTableReload = () => this.fetch()
+                window.adminTableReloads = window.adminTableReloads || {}
+                window.adminTableReloads['{{ $mount }}'] = () => this.fetch()
                 this.fetch()
             },
             methods: {
@@ -100,6 +102,9 @@
                         p['order[0][dir]'] = this.sortDir
                     }
                     Object.entries(this.filters).forEach(([k, v]) => {
+                        if (v !== '' && v != null && !(Array.isArray(v) && v.length === 0)) p[k] = v
+                    })
+                    Object.entries(this.lockedFilters).forEach(([k, v]) => {
                         if (v !== '' && v != null && !(Array.isArray(v) && v.length === 0)) p[k] = v
                     })
                     return p
