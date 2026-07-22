@@ -47,9 +47,13 @@ class Select extends BaseFormField
         return $this->isMultiple() ? json_decode($model->{$this->get('name')}) : $model->{$this->get('name')};
     }
 
-    public function getOption($key): array
+    public function getOption($key): string
     {
-        return $this->get('options', [])[$key] ?? '';
+        $options = $this->get('options', []);
+
+        // Значения без подписи в словаре опций показываем как есть — это нагляднее, чем
+        // молча выводить пустоту.
+        return array_key_exists($key, $options) ? (string) $options[$key] : (string) $key;
     }
 
     public function getOptions(): array
