@@ -114,7 +114,7 @@ class AdminPanelServiceProvider extends ServiceProvider
                     $policyClass = $dataType->getPolicy();
                 }
 
-                $this->policies[$dataType->repository->modelClass()] = $policyClass;
+                $this->policies[$dataType->getRepository()->modelClass()] = $policyClass;
             }
             $this->policies[AdminPanelFacade::modelClass('Setting')] = BasePolicy::class;
             $this->registerPolicies();

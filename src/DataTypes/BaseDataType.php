@@ -17,6 +17,7 @@ use KY\AdminPanel\DataTables\Column;
 use KY\AdminPanel\FormFields\Hidden;
 use KY\AdminPanel\Http\Controllers\BaseDataController;
 use KY\AdminPanel\Policies\BasePolicy;
+use KY\AdminPanel\Repositories\ModelRepository;
 use KY\AdminPanel\Traits\HasFormFields;
 use KY\AdminPanel\Traits\HasLayout;
 use Yajra\DataTables\Facades\DataTables;
@@ -26,6 +27,12 @@ class BaseDataType implements DataTypeContract
     use HasFormFields,HasLayout;
 
     public RepositoryContract $repository;
+
+    /**
+     * FQCN модели — задел под простые DataType без класса-репозитория. Учитывается
+     * только если репозиторий не назначен явно (обычно в __construct()).
+     */
+    protected ?string $modelClass = null;
 
     protected string $name;
 
@@ -115,9 +122,23 @@ class BaseDataType implements DataTypeContract
         return $this->slug;
     }
 
+    /**
+     * Если DataType не назначил репозиторий явно (в __construct()), собирает generic
+     * ModelRepository из объявленного $modelClass — наследнику вообще не нужен __construct
+     * ради `$this->repository = new XRepository`.
+     */
+    public function getRepository(): RepositoryContract
+    {
+        if (! isset($this->repository)) {
+            $this->repository = new ModelRepository($this->modelClass);
+        }
+
+        return $this->repository;
+    }
+
     public function getModel()
     {
-        return $this->repository->model();
+        return $this->getRepository()->model();
     }
 
     public function getOrderColumn(): string
@@ -297,7 +318,7 @@ class BaseDataType implements DataTypeContract
 
     public function getDataTable(Request $request): JsonResponse
     {
-        $dataTable = DataTables::eloquent($this->repository->getDataTableFilter($request, $this))
+        $dataTable = DataTables::eloquent($this->getRepository()->getDataTableFilter($request, $this))
             ->addIndexColumn()
             ->orderColumn('id', function ($query, $order) {
                 $query->orderBy('id', $order);
