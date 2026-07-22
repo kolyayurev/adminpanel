@@ -220,6 +220,7 @@ class BaseDataController extends Controller
         if ($id === null) {
             $model = $this->dataType->getModel();
             $this->authorize('create', $model);
+            $this->prefillFromQuery($request, $model);
         } else {
             $model = $this->dataType->getModel()->findOrFail($id);
             $this->authorize('update', $model);
@@ -234,6 +235,27 @@ class BaseDataController extends Controller
                 'isModelTranslatable' => is_translatable($model),
             ])->render(),
         ]);
+    }
+
+    /**
+     * Предзаполняет новую запись залоченными фильтрами встроенной таблицы — они приходят
+     * query-строкой в ссылке «Создать». Берём только ключи, которые реально являются
+     * колонками таблицы: среди фильтров бывают «виртуальные» (например, `user_id` у
+     * морф-таблицы), присваивать их модели нельзя.
+     */
+    protected function prefillFromQuery(Request $request, $model): void
+    {
+        if (empty($request->query())) {
+            return;
+        }
+
+        $columns = $model->getConnection()->getSchemaBuilder()->getColumnListing($model->getTable());
+
+        foreach ($request->query() as $key => $value) {
+            if (in_array($key, $columns, true)) {
+                $model->setAttribute($key, $value);
+            }
+        }
     }
 
     /**

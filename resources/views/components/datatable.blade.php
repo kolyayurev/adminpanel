@@ -15,11 +15,13 @@
 
 <div id="{{ $mount }}" v-cloak>
     @if($modal)
-        <div class="d-flex justify-content-end mb-2">
-            <el-button type="primary" size="small" @click="openModal(createUrl)">
-                {{ ap_trans('common.buttons.create') }}
-            </el-button>
-        </div>
+        @can('create', $dataType->getModel())
+            <div class="d-flex justify-content-end mb-2">
+                <el-button type="primary" size="small" @click="openModal(createUrl)">
+                    {{ ap_trans('common.buttons.create') }}
+                </el-button>
+            </div>
+        @endcan
     @endif
     <el-table v-loading="loading" :data="rows" border stripe style="width: 100%" @sort-change="onSortChange">
         @foreach($columns as $column)
@@ -89,7 +91,9 @@
                     relationLoading: {},
                     filterTimer: null,
                     modalEnabled: @json((bool) $modal),
-                    createUrl: @json($modal ? route('adminpanel.'.$dataType->getSlug().'.modal-form') : null),
+                    {{-- Залоченные фильтры уходят в форму создания query-строкой: запись
+                         должна попасть в тот же блок, из которого её создают. --}}
+                    createUrl: @json($modal ? route('adminpanel.'.$dataType->getSlug().'.modal-form', $filters) : null),
                     modalVisible: false,
                     modalLoading: false,
                     modalHtml: '',

@@ -75,6 +75,39 @@ class DataTableModalFormTest extends TestCase
     }
 
     /**
+     * Залоченные фильтры встроенной таблицы приходят query-строкой — новая запись должна
+     * по умолчанию принадлежать той записи, в чей блок её добавляют.
+     *
+     * @covers ::modalForm
+     */
+    public function test_modal_form_create_prefills_model_from_query_filters(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $response = $this->getJson(
+            route('adminpanel.modal_form_redirects.modal-form', ['from' => '/locked-path'])
+        );
+
+        $response->assertOk();
+        $this->assertStringContainsString('value="/locked-path"', $response->json('template'));
+    }
+
+    /**
+     * @covers ::modalForm
+     */
+    public function test_modal_form_create_ignores_query_keys_that_are_not_columns(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $response = $this->getJson(
+            route('adminpanel.modal_form_redirects.modal-form', ['not_a_column' => 'boom'])
+        );
+
+        $response->assertOk();
+        $this->assertStringNotContainsString('boom', $response->json('template'));
+    }
+
+    /**
      * @covers ::modalForm
      */
     public function test_modal_form_requires_create_or_update_policy(): void
