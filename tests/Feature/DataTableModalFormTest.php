@@ -75,6 +75,39 @@ class DataTableModalFormTest extends TestCase
     }
 
     /**
+     * Залоченные фильтры встроенной таблицы приходят query-строкой — новая запись должна
+     * по умолчанию принадлежать той записи, в чей блок её добавляют.
+     *
+     * @covers ::modalForm
+     */
+    public function test_modal_form_create_prefills_model_from_query_filters(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $response = $this->getJson(
+            route('adminpanel.modal_form_redirects.modal-form', ['from' => '/locked-path'])
+        );
+
+        $response->assertOk();
+        $this->assertStringContainsString('value="/locked-path"', $response->json('template'));
+    }
+
+    /**
+     * @covers ::modalForm
+     */
+    public function test_modal_form_create_ignores_query_keys_that_are_not_columns(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $response = $this->getJson(
+            route('adminpanel.modal_form_redirects.modal-form', ['not_a_column' => 'boom'])
+        );
+
+        $response->assertOk();
+        $this->assertStringNotContainsString('boom', $response->json('template'));
+    }
+
+    /**
      * @covers ::modalForm
      */
     public function test_modal_form_requires_create_or_update_policy(): void
@@ -119,6 +152,44 @@ class DataTableModalFormTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('from');
+    }
+
+    /**
+     * Браузер шлёт форму модалки обычным multipart-POST'ом (FormData), а не JSON.
+     * Ответ всё равно должен быть JSON: редирект «назад с ошибками» axios повторит
+     * тем же POST на GET-маршрут формы и получит 405 вместо списка ошибок.
+     *
+     * @covers ::validateModalAware
+     */
+    public function test_store_with_modal_flag_returns_json_errors_for_form_encoded_request(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $response = $this->post(route('adminpanel.modal_form_redirects.store'), [
+            'from' => '',
+            'to' => '/target',
+            'modal' => 1,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('status', false);
+        $response->assertJsonValidationErrors('from');
+    }
+
+    /**
+     * @covers ::validateModalAware
+     */
+    public function test_store_without_modal_flag_still_redirects_back_with_errors(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $response = $this->post(route('adminpanel.modal_form_redirects.store'), [
+            'from' => '',
+            'to' => '/target',
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('from');
     }
 
     /**

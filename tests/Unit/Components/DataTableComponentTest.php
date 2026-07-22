@@ -4,10 +4,13 @@ namespace KY\AdminPanel\Tests\Unit\Components;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\ServiceProvider;
 use KY\AdminPanel\Blocks\Row;
 use KY\AdminPanel\DataTypes\BaseDataType;
 use KY\AdminPanel\Facades\AdminPanel;
 use KY\AdminPanel\FormFields\Text;
+use KY\AdminPanel\Models\Redirect;
+use KY\AdminPanel\Policies\BasePolicy;
 use KY\AdminPanel\Tests\TestCase;
 
 /**
@@ -15,10 +18,17 @@ use KY\AdminPanel\Tests\TestCase;
  */
 class DataTableComponentTest extends TestCase
 {
+    // DataType регистрируем в фазе register() — политики связываются с моделями в
+    // AdminPanelServiceProvider::boot(), то есть уже после register() всех провайдеров.
+    protected function getPackageProviders($app): array
+    {
+        return array_merge(parent::getPackageProviders($app), [
+            DataTableComponentFixtureServiceProvider::class,
+        ]);
+    }
+
     protected function defineRoutes($router): void
     {
-        AdminPanel::addDataType(new DataTableComponentTestElement);
-
         $router->group(['prefix' => 'admin'], function () {
             AdminPanel::routes();
         });
@@ -87,6 +97,8 @@ class DataTableComponentTest extends TestCase
 
     public function test_modal_prop_renders_dialog_add_button_and_create_url(): void
     {
+        $this->actingAs($this->createAdminUser());
+
         $html = $this->renderDataTable(['modal' => true]);
 
         $this->assertStringContainsString('<el-dialog', $html);
@@ -102,6 +114,48 @@ class DataTableComponentTest extends TestCase
         $this->assertStringNotContainsString('<el-dialog', $html);
         $this->assertStringContainsString('modalEnabled: false', $html);
     }
+
+    public function test_create_button_is_hidden_when_policy_forbids_creation(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $html = $this->renderDataTable([
+            'dataType' => new DataTableComponentTestDenied,
+            'modal' => true,
+        ]);
+
+        $this->assertStringNotContainsString('openModal(createUrl)', $html);
+        // Сама таблица и модалка для правки строк остаются на месте.
+        $this->assertStringContainsString('<el-dialog', $html);
+    }
+
+    public function test_locked_filters_are_passed_to_create_url(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $html = $this->renderDataTable(['modal' => true, 'filters' => ['user_id' => 5]]);
+
+        $this->assertStringContainsString('modal-form?user_id=5', str_replace('\/', '/', $html));
+    }
+
+    public function test_modal_validation_errors_are_rendered_next_to_fields(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $html = $this->renderDataTable(['modal' => true]);
+
+        $this->assertStringContainsString('showFormErrors', $html);
+        $this->assertStringContainsString('invalid-feedback', $html);
+    }
+}
+
+class DataTableComponentFixtureServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        AdminPanel::addDataType(new DataTableComponentTestElement);
+        AdminPanel::addDataType(new DataTableComponentTestDenied);
+    }
 }
 
 class DataTableComponentTestElement extends BaseDataType
@@ -113,6 +167,8 @@ class DataTableComponentTestElement extends BaseDataType
     protected string $slug = 'component_test_things';
 
     protected string $orderDisplayColumn = 'name';
+
+    protected ?string $modelClass = Redirect::class;
 
     public function layout(): Collection
     {
@@ -126,4 +182,27 @@ class DataTableComponentTestElement extends BaseDataType
             Text::make('user_id')->label('User ID'),
         ]);
     }
+}
+
+/**
+ * Отдельный класс модели на ту же таблицу: политики маппятся по FQCN модели, поэтому
+ * для проверки запрета нужен свой класс, а не тот же Redirect.
+ */
+class DataTableComponentDeniedRedirect extends Redirect {}
+
+class DataTableComponentDenyCreatePolicy extends BasePolicy
+{
+    public function create($user): bool
+    {
+        return false;
+    }
+}
+
+class DataTableComponentTestDenied extends DataTableComponentTestElement
+{
+    protected string $slug = 'component_test_denied';
+
+    protected ?string $modelClass = DataTableComponentDeniedRedirect::class;
+
+    protected string $policy = DataTableComponentDenyCreatePolicy::class;
 }

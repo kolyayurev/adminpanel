@@ -68,12 +68,34 @@ class BaseDataController extends Controller
     {
         $this->authorize('create', $this->dataType->getModel());
 
-        $validator = $this->dataType->validator($request);
-        $validator->validate();
+        $this->validateModalAware($request);
 
         $model = $this->storeData($request, $this->dataType);
 
         return $this->storeReturn($request, $model);
+    }
+
+    /**
+     * Валидация с оглядкой на модальный режим.
+     *
+     * Форма модалки уходит обычным multipart-POST'ом, поэтому дефолтный ответ на
+     * ValidationException — редирект «назад с ошибками». Фронт повторяет его тем же
+     * методом POST на GET-маршрут формы и получает 405, а пользователь — общий тост
+     * вместо списка полей. Для `modal=1` отвечаем JSON'ом независимо от Accept.
+     */
+    protected function validateModalAware(Request $request): void
+    {
+        $validator = $this->dataType->validator($request);
+
+        if ($request->boolean('modal') && $validator->fails()) {
+            abort(response()->json([
+                'status' => false,
+                'message' => ap_trans('messages.error.validation'),
+                'errors' => $validator->errors(),
+            ], 422));
+        }
+
+        $validator->validate();
     }
 
     protected function storeReturn(Request $request, $model)
@@ -127,8 +149,7 @@ class BaseDataController extends Controller
 
         $this->authorize('update', $model);
 
-        $validator = $this->dataType->validator($request);
-        $validator->validate();
+        $this->validateModalAware($request);
 
         $model = $this->updateData($request, $this->dataType, $model);
 
@@ -199,6 +220,7 @@ class BaseDataController extends Controller
         if ($id === null) {
             $model = $this->dataType->getModel();
             $this->authorize('create', $model);
+            $this->prefillFromQuery($request, $model);
         } else {
             $model = $this->dataType->getModel()->findOrFail($id);
             $this->authorize('update', $model);
@@ -213,6 +235,27 @@ class BaseDataController extends Controller
                 'isModelTranslatable' => is_translatable($model),
             ])->render(),
         ]);
+    }
+
+    /**
+     * Предзаполняет новую запись залоченными фильтрами встроенной таблицы — они приходят
+     * query-строкой в ссылке «Создать». Берём только ключи, которые реально являются
+     * колонками таблицы: среди фильтров бывают «виртуальные» (например, `user_id` у
+     * морф-таблицы), присваивать их модели нельзя.
+     */
+    protected function prefillFromQuery(Request $request, $model): void
+    {
+        if (empty($request->query())) {
+            return;
+        }
+
+        $columns = $model->getConnection()->getSchemaBuilder()->getColumnListing($model->getTable());
+
+        foreach ($request->query() as $key => $value) {
+            if (in_array($key, $columns, true)) {
+                $model->setAttribute($key, $value);
+            }
+        }
     }
 
     /**
