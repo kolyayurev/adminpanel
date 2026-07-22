@@ -23,8 +23,8 @@ class BaseDataController extends Controller
 
     public function __construct()
     {
-        if (! app()->runningInConsole()) {
-            $request = app('request');
+        $request = app('request');
+        if ($request->route() !== null) {
             $this->dataType = AdminPanel::getDataType($this->getSlug($request));
         }
     }
@@ -78,6 +78,14 @@ class BaseDataController extends Controller
 
     protected function storeReturn(Request $request, $model)
     {
+        if ($request->boolean('modal')) {
+            return response()->json([
+                'status' => true,
+                'message' => ap_trans('messages.success.create'),
+                'id' => $model->getKey(),
+            ]);
+        }
+
         return match ($request->get('submitButton')) {
             'save' => redirect()
                 ->route('adminpanel.'.$this->dataType->getSlug().'.edit', $model->id)
@@ -129,6 +137,13 @@ class BaseDataController extends Controller
 
     protected function updateReturn(Request $request)
     {
+        if ($request->boolean('modal')) {
+            return response()->json([
+                'status' => true,
+                'message' => ap_trans('messages.success.update'),
+            ]);
+        }
+
         return match ($request->get('submitButton')) {
             'save' => redirect()
                 ->back()
@@ -174,6 +189,30 @@ class BaseDataController extends Controller
         // TODO: remove media and other related
 
         return response()->json(['status' => true, 'message' => ap_trans('messages.success.deleted')], 200);
+    }
+
+    /**
+     * Форма создания/правки для модалки — тот же вид, но без обвязки layouts.master.
+     */
+    public function modalForm(Request $request, $id = null): JsonResponse
+    {
+        if ($id === null) {
+            $model = $this->dataType->getModel();
+            $this->authorize('create', $model);
+        } else {
+            $model = $this->dataType->getModel()->findOrFail($id);
+            $this->authorize('update', $model);
+            $this->eagerLoadRelations($model, is_translatable($model));
+        }
+
+        return response()->json([
+            'status' => true,
+            'template' => view('adminpanel::datatypes.partials.modal-form', [
+                'dataType' => $this->dataType,
+                'model' => $model,
+                'isModelTranslatable' => is_translatable($model),
+            ])->render(),
+        ]);
     }
 
     /**

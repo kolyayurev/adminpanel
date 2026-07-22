@@ -6,7 +6,8 @@
         @include($action->getTemplate(), [
             'dataType' => $dataType,
             'model' => $model,
-            'action' => $action
+            'action' => $action,
+            'modal' => $modal ?? false,
         ])
     @endforeach
 </div>

@@ -35,6 +35,17 @@ window.createVueApp = options => {
     app.config.globalProperties.lang = lang;
     app.use(ElementPlus, { size: 'default', locale: elementLocale })
 
+    // Поля форм монтируются как createVueApp({...}).mount(selector) и нигде не хранят
+    // ссылку на сам app — .unmount() потом вызвать нечем. Регистрируем по селектору,
+    // чтобы модалка (datatable.blade.php) могла размонтировать поля формы при закрытии.
+    const mount = app.mount.bind(app)
+    app.mount = selector => {
+        const result = mount(selector)
+        window.__vueApps = window.__vueApps || {}
+        window.__vueApps[selector] = app
+        return result
+    }
+
     return app
 }
 

@@ -325,9 +325,9 @@ class BaseDataType implements DataTypeContract
             });
 
         if ($this->hasActions()) {
-            $dataTable->editColumn('actions', function ($model) {
+            $dataTable->editColumn('actions', function ($model) use ($request) {
                 return view('adminpanel::datatables.actions.index', [
-                    'model' => $model, 'dataType' => $this,
+                    'model' => $model, 'dataType' => $this, 'modal' => $request->boolean('modal'),
                 ]);
             })->rawColumns(['actions']);
         }
