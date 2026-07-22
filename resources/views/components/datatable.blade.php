@@ -221,6 +221,7 @@
                 submitModalForm(form) {
                     const data = new FormData(form)
                     data.append('modal', '1')
+                    this.clearFormErrors(form)
                     axios.post(form.getAttribute('action'), data)
                         .then((r) => {
                             this.modalVisible = false
@@ -229,14 +230,42 @@
                             if (reload) reload()
                         })
                         .catch((err) => {
-                            if (err.response && err.response.status === 422) {
-                                Object.values(err.response.data.errors || {}).forEach((messages) => {
-                                    messages.forEach((m) => toastr.error(m))
-                                })
+                            const res = err.response
+                            // 422 — ошибки по полям, модалку не закрываем: пользователь правит
+                            // и отправляет снова. Прочие коды (403 от политики и т.п.) — тост
+                            // с серверным сообщением, общий текст только если его нет.
+                            if (res && res.status === 422) {
+                                this.showFormErrors(form, res.data.errors || {})
                             } else {
-                                toastr.error(lang.get('common.whoopsie') || 'Ошибка')
+                                toastr.error((res && res.data && res.data.message) || lang.get('common.whoopsie') || 'Ошибка')
                             }
                         })
+                },
+                // Раскладываем ошибки под поля той же разметкой, что рисует blade в
+                // полноэкранной форме (.is-invalid на контроле + .invalid-feedback рядом).
+                showFormErrors(form, errors) {
+                    Object.entries(errors).forEach(([name, messages]) => {
+                        const message = messages[0]
+                        const input = form.querySelector(`[name="${name}"], [name="${name}[]"]`)
+                        if (!input) {
+                            // Поля нет в разметке (например, вложенный ключ перевода) —
+                            // иначе ошибка потерялась бы совсем.
+                            toastr.error(message)
+                            return
+                        }
+                        input.classList.add('is-invalid')
+                        const hint = document.createElement('span')
+                        hint.className = 'invalid-feedback d-block'
+                        hint.dataset.modalError = '1'
+                        const strong = document.createElement('strong')
+                        strong.textContent = message
+                        hint.appendChild(strong)
+                        input.insertAdjacentElement('afterend', hint)
+                    })
+                },
+                clearFormErrors(form) {
+                    form.querySelectorAll('[data-modal-error]').forEach((el) => el.remove())
+                    form.querySelectorAll('.is-invalid').forEach((el) => el.classList.remove('is-invalid'))
                 },
                 // Размонтируем Vue-инстансы полей, оставшиеся внутри модалки (реестр —
                 // window.__vueApps, см. createVueApp в resources/js/app.js), иначе при

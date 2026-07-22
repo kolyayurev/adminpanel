@@ -68,12 +68,34 @@ class BaseDataController extends Controller
     {
         $this->authorize('create', $this->dataType->getModel());
 
-        $validator = $this->dataType->validator($request);
-        $validator->validate();
+        $this->validateModalAware($request);
 
         $model = $this->storeData($request, $this->dataType);
 
         return $this->storeReturn($request, $model);
+    }
+
+    /**
+     * Валидация с оглядкой на модальный режим.
+     *
+     * Форма модалки уходит обычным multipart-POST'ом, поэтому дефолтный ответ на
+     * ValidationException — редирект «назад с ошибками». Фронт повторяет его тем же
+     * методом POST на GET-маршрут формы и получает 405, а пользователь — общий тост
+     * вместо списка полей. Для `modal=1` отвечаем JSON'ом независимо от Accept.
+     */
+    protected function validateModalAware(Request $request): void
+    {
+        $validator = $this->dataType->validator($request);
+
+        if ($request->boolean('modal') && $validator->fails()) {
+            abort(response()->json([
+                'status' => false,
+                'message' => ap_trans('messages.error.validation'),
+                'errors' => $validator->errors(),
+            ], 422));
+        }
+
+        $validator->validate();
     }
 
     protected function storeReturn(Request $request, $model)
@@ -127,8 +149,7 @@ class BaseDataController extends Controller
 
         $this->authorize('update', $model);
 
-        $validator = $this->dataType->validator($request);
-        $validator->validate();
+        $this->validateModalAware($request);
 
         $model = $this->updateData($request, $this->dataType, $model);
 

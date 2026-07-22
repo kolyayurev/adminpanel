@@ -122,6 +122,44 @@ class DataTableModalFormTest extends TestCase
     }
 
     /**
+     * Браузер шлёт форму модалки обычным multipart-POST'ом (FormData), а не JSON.
+     * Ответ всё равно должен быть JSON: редирект «назад с ошибками» axios повторит
+     * тем же POST на GET-маршрут формы и получит 405 вместо списка ошибок.
+     *
+     * @covers ::validateModalAware
+     */
+    public function test_store_with_modal_flag_returns_json_errors_for_form_encoded_request(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $response = $this->post(route('adminpanel.modal_form_redirects.store'), [
+            'from' => '',
+            'to' => '/target',
+            'modal' => 1,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('status', false);
+        $response->assertJsonValidationErrors('from');
+    }
+
+    /**
+     * @covers ::validateModalAware
+     */
+    public function test_store_without_modal_flag_still_redirects_back_with_errors(): void
+    {
+        $this->actingAs($this->createAdminUser());
+
+        $response = $this->post(route('adminpanel.modal_form_redirects.store'), [
+            'from' => '',
+            'to' => '/target',
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('from');
+    }
+
+    /**
      * @covers ::updateReturn
      */
     public function test_update_with_modal_flag_returns_json_instead_of_redirect(): void
