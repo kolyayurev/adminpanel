@@ -104,15 +104,15 @@
                 window.adminTableReloads['{{ $mount }}'] = () => this.fetch()
                 this.fetch()
 
-                // Кнопки строк (Edit) рисуются сервером отдельно от этого компонента
-                // (см. BaseDataType::getDataTable()) и размечены data-modal-form только
+                // Кнопки строк (Edit/Show) рисуются сервером отдельно от этого компонента
+                // (см. BaseDataType::getDataTable()) и размечены data-modal-open только
                 // когда таблица встроена как modal — перехватываем клик нативно, Vue-директивы
                 // в v-html не компилируются. Берём контейнер по id, а не this.$el: у компонента
                 // несколько корневых узлов (кнопка/таблица/диалог), поэтому this.$el —
                 // произвольный текстовый узел фрагмента, а не сам div.
                 if (this.modalEnabled) {
                     document.getElementById('{{ $mount }}').addEventListener('click', (e) => {
-                        const link = e.target.closest('[data-modal-form]')
+                        const link = e.target.closest('[data-modal-open]')
                         if (!link) return
                         e.preventDefault()
                         this.openModal(link.href)
