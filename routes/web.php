@@ -42,6 +42,7 @@ Route::group(['as' => 'adminpanel.'], function () {
             Route::post($dataType->getSlug().'/edit-field', [$dataType->getController(), 'editField'])->name($dataType->getSlug().'.edit-field');
             Route::post($dataType->getSlug().'/update-field', [$dataType->getController(), 'updateField'])->name($dataType->getSlug().'.update-field');
             Route::get($dataType->getSlug().'/modal-form/{id?}', [$dataType->getController(), 'modalForm'])->name($dataType->getSlug().'.modal-form');
+            Route::get($dataType->getSlug().'/modal-show/{id}', [$dataType->getController(), 'modalShow'])->name($dataType->getSlug().'.modal-show');
             Route::resource($dataType->getSlug(), $dataType->getController());
         }
 

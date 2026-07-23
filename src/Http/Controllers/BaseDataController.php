@@ -238,6 +238,27 @@ class BaseDataController extends Controller
     }
 
     /**
+     * Просмотр записи для модалки — то же тело, что и на странице, без обвязки layouts.master.
+     */
+    public function modalShow($id): JsonResponse
+    {
+        $model = $this->dataType->getModel()->findOrFail($id);
+
+        $this->authorize('show', $model);
+
+        $this->eagerLoadRelations($model, is_translatable($model));
+
+        return response()->json([
+            'status' => true,
+            'template' => view('adminpanel::datatypes.partials.modal-show', [
+                'dataType' => $this->dataType,
+                'model' => $model,
+                'isModelTranslatable' => is_translatable($model),
+            ])->render(),
+        ]);
+    }
+
+    /**
      * Предзаполняет новую запись залоченными фильтрами встроенной таблицы — они приходят
      * query-строкой в ссылке «Создать». Берём только ключи, которые реально являются
      * колонками таблицы: среди фильтров бывают «виртуальные» (например, `user_id` у

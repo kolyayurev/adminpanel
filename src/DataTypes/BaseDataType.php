@@ -181,6 +181,15 @@ class BaseDataType implements DataTypeContract
         return 'adminpanel::datatypes.common.show';
     }
 
+    /**
+     * Тело просмотра без обвязки layouts.master — его же рисует страница show и модалка,
+     * так что переопределение здесь меняет оба режима сразу.
+     */
+    public function getShowBodyView(): string
+    {
+        return 'adminpanel::datatypes.partials.show-body';
+    }
+
     public function getOrderView(): string
     {
         return 'adminpanel::datatypes.common.order';

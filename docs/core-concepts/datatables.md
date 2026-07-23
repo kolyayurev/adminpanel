@@ -65,6 +65,49 @@ public function actions(): Collection
 `KY\AdminPanel\DataTables\Actions\BaseAction`. Видимость действия учитывает
 [политику](permissions-roles.md) (`policyName`).
 
+## Встроенная таблица и модалки
+
+Таблицу можно вставить в чужую страницу (например, в просмотр записи) компонентом
+`<x-adminpanel::datatable>`:
+
+```blade
+<x-adminpanel::datatable
+    :dataType="$playerItemsDataType"
+    :filters="['player_id' => $model->getKey()]"  {{-- залоченный фильтр --}}
+    :except="['player_id']"                        {{-- скрыть колонку --}}
+    :modal="true"
+/>
+```
+
+С `:modal="true"` создание, правка и просмотр записи открываются в модальном окне на той же
+странице, а не отдельными страницами: кнопки строк ведут на маршруты `{slug}.modal-form` и
+`{slug}.modal-show`, которые отдают кусок HTML (`{status, template}`) без обвязки
+`layouts.master`. Права проверяются теми же политиками (`create` / `update` / `show`), что и
+на полноэкранных маршрутах.
+
+Модальный просмотр берёт тот же шаблон, что и страница, — через «телесную» вьюху DataType:
+
+| Метод | Что отдаёт | Где используется |
+| --- | --- | --- |
+| `getFormView()` | страница формы целиком | `create`, `edit` |
+| `getShowView()` | страница просмотра целиком | `show` |
+| `getShowBodyView()` | тело просмотра без `@extends` | страница `show` **и** модалка |
+
+Для формы такой пары нет: модальная форма всегда рисуется шаблоном пакета
+(`datatypes/partials/form-body`), переопределение `getFormView()` на неё не влияет —
+разметку полей меняют через [layout](layout.md) и `bodyTemplate`.
+
+Чтобы модалка просмотра показывала ваши блоки, переопределите `getShowBodyView()` — стандартная
+страница просмотра включает этот же partial, так что дублировать разметку не нужно (если у
+DataType свой `getShowView()`, вставьте в него `@include($dataType->getShowBodyView())`):
+
+```php
+public function getShowBodyView(): string
+{
+    return 'admin.players.show-body';
+}
+```
+
 ## Фильтры (Filters)
 
 Фильтр привязывается к полю методом `filter()`:
